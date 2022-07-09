@@ -1,0 +1,67 @@
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="GRLAP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="policy_id" type="xs:long" minOccurs="0" />
+                <xs:element name="policy_number" type="xs:string" minOccurs="0" />
+                <xs:element name="group_policy_number" type="xs:string" minOccurs="0" />
+                <xs:element name="assured_partner_id" type="xs:long" minOccurs="0" />
+                <xs:element name="assured_customer_id" type="xs:string" minOccurs="0" />
+                <xs:element name="assured_firstname" type="xs:string" minOccurs="0" />
+                <xs:element name="assured_middlename" type="xs:string" minOccurs="0" />
+                <xs:element name="assured_name" type="xs:string" minOccurs="0" />
+                <xs:element name="assured_address" type="xs:string" minOccurs="0" />
+                <xs:element name="issue_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="commencement_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="period_from" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="period_to" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="entry_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="renewal_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="premium_due_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="free_cover_limit" type="xs:string" minOccurs="0" />
+                <xs:element name="insured_name" type="xs:string" minOccurs="0" />
+                <xs:element name="maker_timestamp" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="maker_user_id" type="xs:long" minOccurs="0" />
+                <xs:element name="maker_user_login" type="xs:string" minOccurs="0" />
+                <xs:element name="maker_user_desc" type="xs:string" minOccurs="0" />
+                <xs:element name="checker_time_stamp" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="checker_user_id" type="xs:long" minOccurs="0" />
+                <xs:element name="checker_user_login" type="xs:string" minOccurs="0" />
+                <xs:element name="checker_user_desc" type="xs:string" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <GRLAP>
+    <policy_id>4644276986186429</policy_id>
+    <policy_number>00001921101</policy_number>
+    <group_policy_number>00001921101</group_policy_number>
+    <assured_partner_id>4629571018168366</assured_partner_id>
+    <assured_customer_id>0000192</assured_customer_id>
+    <assured_name>ABC Limited</assured_name>
+    <assured_address />
+    <issue_date>2017-07-26T10:55:14.71+02:00</issue_date>
+    <commencement_date>2017-06-01T09:55:00+02:00</commencement_date>
+    <period_from>2017-06-01T09:55:00+02:00</period_from>
+    <period_to>2019-05-31T00:00:00+02:00</period_to>
+    <entry_date>2017-07-26T10:55:14.71+02:00</entry_date>
+    <renewal_date>2017-06-01T09:55:00+02:00</renewal_date>
+    <premium_due_date>2017-06-01T09:55:00+02:00</premium_due_date>
+    <insured_name>ABC Limited</insured_name>
+    <maker_timestamp>2017-07-14T16:52:06.123+02:00</maker_timestamp>
+    <maker_user_id>4552022030683687</maker_user_id>
+    <maker_user_login>ASSECOSK\MARTINKA</maker_user_login>
+    <maker_user_desc>Martinka Juraj</maker_user_desc>
+    <checker_time_stamp>2017-07-14T16:52:37.977+02:00</checker_time_stamp>
+    <checker_user_id>4552022030683687</checker_user_id>
+    <checker_user_login>ASSECOSK\MARTINKA</checker_user_login>
+    <checker_user_desc>Martinka Juraj</checker_user_desc>
+  </GRLAP>
+</NewDataSet>

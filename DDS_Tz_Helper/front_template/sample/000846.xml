@@ -1,0 +1,52 @@
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="_x0030_00846">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="policy_id" type="xs:long" minOccurs="0" />
+                <xs:element name="policy_no" type="xs:string" minOccurs="0" />
+                <xs:element name="endorsement_no" type="xs:int" minOccurs="0" />
+                <xs:element name="transaction_type" type="xs:string" minOccurs="0" />
+                <xs:element name="period_from" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="period_to" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="assured_partner_id" type="xs:long" minOccurs="0" />
+                <xs:element name="assured" type="xs:string" minOccurs="0" />
+                <xs:element name="broker_partner_id" type="xs:long" minOccurs="0" />
+                <xs:element name="broker_code" type="xs:string" minOccurs="0" />
+                <xs:element name="broker_name" type="xs:string" minOccurs="0" />
+                <xs:element name="sum_insured" type="xs:decimal" minOccurs="0" />
+                <xs:element name="gross_premium" type="xs:decimal" minOccurs="0" />
+                <xs:element name="broker_commission" type="xs:decimal" minOccurs="0" />
+                <xs:element name="net_premium" type="xs:decimal" minOccurs="0" />
+                <xs:element name="policy_duration_years" type="xs:int" minOccurs="0" />
+                <xs:element name="policy_duration_days" type="xs:int" minOccurs="0" />
+                <xs:element name="debit_note_number" type="xs:string" minOccurs="0" />
+                <xs:element name="credit_note_number" type="xs:string" minOccurs="0" />
+                <xs:element name="credit_note_issue_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="branch_code" type="xs:string" minOccurs="0" />
+                <xs:element name="branch_abbrev" type="xs:string" minOccurs="0" />
+                <xs:element name="branch_name" type="xs:string" minOccurs="0" />
+                <xs:element name="amount_received" type="xs:decimal" minOccurs="0" />
+                <xs:element name="receipt_date" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="receipt_no" type="xs:int" minOccurs="0" />
+                <xs:element name="bank_of_lodgement" type="xs:string" minOccurs="0" />
+                <xs:element name="date_of_lodgement" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="insurer" type="xs:string" minOccurs="0" />
+                <xs:element name="amount_remitted" type="xs:int" minOccurs="0" />
+                <xs:element name="amount_unremitted" type="xs:int" minOccurs="0" />
+                <xs:element name="date_remitted" type="xs:int" minOccurs="0" />
+                <xs:element name="bank_name" type="xs:int" minOccurs="0" />
+                <xs:element name="transfer_ref" type="xs:string" minOccurs="0" />
+                <xs:element name="receipt_no1" type="xs:int" minOccurs="0" />
+                <xs:element name="remarks" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+</NewDataSet>

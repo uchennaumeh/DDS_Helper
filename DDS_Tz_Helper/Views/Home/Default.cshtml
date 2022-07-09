@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewBag.Title = "Default";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+</head>
+
+<body>
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#f425R").on('click', function () {
+
+                var grade = "42.5R,50KG BAGGED CEM2 OBA LINE 1&2";
+                var atc = $("#atc").val()
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please fill in the ATC!"; }
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                //var token = $('[name=__RequestVerificationToken]').val();
+                alert("i got to this place for 42.5R ");
+                debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoChangeATCGrade", "Home")',
+                        async: true,
+                        data: {
+                            //__RequestVerificationToken: token,
+                            atc: atc,
+                            grade: grade,
+                        },
+                        error: function (data) {
+                            debugger;
+                            //console.log(data);
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert('invalid ATC or ATC is weighed out');
+                                //console.log("i got to this place for after updating for 42.5R for false status");
+                               //
+                            }
+                            else {
+                                alert('ATC Updated successfully');
+                                 var url = "";
+                                url = '@Url.Action("Default", "Home")'; //Default
+                                //console.log("i got to this place for after updating for 42.5R ");
+                                //window.open(url, "_self");
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+            //
+
+            $("#f325R").on('click', function () {
+
+                var grade = "CEM II-32.5R -(U)-50KG Bagged Cement";
+                var atc = $("#atc").val()
+
+                var msg = "";
+                if (atc == "") { msg = "Please fill in the ATC! <br/>"; }
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                //var token = $('[name=__RequestVerificationToken]').val();
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoChangeATCGrade", "Home")',
+                        async: false,
+                        data: {
+                            //__RequestVerificationToken: token,
+                            atc: atc,
+                            grade: grade,
+                        },
+                        error: function (data) {
+                            debugger;
+                            //console.log(data);
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert('invalid ATC or ATC is weighed out');
+                               //
+                            }
+                            else {
+
+                                alert('ATC Updated successfully');
+                                 var url = "";
+                                 url = '@Url.Action("Default", "Home")'; //Default
+                                //window.open(url, "_self");
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+
+            });
+
+             $("#f425N").on('click', function () {
+
+                 var grade = "CEM II-42.5N -(U)-50KG Bagged Cement";
+                var atc = $("#atc").val()
+
+                var msg = "";
+                if (atc == "") { msg = "Please fill in the ATC! <br/>"; }
+                if (msg != "") {
+                    alert(msg);
+
+
+                    return false;
+                }
+
+                //var token = $('[name=__RequestVerificationToken]').val();
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoChangeATCGrade", "Home")',
+                        async: false,
+                        data: {
+                            //__RequestVerificationToken: token,
+                            atc: atc,
+                            grade: grade,
+                        },
+                        error: function (data) {
+                            debugger;
+                            //console.log(data);
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert('invalid ATC or ATC is weighed out');
+                               //
+                            }
+                            else {
+                                alert('ATC Updated successfully');
+                                 var url = "";
+                                 url = '@Url.Action("Default", "Home")'; //Default
+                                //window.open(url, "_self");
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+
+            });
+        });
+
+    </script>
+
+    <div class="container">
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>Click on appropriate button to change ATC Grade</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" id="submit_form" >
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">ENTER ATC*</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="atc" placeholder="enter ATC..."  class="large">
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="mws-button-row">
+                       
+                            <button id="f425R" class="btn btn-primary" type="submit"><i class="fa fa-key"></i> CHANGE TO 42.5R</button>
+                            <button id="f325R" class="btn btn-primary" type="submit"><i class="fa fa-key"></i> CHANGE TO 32.5R</button>
+                            <button id="f425N" class="btn btn-primary" type="submit"><i class="fa fa-key"></i> CHANGE TO 42.5N</button>
+                          
+</div>
+                </form>
+            </div>
+        </div>
+
+      
+    </div>
+
+</body>
+
+
+
