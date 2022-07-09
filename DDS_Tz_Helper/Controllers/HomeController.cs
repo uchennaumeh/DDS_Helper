@@ -41,8 +41,6 @@ namespace DDS_Tz_Helper.Controllers
         {
             atc_datax atc_Datax = new atc_datax();
 
-            //userLoging user_login = new userLoging();
-            //string token = __RequestVerificationToken;
             string atc_actual = atc;
             string grade_actual = grade;
             string msge;
