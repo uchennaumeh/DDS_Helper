@@ -1,0 +1,143 @@
+﻿
+@{
+    ViewBag.Title = "Receiver";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+</head>
+
+<body>
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#btnReceiver").on('click', function () {
+
+                //var grade = "42.5R,50KG BAGGED CEM2 OBA LINE 1&2";
+                var atc = $("#atc").val();
+                var receiver = $("#txtReceiver").val();
+                
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! <br/>" ; }
+                if (receiver == "") { msg += "Please enter customer name!"; }
+
+                alert("i got to this place for 42.5R ");
+
+                if (msg != "") {
+                    alert(msg);
+
+                    //$.confirm({
+                    //    title: 'Weight Correction Error!!',
+                    //    content: 'check',
+                    //    type: 'red',
+                    //    typeAnimated: true,
+                    //    buttons: {
+                    //        close: function () {
+                    //        }
+                    //    }
+                    //});
+
+                    return false;
+                }
+
+                //var token = $('[name=__RequestVerificationToken]').val();
+                //alert("i got to this place for 42.5R ");
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoUpdateReceiver", "Home")',
+                        async: true,
+                        data: {
+                            //__RequestVerificationToken: token,
+                            atc: atc,
+                            receiver: receiver,
+                           
+                        },
+                        error: function (data) {
+                            debugger;
+                            //console.log(data);
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert('invalid ATC or ATC is weighed out');
+                                //console.log("i got to this place for after updating for 42.5R for false status");
+                               //
+                            }
+                            else {
+                                alert('Receiver Updated successfully');
+                                 var url = "";
+                                url = '@Url.Action("Default", "Receiver")'; //Default
+                                //console.log("i got to this place for after updating for 42.5R ");
+                                //window.open(url, "_self");
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+    <div class="container">
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>Receiver Update for ATC</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" id="submit_form">
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">ENTER ATC*</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="atc" placeholder="enter ATC..." class="large">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">ENTER RECEIVER*</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtReceiver" placeholder="enter customer name..." class="large">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="mws-button-row">
+
+                        <button id="btnReceiver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE RECEIVER</button>
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+

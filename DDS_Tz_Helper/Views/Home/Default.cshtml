@@ -32,8 +32,8 @@
                 }
 
                 //var token = $('[name=__RequestVerificationToken]').val();
-                alert("i got to this place for 42.5R ");
-                debugger;
+                //alert("i got to this place for 42.5R ");
+                //debugger;
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
@@ -86,7 +86,7 @@
                 var atc = $("#atc").val()
 
                 var msg = "";
-                if (atc == "") { msg = "Please fill in the ATC! <br/>"; }
+                if (atc == "") { msg = "Please fill in the ATC!"; }
                 if (msg != "") {
                     alert(msg);
 
@@ -145,7 +145,65 @@
                 var atc = $("#atc").val()
 
                 var msg = "";
-                if (atc == "") { msg = "Please fill in the ATC! <br/>"; }
+                if (atc == "") { msg = "Please fill in the ATC!"; }
+                if (msg != "") {
+                    alert(msg);
+
+
+                    return false;
+                }
+
+                //var token = $('[name=__RequestVerificationToken]').val();
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoChangeATCGrade", "Home")',
+                        async: false,
+                        data: {
+                            //__RequestVerificationToken: token,
+                            atc: atc,
+                            grade: grade,
+                        },
+                        error: function (data) {
+                            debugger;
+                            //console.log(data);
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert('invalid ATC or ATC is weighed out');
+                               //
+                            }
+                            else {
+                                alert('ATC Updated successfully');
+                                 var url = "";
+                                 url = '@Url.Action("Default", "Home")'; //Default
+                                //window.open(url, "_self");
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+
+            });
+
+            $("#fBULKN").on('click', function () {
+
+                 var grade = "CEM II-42.5N -(U)-50KG Bagged Cement";
+                var atc = $("#atc").val()
+
+                var msg = "";
+                if (atc == "") { msg = "Please fill in the ATC!"; }
                 if (msg != "") {
                     alert(msg);
 
@@ -217,12 +275,13 @@
                        
                     </div>
                     <div class="mws-button-row">
-                       
-                            <button id="f425R" class="btn btn-primary" type="submit"><i class="fa fa-key"></i> CHANGE TO 42.5R</button>
-                            <button id="f325R" class="btn btn-primary" type="submit"><i class="fa fa-key"></i> CHANGE TO 32.5R</button>
-                            <button id="f425N" class="btn btn-primary" type="submit"><i class="fa fa-key"></i> CHANGE TO 42.5N</button>
-                          
-</div>
+
+                        <button id="f425R" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 42.5R</button>
+                        <button id="f325R" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 32.5R</button>
+                        <button id="f425N" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 42.5N</button>
+                        <button id="fBULKN" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO BULKN</button>
+
+                    </div>
                 </form>
             </div>
         </div>
