@@ -17,6 +17,8 @@
 
         $(document).ready(function () {
 
+            //$("#atc").val("");
+
             $("#btnDriver").on('click', function () {
 
                 //var grade = "42.5R,50KG BAGGED CEM2 OBA LINE 1&2";
@@ -26,30 +28,18 @@
 
 
                 var msg = "";
-                if (atc == "") { msg = "Please enter ATC! <br/>" ; }
-                if (receiver == "") { msg += "Please enter drivers name!"; }
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+                if (driver == "") { msg += "Please enter drivers name!"; }
 
-                //alert("i got to this place for 42.5R ");
 
                 if (msg != "") {
                     alert(msg);
 
-                    //$.confirm({
-                    //    title: 'Weight Correction Error!!',
-                    //    content: 'check',
-                    //    type: 'red',
-                    //    typeAnimated: true,
-                    //    buttons: {
-                    //        close: function () {
-                    //        }
-                    //    }
-                    //});
 
                     return false;
                 }
 
                 //var token = $('[name=__RequestVerificationToken]').val();
-                //alert("i got to this place for 42.5R ");
                 //debugger;
                  setTimeout(function () {
                     $.ajax({
@@ -71,15 +61,16 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                alert('invalid ATC or ATC is weighed out');
-                                //console.log("i got to this place for after updating for 42.5R for false status");
-                               //
+                                alert(data.msg);
+                           
                             }
                             else {
                                 alert('Driver Updated successfully');
+                                $("#atc").val("");
+                                $("#txtDriver").val("");
                                  var url = "";
                                 url = '@Url.Action("Driver", "Home")'; //Default
-                                //console.log("i got to this place for after updating for 42.5R ");
+                           
                                 //window.open(url, "_self");
 
                             }
@@ -103,7 +94,7 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>Receiver Update for ATC</span>
+                <span>DRIVER Update for ATC</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">

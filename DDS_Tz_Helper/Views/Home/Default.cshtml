@@ -16,6 +16,7 @@
     <script language="JavaScript" type="text/javascript">
 
         $(document).ready(function () {
+            $("#atc").val("");
 
             $("#f425R").on('click', function () {
 
@@ -32,7 +33,6 @@
                 }
 
                 //var token = $('[name=__RequestVerificationToken]').val();
-                //alert("i got to this place for 42.5R ");
                 //debugger;
                  setTimeout(function () {
                     $.ajax({
@@ -53,12 +53,12 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                alert('invalid ATC or ATC is weighed out');
-                                //console.log("i got to this place for after updating for 42.5R for false status");
-                               //
+                                alert(data.msg);
+                            
                             }
                             else {
                                 alert('ATC Updated successfully');
+                                $("#atc").val("");
                                  var url = "";
                                 url = '@Url.Action("Default", "Home")'; //Default
                                 //console.log("i got to this place for after updating for 42.5R ");
@@ -114,12 +114,13 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                alert('invalid ATC or ATC is weighed out');
+                                alert(data.msg);
                                //
                             }
                             else {
 
                                 alert('ATC Updated successfully');
+                                $("#atc").val("");
                                  var url = "";
                                  url = '@Url.Action("Default", "Home")'; //Default
                                 //window.open(url, "_self");
@@ -173,11 +174,13 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                alert('invalid ATC or ATC is weighed out');
+                                //alert('invalid ATC or ATC is weighed out');
+                                alert(data.msg);
                                //
                             }
                             else {
                                 alert('ATC Updated successfully');
+                                $("#atc").val("");
                                  var url = "";
                                  url = '@Url.Action("Default", "Home")'; //Default
                                 //window.open(url, "_self");
@@ -199,7 +202,7 @@
 
             $("#fBULKN").on('click', function () {
 
-                 var grade = "CEM II-42.5N -(U)-50KG Bagged Cement";
+                var grade = "BAGBM_ZAM_ZM01";
                 var atc = $("#atc").val()
 
                 var msg = "";
@@ -231,11 +234,12 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                alert('invalid ATC or ATC is weighed out');
+                                alert(data.msg);
                                //
                             }
                             else {
                                 alert('ATC Updated successfully');
+                                $("#atc").val("");
                                  var url = "";
                                  url = '@Url.Action("Default", "Home")'; //Default
                                 //window.open(url, "_self");
@@ -261,7 +265,7 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>Click on appropriate button to change ATC Grade</span>
+                <span>Click on appropriate button to change ATC GRADE</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form" >
@@ -279,7 +283,7 @@
                         <button id="f425R" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 42.5R</button>
                         <button id="f325R" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 32.5R</button>
                         <button id="f425N" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 42.5N</button>
-                        <button id="fBULKN" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO BULKN</button>
+                        <button id="fBULKN" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CH TO BAGM </button>
 
                     </div>
                 </form>

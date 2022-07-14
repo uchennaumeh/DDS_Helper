@@ -39,6 +39,11 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult Driver()
+        {
+            return View();
+        }
+
         [HttpPost]
         //[ValidateAntiForgeryToken]
         //public JsonResult DoChangeATCGrade(String __RequestVerificationToken, String atc, String grade)
@@ -55,7 +60,16 @@ namespace DDS_Tz_Helper.Controllers
             try
             {
                 //atc_data aData = db.atc_data.Where(a => a.used == null);
-                var atcDetails = db.atc_data.Where(x => x.sales_doc_number == atc).FirstOrDefault();
+                var atcDetails = db.atc_data.Where(x => x.sales_doc_number == atc && x.item_number != null).FirstOrDefault();
+                var transDataDetals = db.transaction_data.Where(a => a.sales_doc_number == atc && a.gross_time != null).FirstOrDefault();
+
+                if (transDataDetals != null)
+                {
+                    atc_Datax.msg = "ATC has been USED and WEIGHED-OUT!!!";
+                    atc_Datax.status = false;
+                    return Json(atc_Datax);
+
+                }
 
                 if (atcDetails == null)
                 {
@@ -141,6 +155,16 @@ namespace DDS_Tz_Helper.Controllers
             var atcDetails = db.atcs.Where(x => x.sales_doc_number == atc).FirstOrDefault();
             var transDataDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.sync_status != true).FirstOrDefault();
 
+            var transDataDetals = db.transaction_data.Where(a => a.sales_doc_number == atc && a.gross_time != null).FirstOrDefault();
+
+            if (transDataDetals != null)
+            {
+                atc_Datax.msg = "ATC has been USED and WEIGHED-OUT!!!";
+                atc_Datax.status = false;
+                return Json(atc_Datax);
+
+            }
+
             try
             {
                 if (tradeDetails != null)
@@ -183,14 +207,15 @@ namespace DDS_Tz_Helper.Controllers
             }
             catch(Exception ex)
             {
-                tradex.msg = "ATC not found, please ensure ATC is correct";
+                tradex.msg = "Something went wrong, plese contact I.T";
                 tradex.status = false;
                 return Json(tradex);
             }
 
-           
 
 
+            tradex.msg = "ATC not found, please ensure ATC is correct";
+            tradex.status = false;
             return Json(tradex);
         }
 
@@ -209,7 +234,17 @@ namespace DDS_Tz_Helper.Controllers
             string receiver_actual = receiver;
             
             string msge;
-            
+
+            var transDataDetals = db.transaction_data.Where(a => a.sales_doc_number == atc && a.gross_time != null).FirstOrDefault();
+
+            if (transDataDetals != null)
+            {
+                atc_Datax.msg = "ATC has been USED and WEIGHED-OUT!!!";
+                atc_Datax.status = false;
+                return Json(atc_Datax);
+
+            }
+
 
 
             try
@@ -238,7 +273,7 @@ namespace DDS_Tz_Helper.Controllers
                     atc_Datax.status = false;
                     return Json(atc_Datax);
                 }
-                var atcDetails = db.atc_data.Where(x => x.sales_doc_number == atc && x.customer_name == null && x.used == null).FirstOrDefault();
+                var atcDetails = db.atc_data.Where(x => x.sales_doc_number == atc && x.customer_name == "" && x.used == null).FirstOrDefault();
 
 
                 //if (atcDetails == null)
@@ -284,7 +319,7 @@ namespace DDS_Tz_Helper.Controllers
 
 
 
-                    atc_Datax.msg = "Receiver Updated Successfully";
+                    atc_Datax.msg = "Receiver/Customer Updated Successfully";
                     atc_Datax.status = true;
                     return Json(atc_Datax);
 
@@ -292,7 +327,7 @@ namespace DDS_Tz_Helper.Controllers
                 }
                 else
                 {
-                    atc_Datax.msg = "Be sure you have entered a correct ATC";
+                    atc_Datax.msg = "Invalid ATC or Customer Already Exists!";
                     atc_Datax.status = false;
                     return Json(atc_Datax);
                 }
