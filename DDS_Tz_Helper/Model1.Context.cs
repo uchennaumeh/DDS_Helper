@@ -392,5 +392,10 @@ namespace DDS_Tz_Helper
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<update_atc_type_atc_count_Result>("update_atc_type_atc_count", atcParameter);
         }
+    
+        public virtual int close_old_open_trips()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("close_old_open_trips");
+        }
     }
 }

@@ -20,6 +20,9 @@
 
             $("#f425R").on('click', function () {
 
+                
+                
+
                 var grade = "42.5R,50KG BAGGED CEM2 OBA LINE 1&2";
                 var atc = $("#atc").val()
 
@@ -34,6 +37,7 @@
 
                 //var token = $('[name=__RequestVerificationToken]').val();
                 //debugger;
+                $("#test_div_id").LoadingOverlay("show");
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
@@ -50,6 +54,7 @@
                             alert(data);
                         },
                         success: function (data) {
+                            $("#test_div_id").LoadingOverlay("hide", true);
                             if (data.status == false) {
 
                                 pause_sensor = false;
@@ -267,16 +272,16 @@
             <div class="mws-panel-header">
                 <span>Click on appropriate button to change ATC GRADE</span>
             </div>
-            <div class="mws-panel-body no-padding">
-                <form class="mws-form" id="submit_form" >
+            <div class="mws-panel-body no-padding" id="test_div_id">
+                <form class="mws-form" id="submit_form">
                     <div class="mws-form-inline">
                         <div class="mws-form-row bordered">
                             <label class="mws-form-label">ENTER ATC*</label>
                             <div class="mws-form-item">
-                                <input type="text" id="atc" placeholder="enter ATC..."  class="large">
+                                <input type="text" id="atc" placeholder="enter ATC..." class="large">
                             </div>
                         </div>
-                       
+
                     </div>
                     <div class="mws-button-row">
 
@@ -290,7 +295,151 @@
             </div>
         </div>
 
-      
+
+        <div class="mws-panel grid_8">
+            <div class="mws-panel-header">                
+                    <span><i class="icon-table"></i> Data Table with Numbered Pagination</span>                
+            </div>
+            <div class="mws-panel-body no-padding">
+                <div id="DataTables-Table_0_wrapper" class="dataTables_wrapper" role="grid">
+                    <div id="DataTables-Table_0_lenght" class="dataTables_length">
+                        <label>
+                            "show" <select size="1" name="DataTables_Tables_0_lenght" aria-controls="DataTables_Table_0">
+                            <option value="10" selected="selected"></option>
+                            <option value="25"></option>
+                            <option value="50"></option>
+                            <option value="100"></option>
+                            <option value="200"></option>
+                            
+                            </select>
+
+                            " entries"
+                        </label>
+
+                    </div>
+
+                </div>
+                <table class="mws-datatable-fn mws-table">
+                    <thead>
+                        <tr>
+                            <th>Rendering engine</th>
+                            <th>Browser</th>
+                            <th>Platform(s)</th>
+                            <th>Engine version</th>
+                            <th>CSS grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Trident</td>
+                            <td>
+                                Internet
+                                Explorer 4.0
+                            </td>
+                            <td>Win 95+</td>
+                            <td>4</td>
+                            <td>X</td>
+                        </tr>
+                        <tr>
+                            <td>Trident</td>
+                            <td>
+                                Internet
+                                Explorer 5.0
+                            </td>
+                            <td>Win 95+</td>
+                            <td>5</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Trident</td>
+                            <td>
+                                Internet
+                                Explorer 5.5
+                            </td>
+                            <td>Win 95+</td>
+                            <td>5.5</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Trident</td>
+                            <td>
+                                Internet
+                                Explorer 6
+                            </td>
+                            <td>Win 98+</td>
+                            <td>6</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Trident</td>
+                            <td>Internet Explorer 7</td>
+                            <td>Win XP SP2+</td>
+                            <td>7</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Trident</td>
+                            <td>AOL browser (AOL desktop)</td>
+                            <td>Win XP</td>
+                            <td>6</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 1.0</td>
+                            <td>Win 98+ / OSX.2+</td>
+                            <td>1.7</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 1.5</td>
+                            <td>Win 98+ / OSX.2+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 2.0</td>
+                            <td>Win 98+ / OSX.2+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 3.0</td>
+                            <td>Win 2k+ / OSX.3+</td>
+                            <td>1.9</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Camino 1.0</td>
+                            <td>OSX.2+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Camino 1.5</td>
+                            <td>OSX.3+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Netscape 7.2</td>
+                            <td>Win 95+ / Mac OS 8.6-9.2</td>
+                            <td>1.7</td>
+                            <td>A</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
     </div>
 
 </body>

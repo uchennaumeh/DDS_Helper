@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DispatchDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DispatchDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -2183,6 +2183,7 @@ warning 6002: The table/view 'DispatchDB.dbo.view_transactions' does not have a 
           <Parameter Name="dateto" Type="datetime" Mode="In" />
           <Parameter Name="rpt_Type" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="close_old_open_trips" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="offline_TMS_product_created_count" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="datefrom" Type="datetime" Mode="In" />
           <Parameter Name="dateto" Type="datetime" Mode="In" />
@@ -2727,8 +2728,7 @@ warning 6002: The table/view 'DispatchDB.dbo.view_transactions' does not have a 
             <End Role="weighbridge_images" EntitySet="weighbridge_images" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DispatchDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -5040,7 +5040,7 @@ warning 6002: The table/view 'DispatchDB.dbo.view_transactions' does not have a 
             <Parameter Name="dateto" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="Offline_TMS_Trips_Hourly_Count" ReturnType="Collection(DispatchDBModel.Offline_TMS_Trips_Hourly_Count_Result)">
-            <Parameter Name="datefrom" Mode="In" Type="DateTime" />
+          <Parameter Name="datefrom" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="picked_cement_not_weighed_out" ReturnType="Collection(DispatchDBModel.picked_cement_not_weighed_out_Result)">
             <Parameter Name="datefrom" Mode="In" Type="DateTime" />
@@ -5063,7 +5063,7 @@ warning 6002: The table/view 'DispatchDB.dbo.view_transactions' does not have a 
             <Parameter Name="dateto" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="SearchAllTables">
-            <Parameter Name="SearchStr" Mode="In" Type="String" />
+          <Parameter Name="SearchStr" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="Summary_Count_Truck_Analysis_All_in_one" ReturnType="Collection(DispatchDBModel.Summary_Count_Truck_Analysis_All_in_one_Result)">
             <Parameter Name="datefrom" Mode="In" Type="DateTime" />
@@ -5091,15 +5091,16 @@ warning 6002: The table/view 'DispatchDB.dbo.view_transactions' does not have a 
             <Parameter Name="dateto" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="Trucks_Hourly_Count" ReturnType="Collection(DispatchDBModel.Trucks_Hourly_Count_Result)">
-            <Parameter Name="datefrom" Mode="In" Type="DateTime" />
+          <Parameter Name="datefrom" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="update_atc_type">
             <Parameter Name="atc" Mode="In" Type="String" />
             <Parameter Name="atcType" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="update_atc_type_atc_count" ReturnType="Collection(DispatchDBModel.update_atc_type_atc_count_Result)">
-            <Parameter Name="atc" Mode="In" Type="String" />
+          <Parameter Name="atc" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="close_old_open_trips" />
         </EntityContainer>
         <ComplexType Name="Cement_Truck_Analysis_All_in_One_Result">
           <Property Type="DateTime" Name="TARETIME" Nullable="true" Precision="23" />
@@ -8266,6 +8267,7 @@ warning 6002: The table/view 'DispatchDB.dbo.view_transactions' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="close_old_open_trips" FunctionName="DispatchDBModel.Store.close_old_open_trips" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

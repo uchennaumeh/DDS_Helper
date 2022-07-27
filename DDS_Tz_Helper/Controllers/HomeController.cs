@@ -71,7 +71,7 @@ namespace DDS_Tz_Helper.Controllers
 
                 }
 
-                if (atcDetails == null)
+                if (atcDetails == null) 
                 {
                     atc_Datax.msg = "Wrong ATC Entered";
                     atc_Datax.status = false;
