@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Driver";
+    ViewBag.Title = "Destination";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -17,16 +17,17 @@
 
         $(document).ready(function () {
 
+
             $("#btnDriver").on('click', function () {
 
                 var atc = $("#atc").val();
-                var driver = $("#txtDriver").val();
+                var destination = $("#txtDriver").val();
 
 
 
                 var msg = "";
                 if (atc == "") { msg = "Please enter ATC! \n" ; }
-                if (driver == "") { msg += "Please enter drivers name!"; }
+                if (destination == "") { msg += "Please enter destination!"; }
 
 
                 if (msg != "") {
@@ -41,12 +42,12 @@
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoUpdateDriver", "Home")',
+                        url: '@Url.Action("DoUpdateDestination", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
                             atc: atc,
-                            driver: driver,
+                            destination: destination,
 
                         },
                         error: function (data) {
@@ -58,15 +59,15 @@
 
                                 pause_sensor = false;
                                 alert(data.msg);
-                           
+
                             }
                             else {
-                                alert('Driver Updated successfully');
+                                alert('Destination Updated successfully');
                                 $("#atc").val("");
                                 $("#txtDriver").val("");
                                  var url = "";
-                                url = '@Url.Action("Driver", "Home")'; //Default
-                           
+                                url = '@Url.Action("Destination", "Home")'; //Default
+
                                 //window.open(url, "_self");
 
                             }
@@ -90,7 +91,7 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>DRIVER Update for ATC</span>
+                <span>DESTINATION Update for ATC</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">
@@ -107,16 +108,16 @@
 
                     <div class="mws-form-inline">
                         <div class="mws-form-row bordered">
-                            <label class="mws-form-label">ENTER DRIVERS NAME*</label>
+                            <label class="mws-form-label">ENTER DESTINATION*</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtDriver" placeholder="enter drivers name..." class="large">
+                                <input type="text" id="txtDriver" placeholder="enter destination..." class="large">
                             </div>
                         </div>
 
                     </div>
                     <div class="mws-button-row">
 
-                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE DRIVER</button>
+                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE DESTINATION</button>
 
 
                     </div>
@@ -124,12 +125,10 @@
             </div>
         </div>
 
-        
+
 
 
     </div>
 
 </body>
-
-
 

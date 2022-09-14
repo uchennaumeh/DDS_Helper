@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Driver";
+    ViewBag.Title = "AddOnlineTrip";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -11,7 +11,6 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
 </head>
-
 <body>
     <script language="JavaScript" type="text/javascript">
 
@@ -20,13 +19,16 @@
             $("#btnDriver").on('click', function () {
 
                 var atc = $("#atc").val();
-                var driver = $("#txtDriver").val();
+                var trip = $("#txtDriver").val();
 
 
 
                 var msg = "";
-                if (atc == "") { msg = "Please enter ATC! \n" ; }
-                if (driver == "") { msg += "Please enter drivers name!"; }
+                
+                if (trip == "") { msg = "Please enter Trip ID! \n"; }
+                if (atc == "") { msg += "Please enter ATC name!"; }
+                if (trip.length != 10) { msg += "Trip ID must be 10 digits! \n"; }
+                if (!/^[0-9]+$/.test(trip)) { msg += "Trip ID must be numbers only! \n"; }
 
 
                 if (msg != "") {
@@ -41,12 +43,12 @@
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoUpdateDriver", "Home")',
+                        url: '@Url.Action("DoUpdateOnlineTrip", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
                             atc: atc,
-                            driver: driver,
+                            trip: trip,
 
                         },
                         error: function (data) {
@@ -58,15 +60,15 @@
 
                                 pause_sensor = false;
                                 alert(data.msg);
-                           
+
                             }
                             else {
-                                alert('Driver Updated successfully');
+                                alert('Online Trip Added successfully');
                                 $("#atc").val("");
                                 $("#txtDriver").val("");
                                  var url = "";
-                                url = '@Url.Action("Driver", "Home")'; //Default
-                           
+                                url = '@Url.Action("AddOnlineTrip", "Home")'; //Default
+
                                 //window.open(url, "_self");
 
                             }
@@ -90,7 +92,7 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>DRIVER Update for ATC</span>
+                <span>TRIP Validation For ATC</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">
@@ -107,16 +109,16 @@
 
                     <div class="mws-form-inline">
                         <div class="mws-form-row bordered">
-                            <label class="mws-form-label">ENTER DRIVERS NAME*</label>
+                            <label class="mws-form-label">ENTER ONLINE TRIP ID*</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtDriver" placeholder="enter drivers name..." class="large">
+                                <input type="number" id="txtDriver" placeholder="enter Online Trip..." class="large">
                             </div>
                         </div>
 
                     </div>
                     <div class="mws-button-row">
 
-                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE DRIVER</button>
+                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> ADD ONLINE TRIP</button>
 
 
                     </div>
@@ -124,12 +126,10 @@
             </div>
         </div>
 
-        
+
 
 
     </div>
 
 </body>
-
-
 

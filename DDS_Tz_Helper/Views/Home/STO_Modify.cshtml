@@ -1,0 +1,311 @@
+﻿
+@{
+    ViewBag.Title = "STO_Modify";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+</head>
+
+<body>
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnUpdate").hide();
+            $("#truckDiv").hide();
+            $("#tripDiv").hide();
+            $("#senderDiv").hide();
+            $("#stoLocDiv").hide();
+            $("#destinationDiv").hide();
+            $("#transDiv").hide();
+            $("#driverDiv").hide();
+            //$("#lblGO").hide();
+
+
+
+            $("#btnATCSearch").on('click', function () {
+                var atc = $("#atc").val();
+                
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n"; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+                $("#btnATCSearch").attr("disabled", "disabled");
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoFetchATCDetails", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                $("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                                //alert('Receiver Updated successfully');
+                                $("#atc").val(data.atc);
+                                $("#txtTruckNum").val(data.truckNumber);
+                                $("#txtDriverName").val(data.driverName);
+                                $("#txtStoLoc").val(data.stoLoc);
+                                $("#txtTransporter").val(data.transporter);
+                                $("#txtSender").val(data.sender);
+                                $("#txtDestination").val(data.destination);
+                                $("#txtTrip").val(data.trip_id);
+                               
+                                $("#atc").attr("disabled", "disabled");
+
+                                $("#btnUpdate").show();
+                                $("#truckDiv").show();
+                                $("#tripDiv").show();
+                                $("#senderDiv").show();
+                                $("#stoLocDiv").show();
+                                $("#destinationDiv").show();
+                                $("#transDiv").show();
+                                $("#driverDiv").show();
+                                 //var url = "";
+                                //url = '@Url.Action("STO_Modify", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+                })
+            });
+
+
+            $("#btnUpdate").on('click', function () {
+
+                var atc = $("#atc").val();
+                var truckNum = $("#txtTruckNum").val();
+                var driver = $("#txtDriverName").val();
+                var stoLoc = $("#txtStoLoc").val();
+                var transporter = $("#txtTransporter").val();
+                var sender = $("#txtSender").val();
+                var destination = $("#txtDestination").val();
+                var trip_id = $("#txtTrip").val();
+
+
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+                if (truckNum == "") { msg += "Please enter truck numbr! \n"; }
+                if (driver == "") { msg += "Please enter driver name! \n"; }
+                if (stoLoc == "") { msg += "Please enter storage location! \n"; }
+                if (transporter == "") { msg += "Please enter transporter name! \n"; }
+                if (sender == "") { msg += "Please enter sender name! \n"; }
+                if (destination == "") { msg += "Please enter destination! \n"; }
+                if (trip_id == "") { msg += "Please enter trip ID! \n"; }
+
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoModifyEntries", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                            truckNum: truckNum,
+                            driver: driver,
+                            stoLoc: stoLoc,
+                            transporter: transporter,
+                            sender: sender,
+                            destination: destination,
+                            trip_id: trip_id,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+
+                            }
+                            else {
+
+                               
+
+                                alert(data.msg);
+                                $("#atc").val("");
+                                $("#txtTruckNum").val("");
+                                $("#txtDriverName").val("");
+                                $("#txtStoLoc").val("");
+                                $("#txtTransporter").val("");
+                                $("#txtDestination").val("");
+                                $("#txtSender").val("");
+                                $("#txtTrip").val("");
+
+
+                                $("#btnUpdate").hide();
+                                $("#truckDiv").hide();
+                                $("#tripDiv").hide();
+                                $("#senderDiv").hide();
+                                $("#stoLocDiv").hide();
+                                $("#destinationDiv").hide();
+                                $("#transDiv").hide();
+                                $("#driverDiv").hide();
+
+
+                                
+                                $("#btnATCSearch").removeAttr("disabled");
+                                $("#atc").removeAttr("disabled");
+
+
+                            
+                                 var url = "";
+                                url = '@Url.Action("STO_MOdify", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+    <div class="container">
+
+        <div class="mws-panel grid_8">
+            <div class="mws-panel-header">
+                <span>Modify STO</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-cols">
+                            <div class="mws-form-col-5-8">
+                                <label class="mws-form-label">ATC*</label>
+                                <div class="mws-form-item">
+                                    @*<input type="text" id="atc" placeholder="enter ATC..." class="large">*@
+                                    <input type="text" id="atc" placeholder="enter ATC..." class="large">
+                                </div>
+                            </div>
+                            <div class="mws-form-col-1-8">
+                                <label id="lblGO" class="mws-form-label">.</label>
+                                <div class="mws-form-item">
+                                    @*<button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>*@
+                                    <button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+                        <div id="truckDiv" class="mws-form-row">
+                            <label class="mws-form-label">Truck Number</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTruckNum" class="small">
+
+                            </div>
+                        </div>
+                        <div id="driverDiv" class="mws-form-row">
+                            <label class="mws-form-label">Driver Name</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtDriverName" class="small">
+                            </div>
+                        </div>
+                        <div id="stoLocDiv" class="mws-form-row">
+                            <label class="mws-form-label">Storage Location</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtStoLoc" class="small">
+                            </div>
+                        </div>
+                        <div id="transDiv" class="mws-form-row">
+                            <label class="mws-form-label">Transporters Name</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTransporter" class="small">
+                            </div>
+                        </div>
+                        <div id="senderDiv" class="mws-form-row">
+                            <label class="mws-form-label">Sender</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtSender" class="small">
+                            </div>
+                        </div>
+                        <div id="destinationDiv" class="mws-form-row">
+                            <label class="mws-form-label">Destination</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtDestination" class="small">
+                            </div>
+                        </div>
+                        <div id="tripDiv" class="mws-form-row">
+                            <label class="mws-form-label">Trip ID</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTrip" class="small">
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="mws-button-row">
+
+                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE RECORD</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+       
+    </div>
+
+</body>
+

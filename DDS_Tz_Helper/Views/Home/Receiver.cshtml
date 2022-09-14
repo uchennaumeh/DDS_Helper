@@ -34,7 +34,7 @@
                     return false;
                 }
 
-                //var token = $('[name=__RequestVerificationToken]').val();
+                var token = $('[name=__RequestVerificationToken]').val();
                 //debugger;
                  setTimeout(function () {
                     $.ajax({
@@ -42,7 +42,7 @@
                         url: '@Url.Action("DoUpdateReceiver", "Home")',
                         async: true,
                         data: {
-                            //__RequestVerificationToken: token,
+                            __RequestVerificationToken: token,
                             atc: atc,
                             receiver: receiver,
                            
@@ -92,6 +92,7 @@
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">
+                    @Html.AntiForgeryToken()
                     <div class="mws-form-inline">
                         <div class="mws-form-row bordered">
                             <label class="mws-form-label">ENTER ATC*</label>

@@ -5,11 +5,12 @@ using System.Web;
 
 namespace DDS_Tz_Helper.Business_Objects
 {
-    public class atc_datax
+    public class trip_registry_dto
     {
         public string msg { get; set; }
-        public string excptn { get; set; }
-        public string grade { get; set; }
+        public string trip { get; set; }
+        public string tms_status { get; set; }
+        public string tms_online_status { get; set; }
         public Boolean status { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Driver";
+    ViewBag.Title = "Trip_Validate";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -11,7 +11,6 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
 </head>
-
 <body>
     <script language="JavaScript" type="text/javascript">
 
@@ -19,14 +18,13 @@
 
             $("#btnDriver").on('click', function () {
 
-                var atc = $("#atc").val();
-                var driver = $("#txtDriver").val();
+                var trip = $("#txtDriver").val();
 
 
 
                 var msg = "";
-                if (atc == "") { msg = "Please enter ATC! \n" ; }
-                if (driver == "") { msg += "Please enter drivers name!"; }
+                if (trip == "") { msg = "Please enter Trip ID! \n" ; }
+            
 
 
                 if (msg != "") {
@@ -41,16 +39,16 @@
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoUpdateDriver", "Home")',
+                        url: '@Url.Action("DoUpdateTrip", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
-                            atc: atc,
-                            driver: driver,
+                            trip: trip,
 
                         },
                         error: function (data) {
                             debugger;
+                            //console.log(data);
                             alert(data);
                         },
                         success: function (data) {
@@ -58,15 +56,14 @@
 
                                 pause_sensor = false;
                                 alert(data.msg);
-                           
+
                             }
                             else {
-                                alert('Driver Updated successfully');
-                                $("#atc").val("");
+                                alert('Trip Validated successfully');                              
                                 $("#txtDriver").val("");
                                  var url = "";
-                                url = '@Url.Action("Driver", "Home")'; //Default
-                           
+                                url = '@Url.Action("Trip_Validate", "Home")'; //Default
+
                                 //window.open(url, "_self");
 
                             }
@@ -90,33 +87,24 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>DRIVER Update for ATC</span>
+                <span>TRIP Validation For ATC</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">
+
                     @Html.AntiForgeryToken()
                     <div class="mws-form-inline">
                         <div class="mws-form-row bordered">
-                            <label class="mws-form-label">ENTER ATC*</label>
+                            <label class="mws-form-label">ENTER AFFECTED ATC*</label>
                             <div class="mws-form-item">
-                                <input type="text" id="atc" placeholder="enter ATC..." class="large">
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="mws-form-inline">
-                        <div class="mws-form-row bordered">
-                            <label class="mws-form-label">ENTER DRIVERS NAME*</label>
-                            <div class="mws-form-item">
-                                <input type="text" id="txtDriver" placeholder="enter drivers name..." class="large">
+                                <input type="text" id="txtDriver" placeholder="enter ATC..." class="large">
                             </div>
                         </div>
 
                     </div>
                     <div class="mws-button-row">
 
-                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE DRIVER</button>
+                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> VALIDATE TRIP</button>
 
 
                     </div>
@@ -124,12 +112,10 @@
             </div>
         </div>
 
-        
+
 
 
     </div>
 
 </body>
-
-
 
