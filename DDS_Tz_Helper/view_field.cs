@@ -21,5 +21,8 @@ namespace DDS_Tz_Helper
         public Nullable<System.DateTime> date_created { get; set; }
         public string code { get; set; }
         public string desscription { get; set; }
+        public string variety { get; set; }
+        public string crop_cycle { get; set; }
+        public Nullable<decimal> spacing { get; set; }
     }
 }

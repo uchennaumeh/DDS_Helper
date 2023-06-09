@@ -34,5 +34,6 @@ namespace DDS_Tz_Helper
         public string billing_block { get; set; }
         public string customer_block { get; set; }
         public string delivery_number { get; set; }
+        public string storage_loc { get; set; }
     }
 }

@@ -1,0 +1,77 @@
+﻿
+@{
+    ViewBag.Title = "Default";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LogOff</title>
+</head>
+<body>
+    <script language="JavaScript" type="text/javascript">
+        $(document).ready(function () {
+
+            var logoutVar = "check logout";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("LoginOff", "Home")',
+                        async: true,
+                        data: {
+                            //__RequestVerificationToken: token,
+                            logoutVar: logoutVar,
+                            
+                        },
+                        error: function (data) {
+                            debugger;
+                            //console.log(data.excptn);
+                            //alert(data);
+                            //console.log(excptn);
+                        },
+                        success: function (data) {
+                            //$("#test_div_id").LoadingOverlay("hide", true);
+                            if (data.status == false) {
+
+                                //pause_sensor = false;
+                                //alert(data.msg);
+                                //console.log(excptn);
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(url,'_self');
+                            
+                            }
+                            else
+                            {
+                                 pause_sensor = false;
+                                //alert(data.msg);
+                                //console.log(excptn);
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open( url,'_self'); // <- This is what makes it open in a new window.
+                                //);
+                            
+
+                            }
+
+
+
+                        },
+
+
+                    });
+
+
+
+
+
+            }, 200);
+        });
+    </script>
+    <div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+﻿
+@{
+    ViewBag.Title = "Remove_TripID";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+
+<head>
+
+    @*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+
+</head>
+<body>
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+                            
+                            loginVAr: loginVAr,
+                            
+                        },
+                        error: function (data) {
+                            debugger;
+                           
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+                            
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+                            
+                            }
+                            else {
+                               
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+                            
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+
+
+
+            $("#btnDriver").on('click', function () {
+
+                var atc = $("#txtDriver").val();
+
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoRemoveTripIDForCTES", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+
+                        },
+                        error: function (data) {
+                            debugger;
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+
+                            }
+                            else {
+                                alert(data.msg);
+                                $("#txtDriver").val("");
+                                 var url = "";
+                                url = '@Url.Action("Remove_TripID", "Home")'; //Default
+
+                                //window.open(url, "_self");
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+    <div class="container">
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>Remove Trip ID From CTEs ATC</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" id="submit_form">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">ENTER AFFECTED ATC*</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtDriver" placeholder="enter ATC..." class="large">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="mws-button-row">
+
+                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> REMOVE TRIP ID</button>
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+</body>
+
+
+

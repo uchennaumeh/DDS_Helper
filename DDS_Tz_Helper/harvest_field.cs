@@ -19,5 +19,8 @@ namespace DDS_Tz_Helper
         public Nullable<decimal> field_area { get; set; }
         public Nullable<int> estate_id { get; set; }
         public Nullable<System.DateTime> date_created { get; set; }
+        public string variety { get; set; }
+        public string crop_cycle { get; set; }
+        public Nullable<decimal> spacing { get; set; }
     }
 }

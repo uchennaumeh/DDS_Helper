@@ -23,5 +23,7 @@ namespace DDS_Tz_Helper
         public Nullable<int> no_of_dry_offs { get; set; }
         public Nullable<System.DateTime> date_of_scrambled_cane { get; set; }
         public Nullable<decimal> estimated_yield { get; set; }
+        public Nullable<int> month { get; set; }
+        public Nullable<int> year { get; set; }
     }
 }

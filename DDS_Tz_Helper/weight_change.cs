@@ -26,5 +26,6 @@ namespace DDS_Tz_Helper
         public string status { get; set; }
         public Nullable<int> change_request_id { get; set; }
         public string weight_change1 { get; set; }
+        public string filename { get; set; }
     }
 }

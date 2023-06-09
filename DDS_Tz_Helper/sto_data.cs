@@ -38,5 +38,6 @@ namespace DDS_Tz_Helper
         public string delivery_number_out { get; set; }
         public string supplying_plant { get; set; }
         public string receiving_plant { get; set; }
+        public Nullable<int> delivery_item { get; set; }
     }
 }

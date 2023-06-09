@@ -16,6 +16,55 @@
 
         $(document).ready(function () {
 
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+                            
+                            loginVAr: loginVAr,
+                            
+                        },
+                        error: function (data) {
+                            debugger;
+                           
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+                            
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+                            
+                            }
+                            else {
+                               
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+                            
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+
+
             $("#btnDriver").on('click', function () {
 
                 var atc = $("#atc").val();

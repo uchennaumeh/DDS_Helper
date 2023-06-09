@@ -64,5 +64,6 @@ namespace DDS_Tz_Helper
         public Nullable<int> harvest_id { get; set; }
         public Nullable<int> plot_id { get; set; }
         public Nullable<int> outgrower_id { get; set; }
+        public string migo_details { get; set; }
     }
 }

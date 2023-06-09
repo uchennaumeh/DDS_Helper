@@ -6,9 +6,9 @@
 
 <head>
 
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    @*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
 
 </head>
 
@@ -16,6 +16,55 @@
     <script language="JavaScript" type="text/javascript">
 
         $(document).ready(function () {
+
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+                            
+                            loginVAr: loginVAr,
+                            
+                        },
+                        error: function (data) {
+                            debugger;
+                           
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+                            
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+                            
+                            }
+                            else {
+                               
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+                            
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+
 
             $("#btnReceiver").on('click', function () {
                 var atc = $("#atc").val();
