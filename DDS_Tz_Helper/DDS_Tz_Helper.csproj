@@ -2866,6 +2866,7 @@
     <Content Include="front_template\HTML\images\core\themer.png" />
     <Content Include="front_template\HTML\images\DDS.png" />
     <Content Include="front_template\HTML\images\mws-logo.png" />
+    <Content Include="front_template\HTML\images\processing.gif" />
     <Content Include="front_template\HTML\index.html" />
     <Content Include="front_template\HTML\js\core\login.js" />
     <Content Include="front_template\HTML\js\core\mws.js" />

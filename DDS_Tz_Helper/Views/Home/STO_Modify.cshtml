@@ -73,6 +73,7 @@
             $("#destinationDiv").hide();
             $("#transDiv").hide();
             $("#driverDiv").hide();
+            $("#receiverDiv").hide();
             //$("#lblGO").hide();
 
 
@@ -128,6 +129,7 @@
                                 $("#txtSender").val(data.sender);
                                 $("#txtDestination").val(data.destination);
                                 $("#txtTrip").val(data.trip_id);
+                                $("#txtReceiver").val(data.receiver);
                                
                                 $("#atc").attr("disabled", "disabled");
 
@@ -139,6 +141,7 @@
                                 $("#destinationDiv").show();
                                 $("#transDiv").show();
                                 $("#driverDiv").show();
+                                $("#receiverDiv").show();
                                  //var url = "";
                                 //url = '@Url.Action("STO_Modify", "Home")'; //Default
 
@@ -163,6 +166,7 @@
                 var sender = $("#txtSender").val();
                 var destination = $("#txtDestination").val();
                 var trip_id = $("#txtTrip").val();
+                var receiver = $("#txtReceiver").val();
 
 
 
@@ -176,6 +180,7 @@
                 if (sender == "") { msg += "Please enter sender name! \n"; }
                 if (destination == "") { msg += "Please enter destination! \n"; }
                 if (trip_id == "") { msg += "Please enter trip ID! \n"; }
+                if (receiver == "") { msg += "Please enter receiver! \n"; }
 
 
 
@@ -202,6 +207,7 @@
                             sender: sender,
                             destination: destination,
                             trip_id: trip_id,
+                            receiver: receiver,
 
                         },
                         error: function (data) {
@@ -229,6 +235,7 @@
                                 $("#txtDestination").val("");
                                 $("#txtSender").val("");
                                 $("#txtTrip").val("");
+                                $("#txtReceiver").val("");
 
 
                                 $("#btnUpdate").hide();
@@ -332,6 +339,12 @@
                             <label class="mws-form-label">Destination</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtDestination" class="small">
+                            </div>
+                        </div>
+                        <div id="receiverDiv" class="mws-form-row">
+                            <label class="mws-form-label">Receiver</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtReceiver" class="small">
                             </div>
                         </div>
                         <div id="tripDiv" class="mws-form-row">

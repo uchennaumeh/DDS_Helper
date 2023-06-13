@@ -37,76 +37,57 @@ namespace DDS_Tz_Helper.Business_Objects
                 // if your users set name is Users
 
                 bool isValidStatus = db.users.Any(u => u.username == username
-                    && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system");
+                    && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system" && u.status == "ACTIVE" && u.can_approve == true);
+
+
+                bool isDisabledStatus = db.users.Any(u => u.username == username
+                    && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system" && u.status == "DISABLED");
+
+                bool isCanApproveStatus = db.users.Any(u => u.username == username
+                    && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system" && u.can_approve == false);
+
+                if (isDisabledStatus)
+                {
+                    return false;
+                }
+
+                if (isCanApproveStatus)
+                {
+                    return false;
+                }
+
+
+
+
 
                 //--return isValidStatus;
                 //TODO : Checking AD Authentication
 
-                if (!isValidStatus)
-                {
-                    //check via Active Directory
-                    String path = "LDAP://dc=dangote-group,dc=com";
-                    LdapAuthentication ldp = new LdapAuthentication(path);
+                //if (!isValidStatus)
+                //{
+                //    //check via Active Directory
+                //    String path = "LDAP://dc=dangote-group,dc=com";
+                //    LdapAuthentication ldp = new LdapAuthentication(path);
 
-                    bool ad_login_status = ldp.IsAuthenticated("dangote_nt", BaseUrl, username, password);
+                //    bool ad_login_status = ldp.IsAuthenticated("dangote_nt", BaseUrl, username, password);
 
-                    if (ad_login_status) //successful ad login
-                    {
+                //    if (ad_login_status) //successful ad login
+                //    {
 
-                        user new_user = new user();
-                        new_user.username = username;
-                        new_user.password = HashedPassword;
-                        new_user.active = true;
-                        new_user.role_id = db.roles.Where(a => a.role_name == "newuser").FirstOrDefault().Id;
-                        new_user.admin = false;
-                        db.users.Add(new_user);
+                //        user new_user = new user();
+                //        new_user.username = username;
+                //        new_user.password = HashedPassword;
+                //        new_user.active = true;
+                //        new_user.role_id = db.roles.Where(a => a.role_name == "newuser").FirstOrDefault().Id;
+                //        new_user.admin = false;
+                //        db.users.Add(new_user);
 
-                        db.SaveChanges();
+                //        db.SaveChanges();
 
+                //        return true;
 
-                        ///
-                        //string _path = "LDAP://dc=dangote-group,dc=com,OU=Users";
-                        //string domainAndUsername = "dangote_nt" + @"\" + username;
-                        //string pwd = password;
-                        //using (DirectoryEntry user = new DirectoryEntry(_path, domainAndUsername, pwd))
-                        //{
-                        //    byte[] data = user.Properties["jpegPhoto"].Value as byte[];
-
-                        //    if (data != null)
-                        //    {
-                        //        using (MemoryStream s = new MemoryStream(data))
-                        //        {
-                        //            user_picture = Bitmap.FromStream(s);
-
-
-                        //        }
-                        //    }
-
-                        //    user_picture = null;
-                        //}
-
-                        //try
-                        //{
-
-                        //Image current_bmp = Bitmap.FromFile("https://dangote-my.sharepoint.com:443/User%20Photos/Profile%20Pictures/" + username.Replace(",","_") + "_dangote_com_MThumb.jpg");
-                        //string filename = BaseUrl + "\\Content\\Data\\" + username + ".jpg";
-                        //if (current_bmp != null && !File.Exists(filename))
-                        //{
-                        //    current_bmp.Save(filename);
-                        //}
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    int ii = 0;
-                        //    ii++;
-                        //    //throw;
-                        //}
-
-                        //
-                        return true;
-
-                    }
-                }
+                //    }
+                //}
                 return isValidStatus;
             }
         }
@@ -121,12 +102,6 @@ namespace DDS_Tz_Helper.Business_Objects
                 //role_id = current_user.role.Id;
                 admin = current_user.admin.Value;
 
-                //if (current_user.last_login == null)
-                //{
-                //    change_password = true;
-                //}
-                //else
-                //{
 
                     current_user.last_login = DateTime.Now;
 

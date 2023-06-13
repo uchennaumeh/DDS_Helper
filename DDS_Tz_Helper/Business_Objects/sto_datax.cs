@@ -11,6 +11,7 @@ namespace DDS_Tz_Helper.Business_Objects
         public string excptn { get; set; }
         public string grade { get; set; }
         public string transporter { get; set; }
+        public string receiver { get; set; }
         public string truckNumber { get; set; }
         public string driverName { get; set; }
         public string stoLoc { get; set; }

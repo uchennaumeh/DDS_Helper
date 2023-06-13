@@ -174,7 +174,7 @@ namespace DDS_Tz_Helper.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult DoModifyEntries(String __RequestVerificationToken, String atc, String driver, String truckNum, String stoLoc, String transporter, String sender, String destination, String trip_id)
+        public JsonResult DoModifyEntries(String __RequestVerificationToken, String atc, String driver, String truckNum, String stoLoc, String transporter, String sender, String destination, String trip_id, String receiver)
         {
             sto_datax sto_Datax = new sto_datax();
 
@@ -198,6 +198,8 @@ namespace DDS_Tz_Helper.Controllers
                 poDetails.loc = stoLoc;
                 poDetails.vehicle = truckNum;
                 poDetails.transporter_name = transporter;
+                poDetails.receiver = receiver;
+
 
 
                 //poDetails.driver = driver;
@@ -240,11 +242,8 @@ namespace DDS_Tz_Helper.Controllers
                 loginx.status = false;
                 return Json(loginx);
 
-                //return RedirectToAction("Login");
             }
-
-            
-            
+ 
 
         }
 
@@ -286,6 +285,7 @@ namespace DDS_Tz_Helper.Controllers
                     sto_Datax.sender = poDetails.sender;
                     sto_Datax.stoLoc = poDetails.loc;
                     sto_Datax.truckNumber = poDetails.vehicle;
+                    sto_Datax.receiver = poDetails.receiver;
                     sto_Datax.atc = atc;
 
                     int user_id = int.Parse(Session["user_id"].ToString());
@@ -796,47 +796,20 @@ namespace DDS_Tz_Helper.Controllers
                 return Json(atc_Datax);
             }
 
-            //return Json(atc_Datax);
-
-
-
+        
         }
 
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        //public ActionResult Login(string username, string password, int weighbridge_id, int shift_id, string returnUrl)
-        //public ActionResult Login(string username, string password, string returnUrl)
         public JsonResult Login(string username, string password, string returnUrl)
         {
             String BaseUrl = Request.Url.GetLeftPart(UriPartial.Authority);
             Loginx loginx = new Loginx();
 
 
-            //IEnumerable<SelectListItem> weighbridges = db.weighbridges.ToList().Select(x => new SelectListItem
-            //{
-            //    Selected = (x.id == weighbridge_id),
-            //    Value = x.id.ToString(),
-            //    Text = x.station_code + "/" + x.station_name
-            //});
-
-            //var cookie_weighbridge = new HttpCookie("weighbridge", weighbridge_id.ToString());
-
-            //cookie_weighbridge.Expires.AddDays(30); ;
-
-            //Response.SetCookie(cookie_weighbridge);
-            //Response.Cookies.Add(cookie_weighbridge);
-
-            //ViewBag.weighbridges = weighbridges;
-            //IEnumerable<SelectListItem> shifts = db.shifts.ToList().Select(x => new SelectListItem
-            //{
-            //    Value = x.id.ToString(),
-            //    Text = x.shift_name + " [" + x.time_start + " - " + x.time_end + "]"
-            //});
-
-            //ViewBag.shifts = shifts;
-            //Session["num_of_tries"] = "0";
+            
             if (Session["num_of_tries"] != null)
             {
                 int num_of_tries = (int)Session["num_of_tries"];
@@ -870,7 +843,7 @@ namespace DDS_Tz_Helper.Controllers
                     loginx.msg = "has been locked out!!";
                     loginx.status = false;
                     return Json(loginx);
-                   // return View();
+                   
 
                 }
             }
@@ -879,56 +852,23 @@ namespace DDS_Tz_Helper.Controllers
                 if (new UserManager().IsValid(username, password, BaseUrl))
                 {
 
-                    //GetUserID
                     UserManager UM = new UserManager();
                     UM.FillUserInfo(username);
                     int user_id = UM.user_id;
 
                     Session["username"] = username;
                     Session["user_id"] = user_id;
-                    //Session["role_name"] = UM.role_name;
-                    //Session["supervisor"] = UM.admin;
-                    //Session["shift"] = db.shifts.Find(shift_id).shift_name;
+                
 
                     Session["change_password"] = UM.change_password;
 
-                    //clsmodule_access
-
-                    //List<module_access> current_access = db.module_access.Where(a => a.role_id == UM.role_id).ToList();
-
-                    //Session["weighbridge"] = (current_access.Find(a => a.module == "weighbridge") != null) ? current_access.Find(a => a.module == "weighbridge").enable : false;
-                    //Session["management"] = (current_access.Find(a => a.module == "management") != null) ? current_access.Find(a => a.module == "management").enable : false;
-                    //Session["admin"] = (current_access.Find(a => a.module == "admin") != null) ? current_access.Find(a => a.module == "admin").enable : false;
-                    //Session["recon"] = (current_access.Find(a => a.module == "recon") != null) ? current_access.Find(a => a.module == "recon").enable : false;
-                    //Session["transport"] = (current_access.Find(a => a.module == "transport") != null) ? current_access.Find(a => a.module == "transport").enable : false;
-                    //Session["operator"] = (current_access.Find(a => a.module == "operator") != null) ? current_access.Find(a => a.module == "operator").enable : false;
-                    //Session["audit"] = (current_access.Find(a => a.module == "audit") != null) ? current_access.Find(a => a.module == "audit").enable : false;
-                    //Session["sales"] = (current_access.Find(a => a.module == "sales") != null) ? current_access.Find(a => a.module == "sales").enable : false;
-                    //Session["picking"] = (current_access.Find(a => a.module == "picking") != null) ? current_access.Find(a => a.module == "picking").enable : false;
 
                     Session["company_name"] = db.system_setting.FirstOrDefault().company_name;
 
-                    //var ident = new ClaimsIdentity(
-                    //new[] { 
-                    // adding following 2 claim just for supporting default antiforgery provider
-                    //new Claim(ClaimTypes.NameIdentifier, username),
-                    //new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
-
-                    //new Claim(ClaimTypes.Name,username),
-
-                    // optionally you could add roles if any: TODO
-                    //new Claim(ClaimTypes.Role, UM.role_name),
-                    //new Claim(ClaimTypes.Role, "AnotherRole"),
-
-                    //},
-                    //DefaultAuthenticationTypes.ApplicationCookie);
-
-                    //HttpContext.GetOwinContext().Authentication.SignIn(
-                    // new AuthenticationProperties { IsPersistent = false }, ident);
-                    ///
+                  
 
                     TransactionLogging TRX_LOG = new TransactionLogging();
-                    bool status = TRX_LOG.RecordLog(db, "N/A", user_id, ActivityType.LOGIN_HELPER, "Login : ", DateTime.Now.ToString());
+                    bool status = TRX_LOG.RecordLog(db, "N/A", user_id, ActivityType.LOGIN_HELPER, "Login_HELPER : ", DateTime.Now.ToString());
 
                     Session["LoginStatus"] = "LoggedIn";
                     var loggedInStatus = Session["LoginStatus"];
@@ -937,66 +877,19 @@ namespace DDS_Tz_Helper.Controllers
                     loginx.status = true;
                     return Json(loginx);
 
-                    ///
 
-                    //weighbridge current_weighbridge = db.weighbridges.Find(weighbridge_id);
-                    //Session["weighbridge_id"] = weighbridge_id;
-                    //Session["weighbridge_enabled"] = "false";
-                    //if (current_weighbridge != null)
-                    //{
-                    //    if (current_weighbridge.station_code != "N" && current_weighbridge.station_name != "A")
-                    //    {
-
-                    //        Session["baud"] = current_weighbridge.baud;
-                    //        Session["parity"] = current_weighbridge.parity;
-                    //        Session["stopbits"] = 1;
-                    //        Session["databits"] = current_weighbridge.data_bits;
-                    //        Session["port"] = current_weighbridge.port;
-                    //        Session["weighbridge_enabled"] = "true";
-
-                    //    }
-                    //    Session["stationcode"] = current_weighbridge.station_code;
-                    //    Session["stationname"] = current_weighbridge.station_name;
-                    //}
-                    //String returnUrl = Request.QueryString["returnUrl"];
-
-                    //if (UM.role_name == "gate_access")
-                    //{
-                    //    return RedirectToRoute(new
-                    //    {
-                    //        controller = "GateAccess",
-                    //        action = "Index"
-                    //    });
-
-                    //}
-                    //if (UM.role_name == "security_access")
-                    //{
-                    //    return RedirectToRoute(new
-                    //    {
-                    //        controller = "GateAccess",
-                    //        action = "Security"
-                    //    });
-
-                    //}
-                    //if (returnUrl != null)
-                    //{
-                    //    return RedirectToLocal(returnUrl);
-                    //}
-
-
-                    //return RedirectToAction("Dashboard"); // auth succeed 
                 }
                 else
                 {
-                    loginx.msg = "Invalid username/password";
+                    loginx.msg = "Invalid or blocked username/password";
                     loginx.status = false;
-                    loginx.excptn = "Invalid username/password";
+                    loginx.excptn = "Invalid or blocked username/password";
                     return Json(loginx);
                 }
             }
             catch (Exception ex)
             {
-                loginx.msg = "Invalid username/password";
+                loginx.msg = "Invalid or blocked username/password";
                 loginx.status = false;
                 loginx.excptn = ex.Message;
                 return Json(loginx);
@@ -1008,13 +901,9 @@ namespace DDS_Tz_Helper.Controllers
                 Session["num_of_tries"] = 0;
             }
             Session["num_of_tries"] = (int)Session["num_of_tries"] + 1;
-            // invalid username or password
+        
             ModelState.AddModelError("", "invalid username or password");
 
-            //loginx.msg = "Invalid username/password";
-            //loginx.status = false;
-            //return Json(loginx);
-            //return View();
         }
         private ActionResult RedirectToLocal(string returnUrl)
         {
@@ -1029,9 +918,13 @@ namespace DDS_Tz_Helper.Controllers
         [HttpPost]
         public JsonResult LoginOff(string logoutVar)
         {
-            //HttpContext.GetOwinContext().Authentication.SignOut();
             Loginx loginx = new Loginx();
             loginx.status = true;
+
+            int user_id = int.Parse(Session["user_id"].ToString());
+            TransactionLogging TRX_LOG = new TransactionLogging();
+            bool status = TRX_LOG.RecordLog(db, "N/A", user_id, ActivityType.LOGOUT_HELPER, "LOGOUT_HELPER: ", DateTime.Now.ToString());
+
             Session.Clear();
           
 
