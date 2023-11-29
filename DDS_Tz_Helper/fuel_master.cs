@@ -24,5 +24,6 @@ namespace DDS_Tz_Helper
         public Nullable<double> fuel_allowance3 { get; set; }
         public Nullable<double> fuel_allowance4 { get; set; }
         public string city { get; set; }
+        public Nullable<int> trip_days { get; set; }
     }
 }

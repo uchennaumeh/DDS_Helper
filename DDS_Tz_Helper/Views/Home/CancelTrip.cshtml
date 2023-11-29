@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Driver";
+    ViewBag.Title = "CancelTrip";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -24,36 +24,36 @@
                         url: '@Url.Action("checkLogin", "Home")',
                         async: true,
                         data: {
-                            
+
                             loginVAr: loginVAr,
-                            
+
                         },
                         error: function (data) {
                             debugger;
-                           
+
                             var url = "";
                                 url = '@Url.Action("NewHome", "Home")';
                         },
                         success: function (data) {
-                            
+
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                
+
                                 var url = "";
                                 url = '@Url.Action("NewHome", "Home")';
                                 window.open(
                                     url,
                                     '_self');
-                            
+
                             }
                             else {
-                               
+
                                 //url = '@Url.Action("Default", "Home")'; //Default
                                 window.open(
                                     url,
                                     '_self');
-                            
+
                             }
 
                         },
@@ -66,18 +66,17 @@
 
 
 
-            $("#btnDriver").on('click', function () {
+            $("#btnTripCancel").on('click', function () {
 
-                
 
-                var atc = $("#atc").val();
-                var driver = $("#txtDriver").val();
+
+                var trip = $("#trip").val();             
 
 
 
                 var msg = "";
-                if (atc == "") { msg = "Please enter ATC! \n" ; }
-                if (driver == "") { msg += "Please enter drivers name!"; }
+                if (trip == "") { msg = "Please enter TRIP ID! \n" ; }
+                
 
 
                 if (msg != "") {
@@ -92,12 +91,12 @@
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoUpdateDriver", "Home")',
+                        url: '@Url.Action("DoCancelDDSTrip", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
-                            atc: atc,
-                            driver: driver,
+                            trip: trip,
+                            
 
                         },
                         error: function (data) {
@@ -109,15 +108,15 @@
 
                                 pause_sensor = false;
                                 alert(data.msg);
-                           
+
                             }
                             else {
-                                alert('Driver Updated successfully');
-                                $("#atc").val("");
-                                $("#txtDriver").val("");
+                                alert(data.msg);
+                                $("#trip").val("");
+                                
                                  var url = "";
-                                url = '@Url.Action("Driver", "Home")'; //Default
-                           
+                                url = '@Url.Action("CancelTrip", "Home")'; //Default
+
                                 //window.open(url, "_self");
 
                             }
@@ -141,33 +140,25 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>DRIVER Update for ATC</span>
+                <span>CANCEL Trip ID for DDS ONLY</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">
                     @Html.AntiForgeryToken()
                     <div class="mws-form-inline">
                         <div class="mws-form-row bordered">
-                            <label class="mws-form-label">ENTER ATC*</label>
+                            <label class="mws-form-label">ENTER TRIP ID*</label>
                             <div class="mws-form-item">
-                                <input type="text" id="atc" placeholder="enter ATC..." class="large">
+                                <input type="text" id="trip" placeholder="enter TRIP ID..." class="large">
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="mws-form-inline">
-                        <div class="mws-form-row bordered">
-                            <label class="mws-form-label">ENTER DRIVERS NAME*</label>
-                            <div class="mws-form-item">
-                                <input type="text" id="txtDriver" placeholder="enter drivers name..." class="large">
-                            </div>
-                        </div>
-
-                    </div>
+                   
                     <div class="mws-button-row">
 
-                        <button id="btnDriver" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE DRIVER</button>
+                        <button id="btnTripCancel" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CANCEL DDS TRIP</button>
 
 
                     </div>
@@ -175,7 +166,7 @@
             </div>
         </div>
 
-        
+
 
 
     </div>

@@ -151,45 +151,13 @@ namespace DDS_Tz_Helper
         public virtual DbSet<view_plot> view_plot { get; set; }
         public virtual DbSet<view_sugar_trx> view_sugar_trx { get; set; }
         public virtual DbSet<view_transactions> view_transactions { get; set; }
-        public virtual DbSet<transaction_data_archive> transaction_data_archive { get; set; }
         public virtual DbSet<atc_cleanup> atc_cleanup { get; set; }
         public virtual DbSet<close_transaction> close_transaction { get; set; }
         public virtual DbSet<destination> destinations { get; set; }
         public virtual DbSet<po_plant> po_plant { get; set; }
         public virtual DbSet<sales_doc_type> sales_doc_type { get; set; }
-        public virtual DbSet<sto_transaction_data_archive> sto_transaction_data_archive { get; set; }
-        public virtual DbSet<transaction_data_backup190720222> transaction_data_backup190720222 { get; set; }
         public virtual DbSet<trx_data_audit> trx_data_audit { get; set; }
-        public virtual DbSet<customer_back_up_07102021> customer_back_up_07102021 { get; set; }
-        public virtual DbSet<driver_bkup_04062022> driver_bkup_04062022 { get; set; }
-        public virtual DbSet<equipment_detail_bkup_04062022> equipment_detail_bkup_04062022 { get; set; }
-        public virtual DbSet<equipment_detail_bkup_19052022> equipment_detail_bkup_19052022 { get; set; }
-        public virtual DbSet<fleet_master_back_up_24022022> fleet_master_back_up_24022022 { get; set; }
-        public virtual DbSet<fuel_master_back_up_13052022> fuel_master_back_up_13052022 { get; set; }
-        public virtual DbSet<fuel_master_bkp> fuel_master_bkp { get; set; }
-        public virtual DbSet<fuel_master_bkup_06052023> fuel_master_bkup_06052023 { get; set; }
-        public virtual DbSet<fuel_master_bkup_06082022> fuel_master_bkup_06082022 { get; set; }
-        public virtual DbSet<fuel_master_bkup_14032023> fuel_master_bkup_14032023 { get; set; }
-        public virtual DbSet<fuel_master_bkup_21082022> fuel_master_bkup_21082022 { get; set; }
-        public virtual DbSet<fuel_master_bkup08112022> fuel_master_bkup08112022 { get; set; }
-        public virtual DbSet<region_data_bkup_06052023> region_data_bkup_06052023 { get; set; }
-        public virtual DbSet<sto_data_backup> sto_data_backup { get; set; }
-        public virtual DbSet<trade_archive> trade_archive { get; set; }
-        public virtual DbSet<trade_bakup> trade_bakup { get; set; }
-        public virtual DbSet<transaction_data_back_up_01102021> transaction_data_back_up_01102021 { get; set; }
-        public virtual DbSet<transaction_data_back_up_14042022> transaction_data_back_up_14042022 { get; set; }
-        public virtual DbSet<transaction_data_bkup_19072022> transaction_data_bkup_19072022 { get; set; }
-        public virtual DbSet<transactions_returned> transactions_returned { get; set; }
-        public virtual DbSet<trip_registry_bkup_06052023> trip_registry_bkup_06052023 { get; set; }
-        public virtual DbSet<trip_registry_bkup_06062022> trip_registry_bkup_06062022 { get; set; }
-        public virtual DbSet<trip_registry_bkup_17052022> trip_registry_bkup_17052022 { get; set; }
-        public virtual DbSet<trip_registry_bkup_19052022> trip_registry_bkup_19052022 { get; set; }
-        public virtual DbSet<trip_registry_bkup_25052022> trip_registry_bkup_25052022 { get; set; }
-        public virtual DbSet<trip_registry_bkup_26052022> trip_registry_bkup_26052022 { get; set; }
-        public virtual DbSet<user_back_up_27092021> user_back_up_27092021 { get; set; }
-        public virtual DbSet<user_request_back_up_27092021> user_request_back_up_27092021 { get; set; }
-        public virtual DbSet<cng_master_bkup_06062022> cng_master_bkup_06062022 { get; set; }
-        public virtual DbSet<trip_registry_backup> trip_registry_backup { get; set; }
+        public virtual DbSet<transaction_data_archive> transaction_data_archive { get; set; }
     
         public virtual ObjectResult<Cement_Truck_Analysis_All_in_One_Result> Cement_Truck_Analysis_All_in_One(Nullable<System.DateTime> datefrom, Nullable<System.DateTime> dateto, string rpt_Type)
         {

@@ -1,24 +1,21 @@
 ﻿
 @{
-    ViewBag.Title = "STO_Modify";
+    ViewBag.Title = "Gate_Modify";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 
-
-    //String can_approves = (Session["can_approve"] != null) ? Session["can_approve"].ToString() : "False";
     String can_approves = Session["can_approve"].ToString();
     if (can_approves != "True")
     {
-        
+
         Response.Redirect("/Home/NotAllowed");
     }
-
 }
 
 <head>
 
     @*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
-    <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
 
 </head>
 
@@ -34,36 +31,36 @@
                         url: '@Url.Action("checkLogin", "Home")',
                         async: true,
                         data: {
-                            
+
                             loginVAr: loginVAr,
-                            
+
                         },
                         error: function (data) {
                             debugger;
-                           
+
                             var url = "";
                                 url = '@Url.Action("NewHome", "Home")';
                         },
                         success: function (data) {
-                            
+
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                
+
                                 var url = "";
                                 url = '@Url.Action("NewHome", "Home")';
                                 window.open(
                                     url,
                                     '_self');
-                            
+
                             }
                             else {
-                               
+
                                 //url = '@Url.Action("Default", "Home")'; //Default
                                 window.open(
                                     url,
                                     '_self');
-                            
+
                             }
 
                         },
@@ -76,6 +73,7 @@
 
 
             $("#btnUpdate").hide();
+            $("#btnCancel").hide();
             $("#truckDiv").hide();
             $("#tripDiv").hide();
             $("#senderDiv").hide();
@@ -84,13 +82,18 @@
             $("#transDiv").hide();
             $("#driverDiv").hide();
             $("#receiverDiv").hide();
+            $("#shippingPointDiv").hide();
+            $("#productDiv").hide();
+            $("#parentSalesOrderDiv").hide();
+            
+
             //$("#lblGO").hide();
 
 
 
             $("#btnATCSearch").on('click', function () {
                 var atc = $("#atc").val();
-                
+
 
                 var msg = "";
                 if (atc == "") { msg = "Please enter ATC! \n"; }
@@ -107,7 +110,7 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoFetchATCDetails", "Home")',
+                        url: '@Url.Action("DoFetchATCDetailsGate", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -134,16 +137,37 @@
                                 $("#atc").val(data.atc);
                                 $("#txtTruckNum").val(data.truckNumber);
                                 $("#txtDriverName").val(data.driverName);
-                                $("#txtStoLoc").val(data.stoLoc);
-                                $("#txtTransporter").val(data.transporter);
-                                $("#txtSender").val(data.sender);
+                                $("#txtCustomer").val(data.customer);
+                                $("#txtLicense").val(data.License);
                                 $("#txtDestination").val(data.destination);
-                                $("#txtTrip").val(data.trip_id);
-                                $("#txtReceiver").val(data.receiver);
+                                $("#txtTransporter").val(data.transporter);
+                                $("#txtStatus").val(data.statusDB);
+                                $("#txtTransType").val(data.transType);
+                                $("#txtShippingPoint").val(data.ShippingPoint);
+                                $("#txtProduct").val(data.product);
+                                $("#txtParentSO").val(data.parentSO);
+
+
+                                //$("#atc").val(data.atc);
+                                //$("#txtTruckNum").val(data.truckNumber);
+                                //$("#txtDriverName").val(data.driverName);
+                                //$("#txtCustomer").val(data.customer);
+                                //$("#txtLicense").val(data.License);
+                                //$("#txtDestination").val(data.destination);
+                                //$("#txtTransporter").val(data.transporter);
+                                //$("#txtStatus").val(data.statusDB);
+                                //$("#txtTransType").val(data.transType);
+                                //$("#txtShippingPoint").val(data.ShippingPoint);
+                                //$("#txtProduct").val(data.product);
+                                //$("#txtParentSO").val(data.parentSO);
                                
+
                                 $("#atc").attr("disabled", "disabled");
+                                $("#txtStatus").attr("disabled", "disabled");
+                               
 
                                 $("#btnUpdate").show();
+                                $("#btnCancel").show();
                                 $("#truckDiv").show();
                                 $("#tripDiv").show();
                                 $("#senderDiv").show();
@@ -152,8 +176,11 @@
                                 $("#transDiv").show();
                                 $("#driverDiv").show();
                                 $("#receiverDiv").show();
+                                $("#shippingPointDiv").show();
+                                $("#productDiv").show();
+                                $("#parentSalesOrderDiv").show();
                                  //var url = "";
-                                //url = '@Url.Action("STO_Modify", "Home")'; //Default
+                                //url = '@Url.Action("Gate_Modify", "Home")'; //Default
 
 
                             }
@@ -171,12 +198,15 @@
                 var atc = $("#atc").val();
                 var truckNum = $("#txtTruckNum").val();
                 var driver = $("#txtDriverName").val();
-                var stoLoc = $("#txtStoLoc").val();
-                var transporter = $("#txtTransporter").val();
-                var sender = $("#txtSender").val();
+                var customer = $("#txtCustomer").val();
+                var license = $("#txtLicense").val();
                 var destination = $("#txtDestination").val();
-                var trip_id = $("#txtTrip").val();
-                var receiver = $("#txtReceiver").val();
+                var transporter = $("#txtTransporter").val();
+                var statusDB = $("#txtStatus").val();
+                var transType = $("#txtTransType").val();
+                var shippingPoint = $("#txtShippingPoint").val();
+                var product = $("#txtProduct").val();
+                var parentSO = $("#txtParentSO").val();
 
 
 
@@ -185,13 +215,10 @@
                 if (atc == "") { msg = "Please enter ATC! \n" ; }
                 if (truckNum == "") { msg += "Please enter truck numbr! \n"; }
                 if (driver == "") { msg += "Please enter driver name! \n"; }
-                if (stoLoc == "") { msg += "Please enter storage location! \n"; }
-                if (transporter == "") { msg += "Please enter transporter name! \n"; }
-                if (sender == "") { msg += "Please enter sender name! \n"; }
-                if (destination == "") { msg += "Please enter destination! \n"; }
-                if (trip_id == "") { msg += "Please enter trip ID! \n"; }
-                if (receiver == "") { msg += "Please enter receiver! \n"; }
-
+                if (customer == "") { msg += "Please enter storage location! \n"; }
+                if (statusDB == "") { msg += "Please enter trip ID! \n"; }
+                if (transType == "") { msg += "Please enter receiver! \n"; }
+                if (product == "") { msg += "Please enter product! \n"; }
 
 
                 if (msg != "") {
@@ -205,19 +232,23 @@
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoModifyEntries", "Home")',
+                        url: '@Url.Action("DoModifyEntriesGate", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
                             atc: atc,
                             truckNum: truckNum,
                             driver: driver,
-                            stoLoc: stoLoc,
+                            customer: customer,
                             transporter: transporter,
-                            sender: sender,
+                            license: license,
                             destination: destination,
-                            trip_id: trip_id,
-                            receiver: receiver,
+                            statusDB: statusDB,
+                            transType: transType,
+                            shippingPoint: shippingPoint,
+                            product: product,
+                            parentSO: parentSO,
+
 
                         },
                         error: function (data) {
@@ -234,21 +265,27 @@
                             }
                             else {
 
-                               
+
 
                                 alert(data.msg);
                                 $("#atc").val("");
                                 $("#txtTruckNum").val("");
                                 $("#txtDriverName").val("");
-                                $("#txtStoLoc").val("");
-                                $("#txtTransporter").val("");
+                                $("#txtCustomer").val("");
+                                $("#txtLicense").val("");
                                 $("#txtDestination").val("");
-                                $("#txtSender").val("");
-                                $("#txtTrip").val("");
-                                $("#txtReceiver").val("");
+                                $("#txtTransporter").val("");
+                                $("#txtStatus").val("");
+                                $("#txtTransType").val("");
+                                $("#txtParentSO").val("");
+                                $("#txtProduct").val("");
+                                $("#txtParentSO").val("");
+                                $("#txtShippingPoint").val("");
 
+                               
 
                                 $("#btnUpdate").hide();
+                                $("#btnCancel").hide();
                                 $("#truckDiv").hide();
                                 $("#tripDiv").hide();
                                 $("#senderDiv").hide();
@@ -256,16 +293,20 @@
                                 $("#destinationDiv").hide();
                                 $("#transDiv").hide();
                                 $("#driverDiv").hide();
+                                $("#receiverDiv").hide();
+                                $("#shippingPointDiv").hide();
+                                $("#productDiv").hide();
+                                $("#parentSalesOrderDiv").hide();
 
 
-                                
+
                                 $("#btnATCSearch").removeAttr("disabled");
                                 $("#atc").removeAttr("disabled");
 
 
-                            
+
                                  var url = "";
-                                url = '@Url.Action("STO_MOdify", "Home")'; //Default
+                                url = '@Url.Action("Gate_MOdify", "Home")'; //Default
 
 
                             }
@@ -282,6 +323,113 @@
                  }, 200);
             });
 
+
+             $("#btnCancel").on('click', function () {
+                 
+                 //var userPreference;
+
+                 if (confirm("ARE YOU SURE YOU WANT TO CANCEL THIS ATC REGISTRATION?") == true) {
+
+                     var atc = $("#atc").val();
+
+                      var token = $('[name=__RequestVerificationToken]').val();
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoModifyEntriesGateCancel", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                        
+
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+
+                            }
+                            else {
+
+
+
+                                alert(data.msg);
+                                $("#atc").val("");
+                                $("#txtTruckNum").val("");
+                                $("#txtDriverName").val("");
+                                $("#txtCustomer").val("");
+                                $("#txtLicense").val("");
+                                $("#txtDestination").val("");
+                                $("#txtTransporter").val("");
+                                $("#txtStatus").val("");
+                                $("#txtTransType").val("");
+                                $("#txtParentSO").val("");
+                                $("#txtProduct").val("");
+                                $("#txtParentSO").val("");
+                                $("#txtShippingPoint").val("");
+
+                               
+
+                                $("#btnUpdate").hide();
+                                $("#btnCancel").hide();
+                                $("#truckDiv").hide();
+                                $("#tripDiv").hide();
+                                $("#senderDiv").hide();
+                                $("#stoLocDiv").hide();
+                                $("#destinationDiv").hide();
+                                $("#transDiv").hide();
+                                $("#driverDiv").hide();
+                                $("#receiverDiv").hide();
+                                $("#shippingPointDiv").hide();
+                                $("#productDiv").hide();
+                                $("#parentSalesOrderDiv").hide();
+
+
+
+                                $("#btnATCSearch").removeAttr("disabled");
+                                $("#atc").removeAttr("disabled");
+
+
+
+                                 var url = "";
+                                url = '@Url.Action("Gate_MOdify", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                     }, 200);
+
+
+
+                   
+                 }
+                 else {
+                     //userPreference = "Save Canceled!";
+                 }
+
+                 //alert(userPreference);
+
+                
+            });
+
         });
 
     </script>
@@ -290,7 +438,7 @@
 
         <div class="mws-panel grid_8">
             <div class="mws-panel-header">
-                <span>Modify STO</span>
+                <span>Modify GATE ENTRY DETAILS</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" action="form_layouts.html">
@@ -328,39 +476,58 @@
                             </div>
                         </div>
                         <div id="stoLocDiv" class="mws-form-row">
-                            <label class="mws-form-label">Storage Location</label>
+                            <label class="mws-form-label">Customer</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtStoLoc" class="small">
+                                <input type="text" id="txtCustomer" class="small">
                             </div>
                         </div>
                         <div id="transDiv" class="mws-form-row">
-                            <label class="mws-form-label">Transporters Name</label>
+                            <label class="mws-form-label">License</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtTransporter" class="small">
+                                <input type="text" id="txtLicense" class="small">
                             </div>
                         </div>
                         <div id="senderDiv" class="mws-form-row">
-                            <label class="mws-form-label">Sender</label>
-                            <div class="mws-form-item">
-                                <input type="text" id="txtSender" class="small">
-                            </div>
-                        </div>
-                        <div id="destinationDiv" class="mws-form-row">
                             <label class="mws-form-label">Destination</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtDestination" class="small">
                             </div>
                         </div>
-                        <div id="receiverDiv" class="mws-form-row">
-                            <label class="mws-form-label">Receiver</label>
+                        <div id="destinationDiv" class="mws-form-row">
+                            <label class="mws-form-label">Transporter</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtReceiver" class="small">
+                                <input type="text" id="txtTransporter" class="small">
+                            </div>
+                        </div>
+                        <div id="parentSalesOrderDiv" class="mws-form-row">
+                            <label class="mws-form-label">Parent Sales Order</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtParentSO" class="small">
+                            </div>
+                        </div>
+                        <div id="receiverDiv" class="mws-form-row">
+                            <label class="mws-form-label">Transaction Type</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTransType" class="small">
+                            </div>
+                        </div>
+
+                        <div id="shippingPointDiv" class="mws-form-row">
+                            <label class="mws-form-label">Shipping Point</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtShippingPoint" class="small">
+                            </div>
+                        </div>
+                        <div id="productDiv" class="mws-form-row">
+                            <label class="mws-form-label">Product</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtProduct" class="small">
                             </div>
                         </div>
                         <div id="tripDiv" class="mws-form-row">
-                            <label class="mws-form-label">Trip ID</label>
+                            <label class="mws-form-label">Weighment Status</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtTrip" class="small">
+                                <input type="text" id="txtStatus" class="small">
                             </div>
                         </div>
 
@@ -369,15 +536,27 @@
                     </div>
                     <div class="mws-button-row">
 
-                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE RECORD</button>
+                        
+                        <table width: 100%>
+                            <tr>
+                                <td align="left" width="500">
+                                    <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> UPDATE RECORD</button>
+                                </td>
+                                <td align="right" width="500">
+                                    <button id="btnCancel" class="btn btn-danger right " type="button"><i class="fa fa-key"></i> CANCEL ATC</button>
+                                </td>
+                            </tr>
+                        </table>
+                        
                     </div>
                 </form>
             </div>
         </div>
 
 
-       
+
     </div>
 
 </body>
+
 

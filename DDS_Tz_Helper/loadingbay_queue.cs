@@ -22,5 +22,7 @@ namespace DDS_Tz_Helper
         public string status { get; set; }
         public Nullable<int> postion { get; set; }
         public Nullable<System.DateTime> processing_time { get; set; }
+    
+        public virtual loading_bay loading_bay { get; set; }
     }
 }

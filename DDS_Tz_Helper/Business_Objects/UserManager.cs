@@ -37,7 +37,8 @@ namespace DDS_Tz_Helper.Business_Objects
                 // if your users set name is Users
 
                 bool isValidStatus = db.users.Any(u => u.username == username
-                    && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system" && u.status == "ACTIVE" && u.can_approve == true);
+                   // && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system" && u.status == "ACTIVE" && u.can_approve == true);
+                    && u.password == HashedPassword && u.active == true && u.approved == true && u.username != "system" && u.status == "ACTIVE");
 
 
                 bool isDisabledStatus = db.users.Any(u => u.username == username
@@ -51,10 +52,11 @@ namespace DDS_Tz_Helper.Business_Objects
                     return false;
                 }
 
-                if (isCanApproveStatus)
-                {
-                    return false;
-                }
+                //if (isCanApproveStatus)
+                //{
+                    
+                //    return false;
+                //}
 
 
 
@@ -99,8 +101,9 @@ namespace DDS_Tz_Helper.Business_Objects
                 user current_user = db.users.FirstOrDefault(u => u.username == username);
                 user_id = current_user.Id;
                 //role_name = current_user.role.role_name;
-                //role_id = current_user.role.Id;
+                //string role_id = current_user.role_id.ToString();
                 admin = current_user.admin.Value;
+                //Session["Role"] = role_id;
 
 
                     current_user.last_login = DateTime.Now;

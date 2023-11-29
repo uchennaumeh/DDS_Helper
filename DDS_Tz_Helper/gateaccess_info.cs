@@ -30,5 +30,9 @@ namespace DDS_Tz_Helper
         public string fleet_no { get; set; }
         public string shipping_point { get; set; }
         public string storage_location { get; set; }
+        public string queue_no { get; set; }
+        public Nullable<bool> is_used { get; set; }
+        public string destination { get; set; }
+        public string transporter { get; set; }
     }
 }

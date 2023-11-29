@@ -1,6 +1,36 @@
 ﻿
 @{
     Layout = null;
+    String roleP = "";
+
+
+    if (Session["Role"].ToString() == "1")
+    {
+        roleP = "weighbridge";
+
+    }
+    if (Session["Role"].ToString() == "4")
+    {
+        roleP = "admin";
+
+    }
+    if (Session["Role"].ToString() == "3009")
+    {
+        roleP = "GAte Access";
+
+    }
+    if (Session["Role"].ToString() == "3010")
+    {
+        roleP = "Security Access";
+
+    }
+    if (Session["Role"].ToString() == "3011" || Session["Role"].ToString() == "3012" || Session["Role"].ToString() == "3013" || Session["Role"].ToString() == "3014" || Session["Role"].ToString() == "3015" || Session["Role"].ToString() == "3016")
+    {
+        roleP = "transport";
+
+    }
+
+
 }
 
 <!DOCTYPE html>
@@ -18,7 +48,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
     <!-- Plugin Stylesheets first to ease overrides -->
+    @*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">*@
     <link rel="stylesheet" type="text/css" href="~/front_template/HTML/plugins/colorpicker/colorpicker.css" media="screen">
+
 
     <!-- Required Stylesheets -->
     <!--<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" media="screen">-->
@@ -42,9 +74,19 @@
     <link rel="stylesheet" type="text/css" href="~/front_template/HTML/css/themer.css" media="screen">
 
 
+
+
+
+
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+    @RenderSection("scripts", required: false)
 
     <title>OBJ HELPER</title>
 
@@ -52,47 +94,19 @@
 
 <body>
 
-    <!-- Themer (Remove if not needed) -->
-    @*<div id="mws-themer">
-        <div id="mws-themer-content">
-            <div id="mws-themer-ribbon"></div>
-            <div id="mws-themer-toggle">
-                <i class="icon-bended-arrow-left"></i>
-                <i class="icon-bended-arrow-right"></i>
-            </div>
-            <div id="mws-theme-presets-container" class="mws-themer-section">
-                <label for="mws-theme-presets">Color Presets</label>
-            </div>
-            <div class="mws-themer-separator"></div>
-            <div id="mws-theme-pattern-container" class="mws-themer-section">
-                <label for="mws-theme-patterns">Background</label>
-            </div>
-            <div class="mws-themer-separator"></div>
-            <div class="mws-themer-section">
-                <ul>
-                    <li class="clearfix"><span>Base Color</span> <div id="mws-base-cp" class="mws-cp-trigger"></div></li>
-                    <li class="clearfix"><span>Highlight Color</span> <div id="mws-highlight-cp" class="mws-cp-trigger"></div></li>
-                    <li class="clearfix"><span>Text Color</span> <div id="mws-text-cp" class="mws-cp-trigger"></div></li>
-                    <li class="clearfix"><span>Text Glow Color</span> <div id="mws-textglow-cp" class="mws-cp-trigger"></div></li>
-                    <li class="clearfix"><span>Text Glow Opacity</span> <div id="mws-textglow-op"></div></li>
-                </ul>
-            </div>
-            <div class="mws-themer-separator"></div>
-            <div class="mws-themer-section">
-                <button class="btn btn-danger small" id="mws-themer-getcss">Get CSS</button>
-            </div>
-        </div>
-        <div id="mws-themer-css-dialog">
-            <form class="mws-form">
-                <div class="mws-form-row">
-                    <div class="mws-form-item">
-                        <textarea cols="auto" rows="auto" readonly="readonly"></textarea>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>*@
-    <!-- Themer End -->
+    <script language="JavaScript" type="text/javascript">
+        $(document).ready(function () {
+
+            //if (Session["Role"] == "4") {
+            //    $("receiver").hide();
+
+            //}
+
+        });
+
+    </script>
+
+   
     <!-- Header -->
     <div id="mws-header" class="clearfix">
 
@@ -101,10 +115,10 @@
 
             <!-- Logo Wrapper, images put within this wrapper will always be vertically centered -->
             <div id="mws-logo-wrap">
-            <img src="~/front_template/HTML/images/DDS.png" />
-        </div>
+                <img src="~/front_template/HTML/images/DDS.png" />
+            </div>
 
-            
+
         </div>
 
         <!-- User Tools (notifications, logout, profile, change password) -->
@@ -176,60 +190,7 @@
                 <!-- Unred messages count -->
                 <span class="mws-dropdown-notif">35</span>
 
-                <!-- Messages dropdown -->
-                @*<div class="mws-dropdown-box">
-                    <div class="mws-dropdown-content">
-                        <ul class="mws-messages">
-                            <li class="read">
-                                <a href="#">
-                                    <span class="sender">John Doe</span>
-                                    <span class="message">
-                                        Lorem ipsum dolor sit amet consectetur adipiscing elit, et al commore
-                                    </span>
-                                    <span class="time">
-                                        January 21, 2012
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="read">
-                                <a href="#">
-                                    <span class="sender">John Doe</span>
-                                    <span class="message">
-                                        Lorem ipsum dolor sit amet
-                                    </span>
-                                    <span class="time">
-                                        January 21, 2012
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="unread">
-                                <a href="#">
-                                    <span class="sender">John Doe</span>
-                                    <span class="message">
-                                        Lorem ipsum dolor sit amet
-                                    </span>
-                                    <span class="time">
-                                        January 21, 2012
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="unread">
-                                <a href="#">
-                                    <span class="sender">John Doe</span>
-                                    <span class="message">
-                                        Lorem ipsum dolor sit amet
-                                    </span>
-                                    <span class="time">
-                                        January 21, 2012
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="mws-dropdown-viewall">
-                            <a href="#">View All Messages</a>
-                        </div>
-                    </div>
-                </div>*@
+               
             </div>
 
             <!-- User Information and functions section -->
@@ -237,14 +198,14 @@
 
                 <!-- User Photo -->
                 @*<div id="mws-user-photo">
-                    <img src="example/profile.jpg" alt="User Photo">
-                </div>*@
+                        <img src="example/profile.jpg" alt="User Photo">
+                    </div>*@
 
                 <!-- Username and Functions -->
                 <div id="mws-user-functions">
                     @*<div id="mws-username">
-                        Hello, John Doe
-                    </div>*@
+                            Hello, John Doe
+                        </div>*@
                     <ul>
                         <li><a href="#">Profile</a></li>
                         <li><a href="#">Change Password</a></li>
@@ -274,54 +235,170 @@
 
             <!-- Searchbox -->
             @*<div id="mws-searchbox" class="mws-inset">
-                <form action="typography.html">
-                    <input type="text" class="mws-search-input" placeholder="Search...">
-                    <button type="submit" class="mws-search-submit"><i class="icon-search"></i></button>
-                </form>
-            </div>*@
+                    <form action="typography.html">
+                        <input type="text" class="mws-search-input" placeholder="Search...">
+                        <button type="submit" class="mws-search-submit"><i class="icon-search"></i></button>
+                    </form>
+                </div>*@
 
             <!-- Main Navigation -->
             <div id="mws-navigation">
                 <ul>
-                    <li><a href="~/Home/Default"><i class="icon-newspaper"></i> ATC Grade</a></li>
-                    <li><a href="~/Home/receiver"><i class="icon-home"></i> Receiver</a></li>
-                    <li><a href="~/Home/Driver"><i class="icon-truck"></i> Driver</a></li>
-                    <li><a href="~/Home/Destination"><i class="icon-hour-glass"></i> Destination</a></li>
-                    <li><a href="~/Home/Trip_Validate"><i class="icon-key"></i> Trip Validate</a></li>
-                    <li><a href="~/Home/AddOnlineTrip"><i class="icon-pie-chart"></i> Add Online Trip</a></li>
-                    <li><a href="~/Home/Offline_Repush"><i class="icon-eye-open"></i> Repush ATC From Posting-Error</a></li>
-                    <li class="active">
-                        <a href="#"><i class="icon-list"></i> STO TMS</a>
-                        <ul>
-                            <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                            @*<li><a href="form_elements.html">Elements</a></li>
-                <li><a href="form_wizard.html">Wizard</a></li>*@
-                        </ul>
-                    </li>
-                    <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
-                    @*<li><a href="charts.html"><i class="icon-graph"></i> Charts</a></li>
-        <li><a href="calendar.html"><i class="icon-calendar"></i> Calendar</a></li>
-        <li><a href="files.html"><i class="icon-folder-closed"></i> File Manager</a></li>
-        <li><a href="table.html"><i class="icon-table"></i> Table</a></li>
-        <li class="active">
-            <a href="#"><i class="icon-list"></i> Forms</a>
-            <ul>
-                <li><a href="form_layouts.html">Layouts</a></li>
-                <li><a href="form_elements.html">Elements</a></li>
-                <li><a href="form_wizard.html">Wizard</a></li>
-            </ul>
-        </li>
-        <li><a href="widgets.html"><i class="icon-cogs"></i> Widgets</a></li>
-        <li><a href="typography.html"><i class="icon-font"></i> Typography</a></li>
-        <li><a href="grids.html"><i class="icon-th"></i> Grids &amp; Panels</a></li>
-        <li><a href="gallery.html"><i class="icon-pictures"></i> Gallery</a></li>
-        <li><a href="error.html"><i class="icon-warning-sign"></i> Error Page</a></li>
-        <li>
-            <a href="icons.html">
-                <i class="icon-pacman"></i>
-                Icons <span class="mws-nav-tooltip">2000+</span>
-            </a>
-        </li>*@
+                    @{ if (roleP == "weighbridge")
+                        {
+                            <li id="def"><a href="~/Home/Default"><i class="icon-newspaper"></i> ATC Grade</a></li>
+
+                            <li id="receiver"><a href="~/Home/receiver"><i class="icon-home"></i> Receiver</a></li>
+                            <li><a href="~/Home/Driver"><i class="icon-truck"></i> Driver</a></li>
+                            <li><a href="~/Home/Destination"><i class="icon-hour-glass"></i> Destination</a></li>
+                            <li><a href="~/Home/Trip_Validate"><i class="icon-key"></i> Trip Validate</a></li>
+                            <li><a href="~/Home/AddOnlineTrip"><i class="icon-pie-chart"></i> Add Online Trip</a></li>
+                            <li><a href="~/Home/Offline_Repush"><i class="icon-eye-open"></i> Repush ATC From Posting-Error</a></li>
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> STO TMS</a>
+                                <ul>
+                                    <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
+                                    @*<li><a href="form_elements.html">Elements</a></li>
+                        <li><a href="form_wizard.html">Wizard</a></li>*@
+                                </ul>
+                            </li>
+
+                            <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
+
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> GATE MODIFY</a>
+                                <ul>
+                                    <li><a href="~/Home/Gate_Modify">Gate Access Modif.</a></li>
+
+                                </ul>
+                            </li>
+
+
+                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
+
+
+                        }
+
+                    }
+
+                    @{ if (roleP == "admin")
+                        {
+                            <li id="def"><a href="~/Home/Default"><i class="icon-newspaper"></i> ATC Grade</a></li>
+
+                            <li id="receiver"><a href="~/Home/receiver"><i class="icon-home"></i> Receiver</a></li>
+                            <li><a href="~/Home/Driver"><i class="icon-truck"></i> Driver</a></li>
+                            <li><a href="~/Home/Destination"><i class="icon-hour-glass"></i> Destination</a></li>
+                            <li><a href="~/Home/Trip_Validate"><i class="icon-key"></i> Trip Validate</a></li>
+                            <li><a href="~/Home/AddOnlineTrip"><i class="icon-pie-chart"></i> Add Online Trip</a></li>
+                            <li><a href="~/Home/Offline_Repush"><i class="icon-eye-open"></i> Repush ATC From Posting-Error</a></li>
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> STO TMS</a>
+                                <ul>
+                                    <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
+                                    @*<li><a href="form_elements.html">Elements</a></li>
+                        <li><a href="form_wizard.html">Wizard</a></li>*@
+                                </ul>
+                            </li>
+                            <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
+                            <li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> GATE MODIFY</a>
+                                <ul>
+                                    <li><a href="~/Home/Gate_Modify">Gate Access Modif.</a></li>
+
+                                </ul>
+                            </li>
+
+                            //Reports
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> REPORTS</a>
+                                <ul>
+                                    <li><a href="~/Home/GateReport">Gate Reports</a></li>
+                                    <li><a href="#">Gate Reports Test</a></li>
+                                    <li><a href="~/Home/TripReport">Trip Report</a></li>
+
+                                </ul>
+                            </li>
+
+
+                        }
+
+                    }
+
+                    @{ if (roleP == "transport")
+                        {
+
+                            <li><a href="~/Home/CancelTrip"><i class="icon-blocked"></i> Cancel DDS Trip ID</a></li>
+                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> REPORTS</a>
+                                <ul>
+
+                                    <li><a href="~/Home/TripReport">Trip Report</a></li>
+
+                                </ul>
+                            </li>
+
+
+                        }
+
+                    }
+
+                    @{ if (roleP == "Gate Access")
+                        {
+
+                            <li><a href="~/Home/CancelTrip"><i class="icon-blocked"></i> Cancel DDS Trip ID</a></li>
+                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
+
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> GATE MODIFY</a>
+                                <ul>
+                                    <li><a href="~/Home/Gate_Modify">Gate Access Modif.</a></li>
+
+
+                                </ul>
+                            </li>
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> REPORTS</a>
+                                <ul>
+                                    <li><a href="~/Home/GateReport">Gate Reports</a></li>
+
+
+                                </ul>
+                            </li>
+
+
+                        }
+
+                    }
+
+                    @{ if (roleP == "Security Access")
+                        {
+
+                            <li><a href="~/Home/CancelTrip"><i class="icon-blocked"></i> Cancel DDS Trip ID</a></li>
+                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
+
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> GATE MODIFY</a>
+                                <ul>
+                                    <li><a href="~/Home/Gate_Modify">Gate Access Modif.</a></li>
+
+                                </ul>
+                            </li>
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> REPORTS</a>
+                                <ul>
+                                    <li><a href="~/Home/GateReport">Gate Reports</a></li>
+
+
+                                </ul>
+                            </li>
+
+
+                        }
+
+                    }
+
                 </ul>
             </div>
         </div>
@@ -329,78 +406,7 @@
         <!-- Main Container Start -->
         <div id="mws-container" class="clearfix">
 
-            <!-- Inner Container Start -->
-            @*<div class="container">
 
-               
-
-
-
-
-
-                <div class="mws-panel grid_4">
-                    <div class="mws-panel-header">
-                        <span>Bordered Form</span>
-                    </div>
-                    <div class="mws-panel-body no-padding">
-                        <form class="mws-form" action="form_layouts.html">
-                            <div class="mws-form-inline">
-                                <div class="mws-form-row bordered">
-                                    <label class="mws-form-label">Text field</label>
-                                    <div class="mws-form-item">
-                                        <input type="text" class="large">
-                                    </div>
-                                </div>
-                                <div class="mws-form-row bordered">
-                                    <label class="mws-form-label">Textarea</label>
-                                    <div class="mws-form-item">
-                                        <textarea rows="" cols="" class="large"></textarea>
-                                    </div>
-                                </div>
-                                <div class="mws-form-row bordered">
-                                    <label class="mws-form-label">Dropdown List</label>
-                                    <div class="mws-form-item">
-                                        <select class="large">
-                                            <option>Option 1</option>
-                                            <option>Option 3</option>
-                                            <option>Option 4</option>
-                                            <option>Option 5</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="mws-form-row bordered">
-                                    <label class="mws-form-label">Checkboxes</label>
-                                    <div class="mws-form-item clearfix">
-                                        <ul class="mws-form-list inline">
-                                            <li><input type="checkbox"> <label>Checkbox 1</label></li>
-                                            <li><input type="checkbox"> <label>Checkbox 2</label></li>
-                                            <li><input type="checkbox"> <label>Checkbox 3</label></li>
-                                            <li><input type="checkbox"> <label>Checkbox 4</label></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="mws-form-row bordered">
-                                    <label class="mws-form-label">Radio Buttons</label>
-                                    <div class="mws-form-item clearfix">
-                                        <ul class="mws-form-list inline">
-                                            <li><input type="radio"> <label>Radio 1</label></li>
-                                            <li><input type="radio"> <label>Radio 1</label></li>
-                                            <li><input type="radio"> <label>Radio 1</label></li>
-                                            <li><input type="radio"> <label>Radio 1</label></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mws-button-row">
-                                <input type="submit" value="Submit" class="btn btn-danger">
-                                <input type="reset" value="Reset" class="btn ">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-               
-            </div>*@
             <!-- Inner Container End -->
             <div class="container body-content">
                 @RenderBody()
@@ -410,20 +416,20 @@
                 </footer>
             </div>
             <!-- Footer -->
-            
+
 
         </div>
         <!-- Main Container End -->
 
     </div>
 
-   
+
 
     <!-- JavaScript Plugins -->
     <!--<script src="js/libs/jquery-1.8.3.min.js"></script>-->
 
 
-    <script src="~/front_template/HTML/js/libs/jquery-1.8.3.js"></script>
+    @*<script src="~/front_template/HTML/js/libs/jquery-1.8.3.js"></script>*@
     <script src="~/front_template/HTML/js/libs/jquery.mousewheel.min.js"></script>
     <script src="~/front_template/HTML/js/libs/jquery.placeholder.min.js"></script>
     <script src="~/front_template/HTML/custom-plugins/fileinput.js"></script>
@@ -445,6 +451,7 @@
     <script src="~/front_template/HTML/js/core/themer.js"></script>
 
     <!-- Demo Scripts (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 
 </body>
 </html>

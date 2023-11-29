@@ -1,0 +1,448 @@
+﻿
+@{
+    ViewBag.Title = "TripReport";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+
+</head>
+
+
+<body>
+
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+    @*<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" rel="stylesheet" />*@
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+
+
+
+
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+
+            if (document.getElementById("drpTrxType").value == "Trip Creation") {
+                debugger;
+                $("#divTripCreate").hide();
+            }
+            if (document.getElementById("drpTrxType").value == "Trip Creation") {
+
+            }
+            if (document.getElementById("drpTrxType").value == "Trip Creation") {
+
+            }
+
+
+            $("#btnSpool").on('click', function () {
+
+                var fromDate = $("#dateFrom").val();
+                var toDate = $("#dateTo").val();
+                var trxType = $("#drpTrxType").val();
+                var truckStatus = $("#drpStatus").val();
+                var driver = $("#txtDriverID").val();
+                var createdBy = $("#txtCreatedBy").val();
+                var Vehicle = $("#txtVehicle").val();
+
+                var msg = "";
+                if (fromDate == "") { msg = "Please select a from date! \n"; }
+                if (toDate == "") { msg += "Please select a to date! \n"; }
+                if (trxType == "-- select --") { msg += "Please select a TRIP transaction type!"; }
+
+                if (msg != "") {
+                    alert(msg);
+
+
+                    return false;
+                }
+
+                if (new Date(fromDate) > new Date(toDate)) {
+                    alert('from date cannot be higher than to date');
+
+                    return false;
+                }
+
+                if (document.getElementById("drpTrxType").value == "Trip Closure") {
+                    //debugger;
+
+                    const diffInMs = new Date(toDate) - new Date(fromDate)
+                    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+                    if (diffInDays > 14) {
+                        alert('report cannot be spooled for more than 14 days!!!');
+
+                        return false;
+
+                    }
+
+
+                    $("#divTripCreate").hide();
+
+
+
+                    $("#tripTableCloseFilter").DataTable({
+                        "ajax": {
+                            "url": "/Home/GetTripDetailsReportDataFilter",
+                            "type": "GET",
+                            data: {
+                                //__RequestVerificationToken: token,
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                trxType: trxType,
+                                truckStatus: truckStatus,
+                                driver: driver,
+                                createdBy: createdBy,
+                                Vehicle: Vehicle,
+
+
+                            },
+                            "datatype": "json"
+
+                        },
+
+                       
+
+                        "columns": [
+                            { data: "trip_id" },
+                            { "data": "waybill" },
+                            {
+                                "data": "closure_date",
+
+
+                                "render": function (data) {
+                                    return moment(data).format('DD/MM/YYYY HH:mm');
+                                }
+                            },
+                            { "data": "damaged_qty" },
+                            { "data": "caked_qty" },
+                            { data: "short_qty" },
+                            { "data": "miss_reason" },
+                            { "data": "driver_id_sap" },
+                            { "data": "driver_name" },
+                            { "data": "atc_no" },
+                            { "data": "trip_id_sap" },
+                            { "data": "atc_type" },
+                            { "data": "fleet" },
+                            { "data": "migo_details" },
+
+                        ],
+
+                        "dom": "Bfrtip",
+                        "buttons": [
+
+                            {
+                                extend: 'excel',
+                                text: '<i class="fa fa-file-excel-o"></i>DOWNLOAD IN EXCEL',
+                                className: 'btn btn-danger'
+
+
+                            }
+
+                        ]
+
+
+
+                    });
+
+
+
+                }
+
+                if (document.getElementById("drpTrxType").value == "Trip Creation")
+                {
+                    const diffInMs = new Date(toDate) - new Date(fromDate)
+                    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+                    if (diffInDays > 14) {
+                        alert('report cannot be spooled for more than 14 days!!!');
+
+                        return false;
+
+                    }
+
+
+                    $("#divTripClose").hide();
+
+                    debugger;
+
+                   
+
+                    $("#gateTableFilter").DataTable({
+                        "ajax": {
+                            "url": "/Home/GetTripDetailsReportDataFilter",
+                            "type": "GET",
+                            data: {
+                                //__RequestVerificationToken: token,
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                trxType: trxType,
+                                truckStatus: truckStatus,
+                                driver: driver,
+                                createdBy: createdBy,
+                                Vehicle: Vehicle,
+
+
+                            },
+                            "datatype": "json"
+
+                        },
+
+                        "columns": [
+                            { data: "atc_no" },
+                            { "data": "trip_no" },
+                            { "data": "trip_id_sap" },
+                            {
+                                "data": "creation_datetime",
+
+
+                                "render": function (data) {
+                                    return moment(data).format('DD/MM/YYYY HH:mm');
+                                }
+                            },
+                            { "data": "driver_id_sap" },
+                            { "data": "fleet" },
+                            { data: "driver_name" },
+                            { "data": "source" },
+                            { "data": "destination" },
+                            { "data": "status" },
+                            { "data": "tms_status" },
+                            { "data": "tms_online_status" },
+                            { "data": "ship_to_party" },
+                            { "data": "cng_allowed" },
+
+                        ],
+
+                        "dom": "Bfrtip",
+                        "buttons": [
+
+                            {
+                                extend: 'excel',
+                                text: '<i class="fa fa-file-excel-o"></i>DOWNLOAD IN EXCEL',
+                                className: 'btn btn-danger'
+
+
+                            }
+
+                        ]
+
+
+
+                    });
+
+                }
+
+                $("#gateTable").hide();
+
+               
+
+                
+
+            });
+
+
+        });
+
+
+
+
+    </script>
+
+    <div class="container">
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>FILTER and SPOOL TRIP REPORT</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" id="submit_form">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">DATE FROM*</label>
+                            <div class="mws-form-item">
+                                <input type="date" id="dateFrom" " class="large">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">DATE TO*</label>
+                            <div class="mws-form-item">
+                                <input type="date" id="dateTo" " class="large">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">CAB Number</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtVehicle" class="large">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="mws-button-row">
+
+                        <button id="btnSpool" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GENERATE TRIP REPORT</button>
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>Filters</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
+
+                    <fieldset class="mws-form-inline">
+                        @*<legend>This is a legend</legend>*@
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">Truck Status</label>
+                            <div class="mws-form-item">
+                                <select id="drpStatus" class="large">
+                                    <option>-- select --</option>
+                                    <option>Created</option>
+                                    <option>Approved</option>
+                                    <option>Dispatched</option>
+                                    <option>Fuel_Posted</option>
+                                    <option>CNG_Posted</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">Transaction Type*</label>
+                            <div class="mws-form-item">
+                                <select id="drpTrxType" class="large">
+                                    <option>-- select --</option>
+                                    <option>Trip Creation</option>
+                                    <option>Trip Closure</option>
+                                    <option>Trip Cancellation</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+
+                        <div class="mws-form-inline">
+                            <div class="mws-form-row bordered">
+                                <label class="mws-form-label">Driver ID</label>
+                                <div class="mws-form-item">
+                                    <input type="text" id="txtDriverID" class="large">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="mws-form-inline">
+                            <div class="mws-form-row bordered">
+                                <label class="mws-form-label">Operator</label>
+                                <div class="mws-form-item">
+                                    <input type="text" id="txtCreatedBy" class="large">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </fieldset>
+
+                </form>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+    <div class="mws-panel grid_8" id="divTripCreate">
+        <div class="mws-panel-header">
+            <span>Trip Create Report</span>
+            </div>
+        <div class="mws-panel-body no-padding">
+            <table border="1" width="100%" id="gateTableFilter" cellspacing="0" class="mws-datatable-fn mws-table">
+                <thead>
+                    <tr>
+                        <th>ATC</th>
+                        <th>DDS trip ID</th>
+                        <th>SAP trip ID</th>
+                        <th>Date</th>
+                        <th>Driver ID</th>
+                        <th>Fleet</th>
+                        <th>Driver Name</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Status</th>
+                        <th>tms status</th>
+                        <th>tms online status</th>
+                        <th>customer</th>
+                        <th>cng</th>
+                    </tr>
+                </thead>
+
+            </table>
+
+        </div>
+    </div>
+       
+
+
+    <div class="mws-panel grid_8" id="divTripClose">
+        <div class="mws-panel-header">
+            <span>Trip Closure Report</span>
+        </div>
+
+        <div class="mws-panel-body no-padding">
+            <table border="1" width="100%" id="tripTableCloseFilter" cellspacing="0" class="mws-datatable-fn mws-table">
+                <thead>
+                    <tr>
+                        <th>Trip ID</th>
+                        <th>Waybill</th>
+                        <th>Closure Date</th>
+                        <th>Damaged Qty</th>
+                        <th>Caked Qty</th>
+                        <th>Short Qty</th>
+                        <th>Miss Reason</th>
+                        <th>Driver ID</th>
+                        <th>Driver Name</th>
+                        <th>ATC</th>
+                        <th>Trip ID (SAP)</th>
+                        <th>ATC Type</th>
+                        <th>Fleet</th>
+                        <th>Migo Details</th>
+                    </tr>
+                </thead>
+
+            </table>
+
+        </div>
+    </div>
+</body>
+
+

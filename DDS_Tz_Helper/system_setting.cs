@@ -39,5 +39,6 @@ namespace DDS_Tz_Helper
         public Nullable<bool> use_wb_for_change { get; set; }
         public Nullable<bool> use_picking_for_change { get; set; }
         public string supplying_plant { get; set; }
+        public string current_queue_no { get; set; }
     }
 }

@@ -26,5 +26,9 @@ namespace DDS_Tz_Helper
         public string delivery_address { get; set; }
         public string ack_flag { get; set; }
         public string contact_no { get; set; }
+        public string doc_no { get; set; }
+        public string dds_ack_flag { get; set; }
+        public string state { get; set; }
+        public string email_id { get; set; }
     }
 }

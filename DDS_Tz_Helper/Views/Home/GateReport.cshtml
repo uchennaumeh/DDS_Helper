@@ -1,0 +1,396 @@
+﻿
+@{
+    ViewBag.Title = "GateReport";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+
+</head>
+
+
+<body>
+
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+    @*<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" rel="stylesheet" />*@
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+
+
+
+
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+
+            //$("#gateTable").DataTable({
+            //    "ajax": {
+            //        "url": "/Home/GetReportData",
+            //        "type": "GET",
+            //        "datatype": "json"
+
+            //    },
+
+            //    "columns": [
+            //        { data: "atc_no" },
+            //        { "data": "customer" },
+            //        { "data": "truck_no" },
+            //        { "data": "parent_so" },
+            //        { "data": "quantity" },
+            //        { data: "driver" },
+            //        { "data": "license" },
+            //        {
+            //            "data": "entry_datetime",
+            //            "render": function (jsonDate) {
+            //                var date = new Date(parseInt(jsonDate.substr(6)));
+            //                var month = date.getMonth() + 1;
+            //                return date.getDate() + "/" + month + "/" + date.getFullYear();
+            //            }
+
+            //            //"render": function (data) {
+            //            //    return moment(data).format('DD/MM/YYYY HH:mm');
+            //            //}
+
+            //        },
+            //        { "data": "username" },
+            //        { "data": "status" },
+            //        { "data": "transaction_type" },
+            //        { "data": "fleet_no" },
+            //        { "data": "transporter" },
+            //        { "data": "destination" },
+
+            //    ],
+
+            //    "dom": "Bfrtip",
+            //    "buttons": [
+
+            //        {
+            //            extend: 'excel',
+            //            text: '<i class="fa fa-file-excel-o"></i>DOWNLOAD IN EXCEL',
+            //            className: 'btn btn-danger'
+
+
+            //        }
+            //        //{
+            //        //    extend: 'pdf',
+            //        //    text: 'EXPORT TO PDF',
+            //        //    forecolour: 'white'
+            //        //},
+            //        //{
+            //        //    extend: 'print',
+            //        //    text: 'PRINT REPORT',
+            //        //    forecolour: 'blue'
+            //        //}
+            //    ]
+
+
+
+            //});
+
+
+
+
+            $("#btnSpool").on('click', function () {
+
+                var fromDate = $("#dateFrom").val();
+                var toDate = $("#dateTo").val();
+                var trxType = $("#drpTrxType").val();
+                var truckStatus = $("#drpStatus").val();
+                var product = $("#dtxtProduc").val();
+
+                var msg = "";
+                if (fromDate == "") { msg = "Please select a from date! \n"; }
+                if (toDate == "") { msg += "Please select a to date!"; }
+
+                if (msg != "") {
+                    alert(msg);
+
+
+                    return false;
+                }
+
+                if (new Date(fromDate) > new Date(toDate)) {
+                    alert('from date cannot be higher than to date');
+
+                    return false;
+                }
+
+                $("#gateTable").hide();
+
+                const diffInMs = new Date(toDate) - new Date(fromDate)
+                const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+                if (diffInDays > 7) {
+                    alert('report cannot be spooled for more than 7 days!!!');
+
+                    return false;
+
+                }
+
+
+
+                debugger;
+
+                $("#gateTableFilter").DataTable({
+                    "ajax": {
+                        "url": "/Home/GetReportDataFilter",
+                        "type": "GET",
+                        data: {
+                            //__RequestVerificationToken: token,
+                            fromDate: fromDate,
+                            toDate: toDate,
+                            trxType: trxType,
+                            truckStatus: truckStatus,
+                            product: product,
+
+                        },
+                        "datatype": "json"
+
+                    },
+
+                    "columns": [
+                        { data: "atc_no" },
+                        { "data": "customer" },
+                        { "data": "truck_no" },
+                        { "data": "parent_so" },
+                        { "data": "quantity" },
+                        { data: "driver" },
+                        { "data": "license" },
+                        {
+                            "data": "entry_datetime",
+                            //"render": function (jsonDate) {
+                            //    var date = new Date(parseInt(jsonDate.substr(6)));
+                            //    var month = date.getMonth() + 1;
+                            //    return date.getDate() + "/" + month + "/" + date.getFullYear();
+                            //}
+
+                                  "render": function (data) {
+                                return moment(data).format('DD/MM/YYYY HH:mm');
+                            }
+                        },
+                        { "data": "username" },
+                        { "data": "status" },
+                        { "data": "transaction_type" },
+                        { "data": "fleet_no" },
+                        { "data": "transporter" },
+                        { "data": "destination" },
+
+                    ],
+
+                    "dom": "Bfrtip",
+                    "buttons": [
+
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-file-excel-o"></i>DOWNLOAD IN EXCEL',
+                            className: 'btn btn-danger'
+
+
+                        }
+
+                    ]
+
+
+
+                });
+
+            });
+
+
+        });
+
+
+
+
+    </script>
+
+    <div class="container">
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>FILTER and SPOOL GATE REPORT</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" id="submit_form">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">DATE FROM</label>
+                            <div class="mws-form-item">
+                                <input type="date" id="dateFrom" " class="large">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">DATE TO</label>
+                            <div class="mws-form-item">
+                                <input type="date" id="dateTo" " class="large">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="mws-button-row">
+
+                        <button id="btnSpool" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GENERATE REPORT</button>
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>Filters</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
+
+                    <fieldset class="mws-form-inline">
+                        @*<legend>This is a legend</legend>*@
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">Truck Status</label>
+                            <div class="mws-form-item">
+                                <select id="drpStatus" class="large">
+                                    <option>-- select --</option>
+                                    <option>Entry Allowed.</option>
+                                    <option>Weigh-In Successful.</option>
+                                    <option>Weighed Out Successfully</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">Transaction Type</label>
+                            <div class="mws-form-item">
+                                <select id="drpTrxType" class="large">
+                                    <option>-- select --</option>
+                                    <option>ATC</option>
+                                    <option>Material</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+
+                        <div class="mws-form-inline">
+                            <div class="mws-form-row bordered">
+                                <label class="mws-form-label">Product</label>
+                                <div class="mws-form-item">
+                                    <input type="text" id="txtProduct" " class="large">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </fieldset>
+                    @*<div class="mws-button-row">
+                            <input type="submit" value="Submit" class="btn btn-danger">
+                            <input type="reset" value="Reset" class="btn ">
+                        </div>*@
+                </form>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+    <div class="mws-panel grid_8">
+        <div class="mws-panel-header">
+            <span>Gate Report</span>
+        </div>
+        @*<div class="mws-panel-body no-padding">
+            <table border="1" width="100%" id="gateTable" cellspacing="0" class="mws-datatable-fn mws-table">
+                <thead>
+                    <tr>
+                        <th>atc no</th>
+                        <th>customer</th>
+                        <th>truck no.</th>
+                        <th>parent so</th>
+                        <th>qty</th>
+                        <th>driver</th>
+                        <th>license</th>
+                        <th>entery date</th>
+                        <th>operator</th>
+                        <th>status</th>
+                        <th>trx type</th>
+                        <th>product</th>
+                        <th>transporter</th>
+                        <th>destination</th>
+                    </tr>
+                </thead>
+               
+
+            </table>
+            
+        </div>*@
+        <br />
+        <br />
+        <div class="mws-panel-body no-padding">
+            <table border="1" width="100%" id="gateTableFilter" cellspacing="0" class="mws-datatable-fn mws-table">
+                <thead>
+                    <tr>
+                        <th>atc no</th>
+                        <th>customer</th>
+                        <th>truck no.</th>
+                        <th>parent so</th>
+                        <th>qty</th>
+                        <th>driver</th>
+                        <th>license</th>
+                        <th>entery date</th>
+                        <th>operator</th>
+                        <th>status</th>
+                        <th>trx type</th>
+                        <th>product</th>
+                        <th>transporter</th>
+                        <th>destination</th>
+                    </tr>
+                </thead>
+                @*<tfoot>
+                        <tr>
+                            <th>atc no</th>
+                            <th>customer</th>
+                            <th>truck no.</th>
+                            <th>parent so</th>
+                            <th>qty</th>
+                            <th>driver</th>
+                            <th>license</th>
+                            <th>entery date</th>
+                            <th>operator</th>
+                            <th>status</th>
+                            <th>trx type</th>
+                            <th>product</th>
+                            <th>transporter</th>
+                            <th>destination</th>
+                        </tr>
+                    </tfoot>*@
+
+            </table>
+            
+        </div>
+    </div>
+</body>
+

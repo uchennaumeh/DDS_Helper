@@ -14,10 +14,19 @@ namespace DDS_Tz_Helper
     
     public partial class loading_bay
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public loading_bay()
+        {
+            this.loadingbay_queue = new HashSet<loadingbay_queue>();
+        }
+    
         public int id { get; set; }
         public string loadingbay_code { get; set; }
         public string loadingbay_name { get; set; }
         public string materials { get; set; }
         public Nullable<double> ave_processing_time { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<loadingbay_queue> loadingbay_queue { get; set; }
     }
 }

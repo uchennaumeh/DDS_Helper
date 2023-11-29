@@ -237,14 +237,18 @@
     </Compile>
     <Compile Include="Business_Objects\atcx.cs" />
     <Compile Include="Business_Objects\atc_datax.cs" />
+    <Compile Include="Business_Objects\Gate_Datax.cs" />
     <Compile Include="Business_Objects\LdapAuthentication.cs" />
     <Compile Include="Business_Objects\Loginx.cs" />
     <Compile Include="Business_Objects\sto_datax.cs" />
     <Compile Include="Business_Objects\trade_dto.cs" />
     <Compile Include="Business_Objects\TransactionLogging.cs" />
+    <Compile Include="Business_Objects\Transaction_Datax.cs" />
     <Compile Include="Business_Objects\transaction_dto.cs" />
+    <Compile Include="Business_Objects\Trip_Registryx.cs" />
     <Compile Include="Business_Objects\trip_registry_dto.cs" />
     <Compile Include="Business_Objects\UserManager.cs" />
+    <Compile Include="Business_Objects\view_closure_dto.cs" />
     <Compile Include="card.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -263,9 +267,6 @@
     <Compile Include="cng_master.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="cng_master_bkup_06062022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="cng_posting.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -274,9 +275,6 @@
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="customer.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="customer_back_up_07102021.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="customer_block_reason.cs">
@@ -309,9 +307,6 @@
     <Compile Include="driver.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="driver_bkup_04062022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="eATC.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -319,12 +314,6 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="equipment_detail.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="equipment_detail_bkup_04062022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="equipment_detail_bkup_19052022.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="equipment_master.cs">
@@ -342,31 +331,7 @@
     <Compile Include="fleet_master.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="fleet_master_back_up_24022022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="fuel_master.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_back_up_13052022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_bkp.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_bkup08112022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_bkup_06052023.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_bkup_06082022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_bkup_14032023.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="fuel_master_bkup_21082022.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="fuel_posting.cs">
@@ -487,9 +452,6 @@
     <Compile Include="region_data.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="region_data_bkup_06052023.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="region_SAP_Truck_Analysis_All_in_One_xx_Result.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -527,13 +489,7 @@
     <Compile Include="sto_data.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="sto_data_backup.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="sto_transaction_data.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sto_transaction_data_archive.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="sto_transaction_pgi.cs">
@@ -554,34 +510,13 @@
     <Compile Include="Trade.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="trade_archive.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="trade_audit.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trade_bakup.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="transactions_returned.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="transaction_data.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="transaction_data_archive.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="transaction_data_backup190720222.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="transaction_data_back_up_01102021.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="transaction_data_back_up_14042022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="transaction_data_bkup_19072022.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="transaction_log.cs">
@@ -600,27 +535,6 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="trip_registry.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_backup.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_bkup_06052023.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_bkup_06062022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_bkup_17052022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_bkup_19052022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_bkup_25052022.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="trip_registry_bkup_26052022.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="trip_sync.cs">
@@ -659,16 +573,10 @@
     <Compile Include="UserList.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="user_back_up_27092021.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="user_modification.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="user_request.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="user_request_back_up_27092021.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="vbbe.cs">
@@ -752,6 +660,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\JS\dataTables.bootstrap.min.css" />
+    <Content Include="Content\JS\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\JS\jquery.dataTables.min.js" />
+    <Content Include="Content\JS\jquery.min.js" />
+    <Content Include="Content\JS\responsive.bootstrap.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="front_template\Documentation\assets\images\image_10.jpg" />
@@ -2867,6 +2780,8 @@
     <Content Include="front_template\HTML\images\DDS.png" />
     <Content Include="front_template\HTML\images\mws-logo.png" />
     <Content Include="front_template\HTML\images\processing.gif" />
+    <Content Include="front_template\HTML\images\welcome-greetings.gif" />
+    <Content Include="front_template\HTML\images\welcome.gif" />
     <Content Include="front_template\HTML\index.html" />
     <Content Include="front_template\HTML\js\core\login.js" />
     <Content Include="front_template\HTML\js\core\mws.js" />
@@ -3731,7 +3646,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -3750,6 +3667,14 @@
     <Content Include="Views\Home\Remove_TripID.cshtml" />
     <Content Include="Views\Home\NewHome.cshtml" />
     <Content Include="Views\Home\LogOff.cshtml" />
+    <Content Include="Views\Home\CancelTrip.cshtml" />
+    <Content Include="Views\Home\Welcome.cshtml" />
+    <Content Include="Views\Home\TripCheck.cshtml" />
+    <Content Include="Views\Home\Gate_Modify.cshtml" />
+    <Content Include="Views\Home\GateReport.cshtml" />
+    <Content Include="Views\Home\ReportGate.cshtml" />
+    <Content Include="Views\Home\TripReport.cshtml" />
+    <Content Include="Views\Home\NotAllowed.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
