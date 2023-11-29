@@ -93,7 +93,8 @@
 
                     $("#tripTableCloseFilter").DataTable({
                         "ajax": {
-                            "url": "/Home/GetTripDetailsReportDataFilter",
+                            //"url": "~/Home/GetTripDetailsReportDataFilter",
+                            "url": '@Url.Action("GetTripDetailsReportDataFilter", "Home")',
                             "type": "GET",
                             data: {
                                 //__RequestVerificationToken: token,
@@ -180,7 +181,8 @@
 
                     $("#gateTableFilter").DataTable({
                         "ajax": {
-                            "url": "/Home/GetTripDetailsReportDataFilter",
+                            //"url": "/Home/GetTripDetailsReportDataFilter",
+                            "url": '@Url.Action("GetTripDetailsReportDataFilter", "Home")',
                             "type": "GET",
                             data: {
                                 //__RequestVerificationToken: token,

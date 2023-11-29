@@ -143,7 +143,8 @@
 
                 $("#gateTableFilter").DataTable({
                     "ajax": {
-                        "url": "/Home/GetReportDataFilter",
+                        //"url": "/Home/GetReportDataFilter",
+                        "url": '@Url.Action("GetReportDataFilter", "Home")',
                         "type": "GET",
                         data: {
                             //__RequestVerificationToken: token,
