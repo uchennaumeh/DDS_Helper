@@ -323,6 +323,66 @@
                  }, 200);
 
             });
+
+
+            $("#f325N").on('click', function () {
+
+                var grade = "CEM II-32.5N -(U)-50KG Bagged Cement";
+                var atc = $("#atc").val()
+
+                var msg = "";
+                if (atc == "") { msg = "Please fill in the ATC!"; }
+                if (msg != "") {
+                    alert(msg);
+
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoChangeATCGrade", "Home")',
+                        async: false,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                            grade: grade,
+                        },
+                        error: function (data) {
+                            debugger;                            
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+                               //
+                            }
+                            else {
+                                alert('ATC Updated successfully');
+                                $("#atc").val("");
+                                 var url = "";
+                                 url = '@Url.Action("Default", "Home")'; //Default
+                               
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+
+            });
+
         });
 
     </script>
@@ -350,6 +410,7 @@
                         <button id="f325R" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 32.5R</button>
                         <button id="f425N" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CHANGE TO 42.5N</button>
                         <button id="fBULKN" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CH TO BAGM </button>
+                        <button id="f325N" class="btn btn-primary" type="button"><i class="fa fa-key"></i> CH TO 32.5N </button>
 
                     </div>
                 </form>

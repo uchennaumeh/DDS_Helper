@@ -51,6 +51,11 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult PostingErrorsReport()
+        {
+            return View();
+        }
+
         public ActionResult LogOff()
         {
             return View();
@@ -1274,7 +1279,10 @@ namespace DDS_Tz_Helper.Controllers
 
 
 
-                    Session["company_name"] = db.system_setting.FirstOrDefault().company_name;
+                    //Session["company_name"] = db.system_setting.FirstOrDefault().company_name;
+
+                    //update_atc_type_atc_count_Result for TZ. they need DB upgrade to include currecnt_queue column on system_setting
+                    Session["company_name"] = "Dangote Cement Tanzania";
 
 
 
@@ -1451,6 +1459,7 @@ namespace DDS_Tz_Helper.Controllers
             }
         }
 
+
         [HttpGet]
         public ActionResult GetTripDetailsReportDataFilter(DateTime fromDate, DateTime toDate, string trxType, string driver, string truckStatus, string Vehicle, string createdBy)
         {
@@ -1600,6 +1609,36 @@ namespace DDS_Tz_Helper.Controllers
             return Json(gate_Dataxx);
            
         }
+
+        public ActionResult GetReportPostingErrors(DateTime fromDate, DateTime toDate)
+        {
+
+            db.Configuration.ProxyCreationEnabled = false;
+
+            try
+            {
+
+            
+                var returnedRecord = db.transaction_data.Where(a => a.gross_time >= fromDate && a.gross_time <= toDate && a.error_field != "OFFLINE" && a.sync_status == false && a.error_field != " ").ToList<transaction_data>();
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.POSTING_ERRORS_REPORT_SPOOL_HELPER, "POSTING ERRORS REPORT SPOOL: ", DateTime.Now.ToString());
+
+                return Json(new { data = returnedRecord }, JsonRequestBehavior.AllowGet);
+
+               
+            }
+            catch (Exception ex)
+            {
+                Gate_Datax gate_Datax = new Gate_Datax();
+                gate_Datax.msg = "Something went wrong";
+                gate_Datax.status = false;
+
+                return Json(gate_Datax);
+            }
+        }
+
 
     }
 

@@ -3675,6 +3675,7 @@
     <Content Include="Views\Home\ReportGate.cshtml" />
     <Content Include="Views\Home\TripReport.cshtml" />
     <Content Include="Views\Home\NotAllowed.cshtml" />
+    <Content Include="Views\Home\PostingErrorsReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
