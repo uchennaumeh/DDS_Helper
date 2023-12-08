@@ -1376,7 +1376,8 @@ namespace DDS_Tz_Helper.Controllers
             //return();
             try
             {
-                var returnedReport = db.gateaccess_info.Where(a => a.entry_datetime >= fromDate && a.entry_datetime <= toDate).ToList<gateaccess_info>();
+                var returnedReport = db.gateaccess_info.Where(a => a.entry_datetime >= fromDate && a.entry_datetime <= toDate).OrderBy(s=>s.entry_datetime).ToList<gateaccess_info>();
+                
 
                 if (product != null)
                 {
