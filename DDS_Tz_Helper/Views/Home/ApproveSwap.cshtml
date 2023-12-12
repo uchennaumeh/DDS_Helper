@@ -1,0 +1,443 @@
+﻿
+@{
+    Layout = null;
+    //var id2 = int.Parse(Session["recordId"].ToString());
+
+    int id = (int)ViewBag.RecordId;
+
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ApproveSwap</title>
+</head>
+<body>
+    <script language="JavaScript" type="text/javascript">
+        
+        $(document).ready(function () {
+            //var xx = id;
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+
+                            loginVAr: loginVAr,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+                            else {
+
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+            $("#wrongATC").attr("disabled", "disabled");
+            $("#correctATC").attr("disabled", "disabled");
+            $("#txtTrip").attr("disabled", "disabled");
+            $("#txtRequestDate").attr("disabled", "disabled");
+            $("#txtRequestBy").attr("disabled", "disabled");
+            $("#txtReason").attr("disabled", "disabled");
+
+            var token = $('[name=__RequestVerificationToken]').val();
+            var bb = @ViewBag.RecordId;
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoApproveATCSwapFetch", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            id: bb,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                //$("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                                //alert('Receiver Updated successfully');
+                                $("#wrongATC").val(data.atc_no);
+                                $("#correctATC").val(data.vehicle);
+                                $("#txtTrip").val(data.trip_id);
+                                $("#txtReason").val(data.seal);
+                                $("#txtRequestBy").val(data.operatorID);
+                                //$("#txtTransporter").val(data.transporter);
+                                //$("#txtSender").val(data.sender);
+                                //$("#txtDestination").val(data.destination);
+                                //$("#txtTrip").val(data.trip_id);
+                                //$("#txtReceiver").val(data.receiver);
+
+                                //$("#atc").attr("disabled", "disabled");
+
+                                //$("#btnUpdate").show();
+                                //$("#txtNewATC").show();
+                                //$("#trpDiv").show();
+                                //$("#newATCDiv").show();
+                                //$("#reasonDiv").show();
+                                //$("#senderDiv").show();
+                                //$("#stoLocDiv").show();
+                                //$("#destinationDiv").show();
+                                //$("#transDiv").show();
+                                //$("#driverDiv").show();
+                                //$("#receiverDiv").show();
+                                // //var url = "";
+                                //url = '@Url.Action("ATCSwap", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+                })
+
+
+
+            //$("#btnUpdate").hide();
+            //$("#newATCDiv").hide();
+            //$("#trpDiv").hide();
+            //$("#reasonDiv").hide();
+            //$("#senderDiv").hide();
+            //$("#stoLocDiv").hide();
+            //$("#destinationDiv").hide();
+            //$("#transDiv").hide();
+            //$("#driverDiv").hide();
+            //$("#receiverDiv").hide();
+            //$("#lblGO").hide();
+
+            $("#btnReject").on('click', function () {
+
+            });
+
+            $("#btnApprove").on('click', function () {
+                var comment = $("#txtComment").val();
+
+
+                var msg = "";
+                if (comment == "") { msg = "Please enter Approval/Rejection comment! \n"; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+                
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoApproveATCSwapFetch", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            id: id,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                //$("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                                //alert('Receiver Updated successfully');
+                                debugger;
+                                $("#wrongATC").val(data.atc_no);
+                                $("#correctATC").val(data.vehicle);
+                                $("#txtTrip").val(data.trip_id);
+                                $("#txtReason").val(data.seal);
+                                $("#txtRequestBy").val(data.operatorID);
+                                //$("#txtSender").val(data.sender);
+                                //$("#txtDestination").val(data.destination);
+                                //$("#txtTrip").val(data.trip_id);
+                                //$("#txtReceiver").val(data.receiver);
+
+                                //$("#atc").attr("disabled", "disabled");
+
+                                //$("#btnUpdate").show();
+                                //$("#txtNewATC").show();
+                                //$("#trpDiv").show();
+                                //$("#newATCDiv").show();
+                                //$("#reasonDiv").show();
+                                //$("#senderDiv").show();
+                                //$("#stoLocDiv").show();
+                                //$("#destinationDiv").show();
+                                //$("#transDiv").show();
+                                //$("#driverDiv").show();
+                                //$("#receiverDiv").show();
+                                // //var url = "";
+                                //url = '@Url.Action("ATCSwap", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+                })
+            });
+
+
+            $("#btnUpdate").on('click', function () {
+
+                var atc = $("#atc").val();
+                var newATC = $("#txtNewATC").val();
+                var reason = $("#txtReason").val();
+                //var reason = $("#txtReason").val();
+                //var driver = $("#txtDriverName").val();
+                //var stoLoc = $("#txtStoLoc").val();
+                //var transporter = $("#txtTransporter").val();
+                //var sender = $("#txtSender").val();
+                //var destination = $("#txtDestination").val();
+                var trip_id = $("#txtTrip").val();
+                //var receiver = $("#txtReceiver").val();
+
+
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+                if (newATC == "") { msg += "Please enter new ATC! \n"; }
+                if (reason == "") { msg += "Please enter reason for the swap! \n"; }
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoATCSwap", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                            newATC: newATC,
+                            trip_id: trip_id,
+                            reason: reason,
+
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+
+                            }
+                            else {
+
+
+
+                                alert(data.msg);
+                                $("#atc").val("");
+                                $("#txtNewATC").val("");
+
+
+
+                                $("#btnUpdate").hide();
+                                $("#newATCDiv").hide();
+                                $("#trpDiv").hide();
+                                $("#reasonDiv").hide();
+
+
+
+                                $("#btnATCSearch").removeAttr("disabled");
+                                $("#atc").removeAttr("disabled");
+
+
+
+                                 var url = "";
+                                url = '@Url.Action("ATCSwwap", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+
+
+
+    <div class="container">
+
+        <div class="mws-panel-body no-padding">
+            <form class="mws-form" id="submit_form">
+                @Html.AntiForgeryToken()
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">WRONG ATC</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="wrongATC" class="large">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">CORRECT ATC</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="correctATC" class="large">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">TRIP ID</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="txtTrip" class="large">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">REQUEST DATE</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="txtRequestDate" class="large">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">REQUESTED BY</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="txtRequestBy" class="large">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">SWAP REASON</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="txtReason" class="large">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mws-form-inline">
+                    @*<div class="mws-form-row bordered">
+                        <label class="mws-form-label">COMMENTS</label>
+                        <div class="mws-form-item">
+                            
+                            <input type="text" id="txtComments" class="large">
+                        </div>
+                    </div>*@
+                    <div class="mws-form-row">
+                        <label class="mws-form-label">COMMENTS</label>
+                        <div class="mws-form-item">
+                            <textarea rows="1" cols="" class="large" id="txtComments"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="mws-button-row">
+
+                    <button id="btnApprove" class="btn btn-success" type="button"><i class="fa fa-key"></i> APPROVE</button>
+                    <button id="btnReject" class="btn btn-danger" type="button"><i class="fa fa-key"></i> REJECT</button>
+
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

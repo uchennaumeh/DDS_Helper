@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewBag.Title = "ATCswapRequests";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+
+</head>
+
+
+<body>
+
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+    @*<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" rel="stylesheet" />*@
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>*@
+    <script src="~/Scripts/jszip.min.js"></script>
+
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>*@
+    <script src="~/Scripts/pdfmake.min.js"></script>
+
+
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>*@
+    <script src="~/Scripts/vfs_fonts.js"></script>
+
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>*@
+
+    <script src="~/Scripts/moment.js"></script>
+
+
+
+
+    <script language="JavaScript" type="text/javascript">
+        var popup;
+        $(document).ready(function () {
+
+
+           
+
+            //$("#btnSpool").on('click', function () {
+
+                
+                debugger;
+
+                $("#gateTableFilter").DataTable({
+                    "ajax": {
+                        //"url": "/Home/GetReportDataFilter",
+                        "url": '@Url.Action("GetPendingApprovalRequestForSwap", "Home")',
+                        "type": "GET",
+                        data: {
+                            //__RequestVerificationToken: token,
+                          
+                        },
+                        "datatype": "json"
+
+                    },
+
+                    "columns": [
+                        { data: "b.sales_doc_number" },
+                        {
+                            "data": "b.tare_time",
+                            "render": function (data) {
+                                return moment(data).format('DD/MM/YYYY HH:mm');
+                            }
+                        },
+                        { "data": "v.username" },
+                        { "data": "b.vehicle" },
+                        { "data": "b.trip_id" },
+                        { data: "b.sales_type" },
+                        { "data": "b.sales_doc_type" },
+                      
+                        { "data": "b.seal" },
+                        {
+                            "data": "b.id",
+                            "render": function (data) {
+                                return "<a class='btn btn-default' onclick=Popupform('@Url.Action("ApproveSwap", "Home")/" + data +"')>APPROVE or REJECT</a>";
+                            },
+
+                            "orderable": false,
+                            
+
+                        },
+                        
+
+                    ],
+
+                    "language": {
+                        "emptyTable": "No Data Found! <b>Please comfirm</b> you have requests pending approval"
+                    },
+
+                    "dom": "Bfrtip",
+                    "buttons": [
+
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-file-excel-o"></i>DOWNLOAD IN EXCEL',
+                            className: 'btn btn-danger'
+
+
+                        }
+
+                    ]
+
+
+
+                });
+
+            //});
+
+
+        });
+
+        function Popupform(url) {
+            var formDiv = $('<div/>');
+            $.get(url)
+                .done(function (response) {
+                    formDiv.html(response);
+
+                    popup = formDiv.dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        title: 'Approve or Reject ATC SWAP',
+                        height: 600,
+                        width: 700,
+                        close: function () {
+                            popup.dialog('destroy').remove();
+                        }
+                    });
+                });
+
+        }
+
+
+
+    </script>
+
+    <div class="container">
+       
+
+
+
+
+    </div>
+
+
+    <div class="mws-panel grid_8">
+        <div class="mws-panel-header">
+            <span>PENDING ATC SWAP REQUESTS</span>
+        </div>
+
+        <div class="mws-panel-body no-padding">
+            <table border="1" width="100%" id="gateTableFilter" cellspacing="0" class="mws-datatable-fn mws-table">
+                <thead>
+                    <tr>
+                        <th>atc no</th>
+                        <th>Request Date</th>
+                        <th>Requested By</th>
+                        <th>Swap With</th>
+                        <th>Trip ID</th>
+                        <th>Sales type</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                        <th></th>                        
+                    </tr>
+                </thead>
+               
+            </table>
+
+        </div>
+    </div>
+</body>
+

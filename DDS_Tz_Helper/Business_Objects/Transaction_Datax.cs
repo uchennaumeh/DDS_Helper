@@ -8,6 +8,7 @@ namespace DDS_Tz_Helper.Business_Objects
     public class Transaction_Datax
     {
         public string msg { get; set; }
+        public string atc { get; set; }
         public string driver { get; set; }
         public string vehicle { get; set; }
         public string transporter { get; set; }
@@ -28,6 +29,13 @@ namespace DDS_Tz_Helper.Business_Objects
         public string operator_weighout { get; set; }
         public string operator_picking { get; set; }
         public string serial_no { get; set; }
+        public string user { get; set; }
+        public string seal { get; set; }
+        public string atc_no { get; set; }
+        public string operatorID { get; set; }
+        public DateTime tare_time { get; set; }
+        public DateTime gross_time { get; set; }
         public Boolean status { get; set; }
+        public Boolean statusPicking { get; set; }
     }
 }

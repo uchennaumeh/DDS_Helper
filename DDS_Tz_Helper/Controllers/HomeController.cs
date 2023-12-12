@@ -30,6 +30,19 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult ATCSwapRequests()
+        {
+            
+            return View();
+        }
+
+        public ActionResult ApproveSwap(int? id)
+        {
+            //ession["recordId"] = id;
+            ViewBag.RecordId = id;
+            return View();
+        }
+
         public ActionResult GateReport()
         {
             return View();
@@ -47,6 +60,11 @@ namespace DDS_Tz_Helper.Controllers
 
 
         public ActionResult ReportGate()
+        {
+            return View();
+        }
+
+        public ActionResult ATCSwap()
         {
             return View();
         }
@@ -262,6 +280,131 @@ namespace DDS_Tz_Helper.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoATCSwap(String __RequestVerificationToken, String atc, String newATC, String trip_id, String reason)
+        {
+
+            if (Session["TrxSwapPicking"].ToString() == "1")
+            {
+                Transaction_Datax trx_Datax = new Transaction_Datax();
+                var trxDetails = db.transaction_data.Where(a => a.sales_doc_number == atc && a.gross == null && a.sales_type == "BAGS").FirstOrDefault();
+                var atcDetails = db.atc_data.Where(x => x.sales_doc_number == newATC && x.used == null && x.sales_type == "BAGS").FirstOrDefault();
+                var atcDetailsold = db.atc_data.Where(x => x.sales_doc_number == atc && x.used != null && x.sales_type == "BAGS").FirstOrDefault();
+                int user_id = int.Parse(Session["user_id"].ToString());
+
+                //var trxDataArch 
+                if (atcDetails == null)
+                {
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong ATC or ATC is already used";
+                    return Json(trx_Datax);
+                }
+                var atcQty = atcDetails.del_qty;
+
+                trxDetails.quantity = atcQty;
+                trxDetails.sales_doc_number = newATC;
+                trxDetails.trip_id = trip_id;
+
+                transaction_data_archive tda = new transaction_data_archive();
+                tda.sales_doc_number = newATC;
+                tda.trip_id = trip_id;
+                tda.vehicle = atc;
+                tda.shp_point = user_id.ToString();
+                tda.operator_weighin = "ATC SWAP REQUEST";
+                tda.sales_type = "BAGS";
+                tda.tare_time = DateTime.Now;
+                tda.sales_doc_type = "PENDING";
+                tda.seal = reason;
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+
+
+                //TO BE DONE AFTER SUPERVISOR APPROVAL
+                //db.Entry(trxDetails).State = EntityState.Modified;
+                //db.SaveChanges();
+
+
+
+                //atcDetails.used = true;
+                //db.Entry(atcDetails).State = EntityState.Modified;
+                //db.SaveChanges();
+
+                //atcDetailsold.used = false;
+                //db.Entry(atcDetailsold).State = EntityState.Modified;
+                //db.SaveChanges();
+
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.ATC_SWAP_REQUEST_HELPER, newATC + " " + reason, DateTime.Now.ToString());
+
+                trx_Datax.msg = "REQUEST SUBMITTED SUCCESSFULLY!!!";
+                trx_Datax.status = true;
+                return Json(trx_Datax);
+            }
+            else
+            {
+                Transaction_Datax trx_Datax = new Transaction_Datax();
+                var trxDetails = db.transaction_data.Where(a => a.sales_doc_number == atc && a.gross == null).FirstOrDefault();
+                var atcDetails = db.atc_data.Where(x => x.sales_doc_number == newATC && x.used == null && x.sales_type == "BAGS").FirstOrDefault();
+                var atcDetailsold = db.atc_data.Where(x => x.sales_doc_number == atc && x.used != null && x.sales_type == "BAGS").FirstOrDefault();
+                int user_id = int.Parse(Session["user_id"].ToString());
+
+                if (atcDetails == null)
+                {
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong New ATC or New ATC is already used";
+                    return Json(trx_Datax);
+                }
+                var atcQty = atcDetails.del_qty;
+
+                //trxDetails.quantity = atcQty;
+                trxDetails.sales_doc_number = newATC;
+                trxDetails.trip_id = trip_id;
+
+                transaction_data_archive tda = new transaction_data_archive();
+                tda.sales_doc_number = newATC;
+                tda.trip_id = trip_id;
+                tda.vehicle = atc;
+                tda.shp_point = user_id.ToString();
+                tda.operator_weighin = "ATC SWAP REQUEST";
+                tda.sales_type = "BAGS";
+                tda.tare_time = DateTime.Now;
+                tda.sales_doc_type = "PENDING";
+                tda.seal = reason;
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+
+                //TO BE DONE AFTER SUPERVISOR APPROVAL
+                //db.Entry(trxDetails).State = EntityState.Modified;
+                //db.SaveChanges();
+
+                //atcDetails.used = true;
+                //db.Entry(atcDetails).State = EntityState.Modified;
+                //db.SaveChanges();
+
+                //atcDetailsold.used = false;
+                //db.Entry(atcDetailsold).State = EntityState.Modified;
+                //db.SaveChanges();
+
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.ATC_SWAP_REQUEST_HELPER, newATC + " " + reason, DateTime.Now.ToString());
+
+                trx_Datax.msg = "REQUEST SUBMITTED SUCCESSFULLY!!!";
+                trx_Datax.status = true;
+                return Json(trx_Datax);
+            }
+
+
+        }
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -445,6 +588,137 @@ namespace DDS_Tz_Helper.Controllers
 
                 return Json(sto_Datax);
             }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoFetchATCDetailsForSwap(String __RequestVerificationToken, String atc)
+        {
+            Session["TrxSwapPicking"] = 0;
+            //sto_datax sto_Datax = new sto_datax();
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+
+
+            string atc_actual = atc;
+            string msge;
+
+
+
+            try
+            {
+                //var poDetails = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.sync_status == false).FirstOrDefault();
+                var atcDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.gross == null && x.sales_type == "BAGS").FirstOrDefault();
+
+                if (atcDetails == null)
+                {
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_HELPER, "FETCH ATC ATTEMPT FOR SWAP : ", DateTime.Now.ToString());
+
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                    return Json(trx_Datax);
+                }
+                else
+                {
+                    trx_Datax.msg = "";
+                    trx_Datax.status = true;
+                    if (atcDetails.picking_time != null)
+                    {
+                        trx_Datax.statusPicking = true;
+                        Session["TrxSwapPicking"] = 1;
+
+                    }
+                    trx_Datax.atc = atc;
+                    trx_Datax.trip_id = atcDetails.trip_id;
+                    //sto_Datax.transporter = poDetails.transporter_name;
+                    //sto_Datax.trip_id = poDetails.trip_id;
+                    //sto_Datax.destination = poDetails.destination;
+                    //sto_Datax.driverName = poDetails.driver;
+                    //sto_Datax.sender = poDetails.sender;
+                    //sto_Datax.stoLoc = poDetails.loc;
+                    //sto_Datax.truckNumber = poDetails.vehicle;
+                    //sto_Datax.receiver = poDetails.receiver;
+                    //sto_Datax.atc = atc;
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_SWAP_HELPER, "FETCH ATC ATTEMPT FOR SWAP : ", DateTime.Now.ToString());
+
+                    return Json(trx_Datax);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_SWAP_HELPER, "FETCH ATC ATTEMPT FOR SWAP : ", DateTime.Now.ToString());
+
+                msge = ex.Message;
+                trx_Datax.msg = "Error occured during ATC fetch";
+                trx_Datax.status = false;
+                //trx_Datax.excptn = ex.ToString();
+
+                return Json(trx_Datax);
+            }
+
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoApproveATCSwapFetch(String __RequestVerificationToken, int id)
+        {
+           
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var returnedTda = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+
+
+            try
+            {
+                if(returnedTda == null)
+                {
+                    
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                    return Json(trx_Datax);
+
+
+
+
+
+                }
+                else
+                {
+                    trx_Datax.msg = "";
+                    trx_Datax.status = true;
+                    trx_Datax.atc_no = returnedTda.sales_doc_number;
+                    trx_Datax.vehicle = returnedTda.vehicle;
+                    trx_Datax.trip_id = returnedTda.trip_id;
+                    //trx_Datax.tare_time = returnedTda.tare_time;
+                    trx_Datax.operatorID = returnedTda.shp_point;
+                    trx_Datax.seal = returnedTda.seal;
+
+                    return Json(trx_Datax);
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                trx_Datax.msg = "Error occured during ATC fetch";
+                trx_Datax.status = false;
+                //trx_Datax.excptn = ex.ToString();
+
+                return Json(trx_Datax);
+            }
+                                             
 
         }
 
@@ -1262,17 +1536,17 @@ namespace DDS_Tz_Helper.Controllers
 
                     bool ca = false;
                     bool ad = false;
-                    
+
                     if (userx.can_approve == true)
                     {
                         ca = true;
-                        
+
                     }
                     Session["can_approve"] = ca;
                     if (userx.admin == true)
                     {
                         ad = true;
-                        
+
                     }
                     Session["admin"] = ad;
                     Session["Role"] = role;
@@ -1376,8 +1650,8 @@ namespace DDS_Tz_Helper.Controllers
             //return();
             try
             {
-                var returnedReport = db.gateaccess_info.Where(a => a.entry_datetime >= fromDate && a.entry_datetime <= toDate).OrderBy(s=>s.entry_datetime).ToList<gateaccess_info>();
-                
+                var returnedReport = db.gateaccess_info.Where(a => a.entry_datetime >= fromDate && a.entry_datetime <= toDate).OrderBy(s => s.entry_datetime).ToList<gateaccess_info>();
+
 
                 if (product != null)
                 {
@@ -1410,9 +1684,49 @@ namespace DDS_Tz_Helper.Controllers
             }
         }
 
+
+        public ActionResult GetPendingApprovalRequestForSwap()
+        {
+            int user_id = int.Parse(Session["user_id"].ToString());
+            TransactionLogging TRX_LOG = new TransactionLogging();
+            bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.GATE_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL: ", DateTime.Now.ToString());
+
+            db.Configuration.ProxyCreationEnabled = false;
+            try
+            {
+
+                //var returnedReportPendingSwap0 = from s in db.transaction_data_archive.Where(a => a.operator_weighin == "ATC SWAP REQUEST" && a.sales_doc_type == "PENDING")
+                //                                 join t in db.users on s.shp_point equals t.Id.ToString()
+                //                                 select new { s, t };
+
+                var trxDataArc = db.transaction_data_archive.Where(a => a.operator_weighin == "ATC SWAP REQUEST" && a.sales_doc_type == "PENDING").ToList();
+                var allUsers = db.users.ToList();
+                var returnedReportPendingSwap = from b in trxDataArc
+                                                join v in allUsers on b.shp_point equals v.Id.ToString()
+                                                select new { b, v };
+
+                returnedReportPendingSwap = returnedReportPendingSwap.ToList();
+
+
+                return Json(new { data = returnedReportPendingSwap }, JsonRequestBehavior.AllowGet);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Gate_Datax gate_Datax = new Gate_Datax();
+                gate_Datax.msg = "Something during data spool";
+                gate_Datax.status = false;
+
+                return Json(gate_Datax);
+            }
+        }
+
+
         public ActionResult GetTripReportDataFilter(DateTime fromDate, DateTime toDate, string trxType, string driver, string truckStatus, string Vehicle, string createdBy)
         {
-           
+
             db.Configuration.ProxyCreationEnabled = false;
 
             try
@@ -1438,9 +1752,9 @@ namespace DDS_Tz_Helper.Controllers
 
                     return Json(new { data = returnedReportTripCreate }, JsonRequestBehavior.AllowGet);
 
-               
+
                 }
-               
+
                 Gate_Datax gate_Datax = new Gate_Datax();
                 gate_Datax.status = true;
 
@@ -1472,7 +1786,7 @@ namespace DDS_Tz_Helper.Controllers
                 {
                     var returnedReport = db.trip_registry.Where(a => a.creation_datetime >= fromDate && a.creation_datetime <= toDate && a.trip_no.StartsWith("38")).ToList<trip_registry>();
 
-       
+
 
                     if (Vehicle != "")
                     {
@@ -1602,13 +1916,13 @@ namespace DDS_Tz_Helper.Controllers
             }
 
 
-            
+
             Gate_Datax gate_Dataxx = new Gate_Datax();
             gate_Dataxx.msg = "Something went wrong";
             gate_Dataxx.status = false;
 
             return Json(gate_Dataxx);
-           
+
         }
 
         public ActionResult GetReportPostingErrors(DateTime fromDate, DateTime toDate)
@@ -1619,7 +1933,7 @@ namespace DDS_Tz_Helper.Controllers
             try
             {
 
-            
+
                 var returnedRecord = db.transaction_data.Where(a => a.gross_time >= fromDate && a.gross_time <= toDate && a.error_field != "OFFLINE" && a.sync_status == false && a.error_field != " ").ToList<transaction_data>();
 
                 int user_id = int.Parse(Session["user_id"].ToString());
@@ -1628,7 +1942,7 @@ namespace DDS_Tz_Helper.Controllers
 
                 return Json(new { data = returnedRecord }, JsonRequestBehavior.AllowGet);
 
-               
+
             }
             catch (Exception ex)
             {

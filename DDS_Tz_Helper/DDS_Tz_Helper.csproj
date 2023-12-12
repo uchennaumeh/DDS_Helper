@@ -3626,6 +3626,7 @@
     <Content Include="Scripts\jszip.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\notify.min.js" />
     <Content Include="Scripts\pdfmake.min.js" />
     <Content Include="Scripts\vfs_fonts.js" />
     <Content Include="SqlServerTypes\readme.htm" />
@@ -3680,6 +3681,9 @@
     <Content Include="Views\Home\TripReport.cshtml" />
     <Content Include="Views\Home\NotAllowed.cshtml" />
     <Content Include="Views\Home\PostingErrorsReport.cshtml" />
+    <Content Include="Views\Home\ATCSwap.cshtml" />
+    <Content Include="Views\Home\ATCswapRequests.cshtml" />
+    <Content Include="Views\Home\ApproveSwap.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
