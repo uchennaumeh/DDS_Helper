@@ -241,6 +241,7 @@
     <Compile Include="Business_Objects\LdapAuthentication.cs" />
     <Compile Include="Business_Objects\Loginx.cs" />
     <Compile Include="Business_Objects\sto_datax.cs" />
+    <Compile Include="Business_Objects\Sto_Transaction_Datax.cs" />
     <Compile Include="Business_Objects\trade_dto.cs" />
     <Compile Include="Business_Objects\TransactionLogging.cs" />
     <Compile Include="Business_Objects\Transaction_Datax.cs" />

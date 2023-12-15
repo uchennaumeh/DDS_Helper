@@ -2,13 +2,11 @@
 @{
     ViewBag.Title = "ATCSwap";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
+
+    string destinationTable = ViewBag.DestinationTable;
 }
 
 <head>
-
-    @*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
-        <script src="~/Scripts/jquery.validate.min.js"></script>
-        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
 
 </head>
 
@@ -69,14 +67,6 @@
             $("#newATCDiv").hide();
             $("#trpDiv").hide();
             $("#reasonDiv").hide();
-            //$("#senderDiv").hide();
-            //$("#stoLocDiv").hide();
-            //$("#destinationDiv").hide();
-            //$("#transDiv").hide();
-            //$("#driverDiv").hide();
-            //$("#receiverDiv").hide();
-            //$("#lblGO").hide();
-
 
 
             $("#btnATCSearch").on('click', function () {
@@ -197,6 +187,7 @@
                 }
 
                 var token = $('[name=__RequestVerificationToken]').val();
+                //var destination = @ViewBag.DestinationTable;
                 //debugger;
                  setTimeout(function () {
                     $.ajax({
@@ -209,6 +200,7 @@
                             newATC: newATC,
                             trip_id: trip_id,
                             reason: reason,
+                            //destination: destination,
                             //driver: driver,
                             //stoLoc: stoLoc,
                             //transporter: transporter,

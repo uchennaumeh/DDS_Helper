@@ -104,32 +104,13 @@
                             }
                             else {
                                 //alert('Receiver Updated successfully');
-                                $("#wrongATC").val(data.atc_no);
-                                $("#correctATC").val(data.vehicle);
+                                $("#wrongATC").val(data.vehicle);
+                                $("#correctATC").val(data.atc_no);
                                 $("#txtTrip").val(data.trip_id);
                                 $("#txtReason").val(data.seal);
                                 $("#txtRequestBy").val(data.operatorID);
-                                //$("#txtTransporter").val(data.transporter);
-                                //$("#txtSender").val(data.sender);
-                                //$("#txtDestination").val(data.destination);
-                                //$("#txtTrip").val(data.trip_id);
-                                //$("#txtReceiver").val(data.receiver);
 
-                                //$("#atc").attr("disabled", "disabled");
-
-                                //$("#btnUpdate").show();
-                                //$("#txtNewATC").show();
-                                //$("#trpDiv").show();
-                                //$("#newATCDiv").show();
-                                //$("#reasonDiv").show();
-                                //$("#senderDiv").show();
-                                //$("#stoLocDiv").show();
-                                //$("#destinationDiv").show();
-                                //$("#transDiv").show();
-                                //$("#driverDiv").show();
-                                //$("#receiverDiv").show();
-                                // //var url = "";
-                                //url = '@Url.Action("ATCSwap", "Home")'; //Default
+                                
 
 
                             }
@@ -142,46 +123,30 @@
 
 
 
-            //$("#btnUpdate").hide();
-            //$("#newATCDiv").hide();
-            //$("#trpDiv").hide();
-            //$("#reasonDiv").hide();
-            //$("#senderDiv").hide();
-            //$("#stoLocDiv").hide();
-            //$("#destinationDiv").hide();
-            //$("#transDiv").hide();
-            //$("#driverDiv").hide();
-            //$("#receiverDiv").hide();
-            //$("#lblGO").hide();
-
             $("#btnReject").on('click', function () {
-
-            });
-
-            $("#btnApprove").on('click', function () {
                 var comment = $("#txtComment").val();
 
-
                 var msg = "";
-                if (comment == "") { msg = "Please enter Approval/Rejection comment! \n"; }
-
+                if (comment == "") { msg = "Please enter Rejection comment! \n"; }
 
                 if (msg != "") {
                     alert(msg);
 
                     return false;
                 }
-                
 
                 var token = $('[name=__RequestVerificationToken]').val();
+                var bb = @ViewBag.RecordId;
+
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoApproveATCSwapFetch", "Home")',
+                        url: '@Url.Action("RejectATCSwap", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
-                            id: id,
+                            id: bb,
+                            comment: comment,
 
                         },
                         error: function (data) {
@@ -203,34 +168,128 @@
                             else {
                                 //alert('Receiver Updated successfully');
                                 debugger;
-                                $("#wrongATC").val(data.atc_no);
-                                $("#correctATC").val(data.vehicle);
-                                $("#txtTrip").val(data.trip_id);
-                                $("#txtReason").val(data.seal);
-                                $("#txtRequestBy").val(data.operatorID);
-                                //$("#txtSender").val(data.sender);
-                                //$("#txtDestination").val(data.destination);
-                                //$("#txtTrip").val(data.trip_id);
-                                //$("#txtReceiver").val(data.receiver);
+                                $("#atc").val("");
+                                $("#wrongATC").val("");
+                                $("#correctATC").val("");
+                                $("#txtTrip").val("");
+                                $("#txtReason").val("");
+                                $("#txtRequestBy").val("");
+                                $("#txtRequestDate").val("");
+                                $("#txtCOmment").val("");
 
-                                //$("#atc").attr("disabled", "disabled");
+                                //window.parent.closeIframe();
 
-                                //$("#btnUpdate").show();
-                                //$("#txtNewATC").show();
-                                //$("#trpDiv").show();
-                                //$("#newATCDiv").show();
-                                //$("#reasonDiv").show();
-                                //$("#senderDiv").show();
-                                //$("#stoLocDiv").show();
-                                //$("#destinationDiv").show();
-                                //$("#transDiv").show();
-                                //$("#driverDiv").show();
-                                //$("#receiverDiv").show();
-                                // //var url = "";
-                                //url = '@Url.Action("ATCSwap", "Home")'; //Default
+                                //$.confirm({
+                                //    title: 'Change Request Success!!',
+                                //    content: "Change Request Approved!!",
+                                //    type: 'green',
+                                //    typeAnimated: true,
+                                //    buttons: {
+                                //        close: function () {
+                                //            window.parent.closeIframe();
+                                //        }
+                                //    }
+                                //});
+
+                                //return false;
+                               
+                                var url = "";
+                                url = '@Url.Action("ATCswapRequests", "Home")'; //Default
+
+                                window.open(url, "_self");
 
 
                             }
+                            //return false;
+
+                        },
+
+
+                    });
+                })
+
+
+            });
+
+            $("#btnApprove").on('click', function () {
+                var comment = $("#txtComment").val();
+
+
+                var msg = "";
+                if (comment == "") { msg = "Please enter Approval comment! \n"; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+                
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                var bb = @ViewBag.RecordId;
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoActualATCSwap", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            id: bb,
+                            comment: comment,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                //$("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                                //alert('Receiver Updated successfully');
+                                debugger;
+                                $("#atc").val("");
+                                $("#wrongATC").val("");
+                                $("#correctATC").val("");
+                                $("#txtTrip").val("");
+                                $("#txtReason").val("");
+                                $("#txtRequestBy").val("");
+                                $("#txtRequestDate").val("");
+
+                                //window.parent.closeIframe();
+
+                                //$.confirm({
+                                //    title: 'Change Request Success!!',
+                                //    content: "Change Request Approved!!",
+                                //    type: 'green',
+                                //    typeAnimated: true,
+                                //    buttons: {
+                                //        close: function () {
+                                //            window.parent.closeIframe();
+                                //        }
+                                //    }
+                                //});
+
+                                //return false;
+                               
+                                var url = "";
+                                url = '@Url.Action("ATCswapRequests", "Home")'; //Default
+
+                                window.open(url, "_self");
+
+
+                            }
+                            //return false;
 
                         },
 
@@ -240,19 +299,13 @@
             });
 
 
-            $("#btnUpdate").on('click', function () {
+            @*$("#btnUpdate").on('click', function () {
 
                 var atc = $("#atc").val();
                 var newATC = $("#txtNewATC").val();
                 var reason = $("#txtReason").val();
-                //var reason = $("#txtReason").val();
-                //var driver = $("#txtDriverName").val();
-                //var stoLoc = $("#txtStoLoc").val();
-                //var transporter = $("#txtTransporter").val();
-                //var sender = $("#txtSender").val();
-                //var destination = $("#txtDestination").val();
+
                 var trip_id = $("#txtTrip").val();
-                //var receiver = $("#txtReceiver").val();
 
 
 
@@ -334,7 +387,7 @@
 
 
                  }, 200);
-            });
+            });*@
 
         });
 
@@ -409,13 +462,7 @@
                 </div>
 
                 <div class="mws-form-inline">
-                    @*<div class="mws-form-row bordered">
-                        <label class="mws-form-label">COMMENTS</label>
-                        <div class="mws-form-item">
-                            
-                            <input type="text" id="txtComments" class="large">
-                        </div>
-                    </div>*@
+
                     <div class="mws-form-row">
                         <label class="mws-form-label">COMMENTS</label>
                         <div class="mws-form-item">
