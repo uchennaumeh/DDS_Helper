@@ -113,15 +113,8 @@
                             else {
                                 //alert('Receiver Updated successfully');
                                 $("#atc").val(data.atc);
-                                //$("#txtNewATC").val();
-                                //$("#txtDriverName").val(data.driverName);
-                                //$("#txtStoLoc").val(data.stoLoc);
-                                //$("#txtTransporter").val(data.transporter);
-                                //$("#txtSender").val(data.sender);
-                                //$("#txtDestination").val(data.destination);
-                                $("#txtTrip").val(data.trip_id);
-                                //$("#txtReceiver").val(data.receiver);
 
+                                $("#txtTrip").val(data.trip_id);
                                 $("#atc").attr("disabled", "disabled");
 
                                 $("#btnUpdate").show();
@@ -129,13 +122,7 @@
                                 $("#trpDiv").show();
                                 $("#newATCDiv").show();
                                 $("#reasonDiv").show();
-                                //$("#senderDiv").show();
-                                //$("#stoLocDiv").show();
-                                //$("#destinationDiv").show();
-                                //$("#transDiv").show();
-                                //$("#driverDiv").show();
-                                //$("#receiverDiv").show();
-                                // //var url = "";
+
                                 //url = '@Url.Action("ATCSwap", "Home")'; //Default
 
 
@@ -154,14 +141,9 @@
                 var atc = $("#atc").val();
                 var newATC = $("#txtNewATC").val();
                 var reason = $("#txtReason").val();
-                //var reason = $("#txtReason").val();
-                //var driver = $("#txtDriverName").val();
-                //var stoLoc = $("#txtStoLoc").val();
-                //var transporter = $("#txtTransporter").val();
-                //var sender = $("#txtSender").val();
-                //var destination = $("#txtDestination").val();
+
                 var trip_id = $("#txtTrip").val();
-                //var receiver = $("#txtReceiver").val();
+
 
 
 
@@ -170,13 +152,7 @@
                 if (atc == "") { msg = "Please enter ATC! \n" ; }
                 if (newATC == "") { msg += "Please enter new ATC! \n"; }
                 if (reason == "") { msg += "Please enter reason for the swap! \n"; }
-                //if (driver == "") { msg += "Please enter driver name! \n"; }
-                //if (stoLoc == "") { msg += "Please enter storage location! \n"; }
-                //if (transporter == "") { msg += "Please enter transporter name! \n"; }
-                //if (sender == "") { msg += "Please enter sender name! \n"; }
-                //if (destination == "") { msg += "Please enter destination! \n"; }
-                //if (trip_id == "") { msg += "Please enter trip ID! \n"; }
-                //if (receiver == "") { msg += "Please enter receiver! \n"; }
+
 
 
 
@@ -200,14 +176,6 @@
                             newATC: newATC,
                             trip_id: trip_id,
                             reason: reason,
-                            //destination: destination,
-                            //driver: driver,
-                            //stoLoc: stoLoc,
-                            //transporter: transporter,
-                            //sender: sender,
-                            //destination: destination,
-                            
-                            //receiver: receiver,
 
                         },
                         error: function (data) {
@@ -229,24 +197,12 @@
                                 alert(data.msg);
                                 $("#atc").val("");
                                 $("#txtNewATC").val("");
-                                //$("#txtDriverName").val("");
-                                //$("#txtStoLoc").val("");
-                                //$("#txtTransporter").val("");
-                                //$("#txtDestination").val("");
-                                //$("#txtSender").val("");
-                                //$("#txtTrip").val("");
-                                //$("#txtReceiver").val("");
 
 
                                 $("#btnUpdate").hide();
                                 $("#newATCDiv").hide();
                                 $("#trpDiv").hide();
                                 $("#reasonDiv").hide();
-                                //$("#senderDiv").hide();
-                                //$("#stoLocDiv").hide();
-                                //$("#destinationDiv").hide();
-                                //$("#transDiv").hide();
-                                //$("#driverDiv").hide();
 
 
 
@@ -256,7 +212,7 @@
 
 
                                  var url = "";
-                                url = '@Url.Action("ATCSwwap", "Home")'; //Default
+                                url = '@Url.Action("ATCSwwap", "Home")'; 
 
 
                             }

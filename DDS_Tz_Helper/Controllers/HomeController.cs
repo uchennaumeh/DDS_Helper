@@ -48,6 +48,11 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult MaterialReport()
+        {
+            return View();
+        }
+
         public ActionResult NotAllowed()
         {
             return View();
@@ -341,7 +346,7 @@ namespace DDS_Tz_Helper.Controllers
                 TransactionLogging TRX_LOG = new TransactionLogging();
                 bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.ATC_SWAP_REQUEST_HELPER, newATC + " " + reason, DateTime.Now.ToString());
 
-                trx_Datax.msg = "REQUEST SUBMITTED SUCCESSFULLY!!!";
+                trx_Datax.msg = "SWAP REQUEST SUBMITTED SUCCESSFULLY; APPROVAL IS PENDING!";
                 trx_Datax.status = true;
                 return Json(trx_Datax);
             }
@@ -356,7 +361,7 @@ namespace DDS_Tz_Helper.Controllers
                 if (atcDetails == null)
                 {
                     trx_Datax.status = false;
-                    trx_Datax.msg = "Wrong New ATC or New ATC is already used";
+                    trx_Datax.msg = "New ATC for the swap is either used or incorrect";
                     return Json(trx_Datax);
                 }
                 var atcQty = atcDetails.del_qty;
@@ -397,7 +402,7 @@ namespace DDS_Tz_Helper.Controllers
                 TransactionLogging TRX_LOG = new TransactionLogging();
                 bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.ATC_SWAP_REQUEST_HELPER, newATC + " " + reason, DateTime.Now.ToString());
 
-                trx_Datax.msg = "REQUEST SUBMITTED SUCCESSFULLY!!!";
+                trx_Datax.msg = "SWAP REQUEST SUBMITTED SUCCESSFULLY; APPROVAL IS PENDING!";
                 trx_Datax.status = true;
                 return Json(trx_Datax);
             }
@@ -1069,8 +1074,9 @@ namespace DDS_Tz_Helper.Controllers
                     //if (returnedTda.tare_time.HasValue)
                     //{
                         trx_Datax.tare_time = returnedTda.tare_time ?? DateTime.MinValue;
+                    //var date = new Date(parseInt(returnedTda.tare_time.substr(6)));
                     //}
-                    
+
                     trx_Datax.operatorID = loggedInUser;
                     trx_Datax.seal = returnedTda.seal;
 
@@ -2056,8 +2062,66 @@ namespace DDS_Tz_Helper.Controllers
         }
 
 
+        public ActionResult GetMaterialReport(DateTime fromDate, DateTime toDate, String product)
+        {
+            //return();
+            try
+            {
+                trade_dto stdx = new trade_dto();
+                List<Sto_Transaction_Datax> materialReport = new List<Sto_Transaction_Datax>();
+                var returnedReport = db.gateaccess_info.Where(a => a.entry_datetime >= fromDate && a.entry_datetime <= toDate).OrderBy(s => s.entry_datetime).ToList<gateaccess_info>();
+
+                
+                if (product == null || product.Length == 0)
+                {
+                    var allMaterialsReturned = db.Truck_Analysis_Material_only(fromDate, toDate).ToList();
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.MATERIAL_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL HELPER: ", DateTime.Now.ToString());
+
+                    return Json(new { data = allMaterialsReturned }, JsonRequestBehavior.AllowGet);
+                 
+                }
+                else
+                {
+                    var allMaterialsReturned = db.Truck_Analysis_Material_only(fromDate, toDate).Where(a => a.PRODUCT == product).ToList();
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.MATERIAL_REPORT_SPOOL_HELPER, "MATERIAL REPORT SPOOL HELPER: ", DateTime.Now.ToString());
+
+                    return Json(new { data = allMaterialsReturned }, JsonRequestBehavior.AllowGet);
+                }
+                
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                Gate_Datax gate_Datax = new Gate_Datax();
+                gate_Datax.msg = "Something went wrong";
+                gate_Datax.status = false;
+
+                return Json(gate_Datax);
+            }
+        }
+
+
         public ActionResult GetPendingApprovalRequestForSwap()
         {
+
+            var usertry = db.users.ToList();
+            var roletry = db.roles.ToList();
+
+            var jointry = from f in usertry
+                          join c in roletry.DefaultIfEmpty() on f.role_id equals c.Id
+                          select new { f, c };
+
+
+
+
+
             int user_id = int.Parse(Session["user_id"].ToString());
             TransactionLogging TRX_LOG = new TransactionLogging();
             bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.GATE_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL: ", DateTime.Now.ToString());

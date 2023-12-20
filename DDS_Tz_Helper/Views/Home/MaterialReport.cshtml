@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "PostingErrorsReport";
+    ViewBag.Title = "MaterialReport";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -14,23 +14,13 @@
 
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
-    @*<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" rel="stylesheet" />*@
-
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>*@
     <script src="~/Scripts/jszip.min.js"></script>
-
-    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>*@
     <script src="~/Scripts/pdfmake.min.js"></script>
-
-
-    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>*@
     <script src="~/Scripts/vfs_fonts.js"></script>
-
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>*@
 
     <script src="~/Scripts/moment.js"></script>
 
@@ -46,7 +36,8 @@
 
                 var fromDate = $("#dateFrom").val();
                 var toDate = $("#dateTo").val();
-
+                //var trxType = $("#drpTrxType").val();
+                var product = $("#txtProduct").val();
 
                 var msg = "";
                 if (fromDate == "") { msg = "Please select a from date! \n"; }
@@ -65,13 +56,13 @@
                     return false;
                 }
 
-                //$("#gateTable").hide();
+                $("#gateTable").hide();
 
                 const diffInMs = new Date(toDate) - new Date(fromDate)
                 const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-                if (diffInDays > 365) {
-                    alert('report cannot be spooled for more than 365 days!!!');
+                if (diffInDays > 391) {
+                    alert('report cannot be spooled for more than 31 days!!!');
 
                     return false;
 
@@ -83,13 +74,13 @@
 
                 $("#gateTableFilter").DataTable({
                     "ajax": {
-                        //"url": "/Home/GetReportDataFilter",
-                        "url": '@Url.Action("GetReportPostingErrors", "Home")',
+                        "url": '@Url.Action("GetMaterialReport", "Home")',
                         "type": "GET",
                         data: {
                             //__RequestVerificationToken: token,
                             fromDate: fromDate,
                             toDate: toDate,
+                            product: product,
 
                         },
                         "datatype": "json"
@@ -97,30 +88,40 @@
                     },
 
                     "columns": [
-                        { data: "sales_doc_number" },
-                        { "data": "trip_id" },
-                        { "data": "quantity" },
-                        { "data": "sales_type" },
+                        { data: "DELIVERY_NO" },
+                        { "data": "DELIVERY_DOC_TYPE" },
+                        { "data": "SALES_DOC_TYPE" },
+                        { "data": "ATC" },
+                        { data: "CUSTOMER_NAME" },
+                        { "data": "PRODUCT" },
+                        { "data": "UOM" },
                         {
-                            "data": "tare_time",
+                            "data": "DISPATCHED_DATE",                          
+                                  "render": function (data) {
+                                return moment(data).format('DD/MM/YYYY HH:mm');
+                            }
+                        },
+                        {
+                            "data": "TARETIME",
                             "render": function (data) {
                                 return moment(data).format('DD/MM/YYYY HH:mm');
                             }
                         },
                         {
-                            "data": "gross_time",
+                            "data": "GROSS_TIME",
                             "render": function (data) {
                                 return moment(data).format('DD/MM/YYYY HH:mm');
                             }
                         },
-                        { data: "tare" },
-                        { "data": "gross" },
-                        { "data": "nett" },
-                        { "data": "error_field" },
-                        { "data": "vehicle" },
-                        { "data": "driver" },
-                        { "data": "parent_sales_order" },
-                        { "data": "customer" },
+                        { "data": "WAYBILL" },
+                        { "data": "TRUCK_NUMBER" },
+                        { "data": "DRIVER" },
+                        { "data": "TARE_WEIGHT" },
+                        { "data": "GROSS_WEIGHT" },
+                        { "data": "NET" },
+                        { "data": "DESTINATION" },
+                        { "data": "SENDER" },
+                        { "data": "Truck_Status" },
 
                     ],
 
@@ -154,7 +155,7 @@
     <div class="container">
         <div class="mws-panel grid_4">
             <div class="mws-panel-header">
-                <span>FILTER and SPOOL POSTIG ERRORS REPORT</span>
+                <span>FILTER and SPOOL GATE REPORT</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" id="submit_form">
@@ -193,7 +194,45 @@
 
 
 
+        <div class="mws-panel grid_4">
+            <div class="mws-panel-header">
+                <span>Filters</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
 
+                    <fieldset class="mws-form-inline">
+                    
+                        @*<div class="mws-form-row bordered">
+                            <label class="mws-form-label">Truck Status</label>
+                            <div class="mws-form-item">
+                                <select id="drpStatus" class="large">
+                                    <option>-- select --</option>
+                                    <option>Entry Allowed.</option>
+                                    <option>Weigh-In Successful.</option>
+                                    <option>Weighed Out Successfully</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>*@
+
+                        
+                        <div class="mws-form-inline">
+                            <div class="mws-form-row bordered">
+                                <label class="mws-form-label">Product</label>
+                                <div class="mws-form-item">
+                                    <input type="text" id="txtProduct" class="large">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </fieldset>
+                 
+                </form>
+            </div>
+        </div>
 
 
 
@@ -203,36 +242,41 @@
 
     <div class="mws-panel grid_8">
         <div class="mws-panel-header">
-            <span>Posting Errors Report</span>
+            <span>Gate Report</span>
         </div>
-
+      
         <br />
         <br />
         <div class="mws-panel-body no-padding">
             <table border="1" width="100%" id="gateTableFilter" cellspacing="0" class="mws-datatable-fn mws-table">
                 <thead>
                     <tr>
-                        <th>ATC</th>
-                        <th>Trip ID</th>
-                        <th>Qty.</th>
-                        <th>Sales Type</th>
-                        <th>Weigh-In</th>
-                        <th>Weigh-Out</th>
-                        <th>Tare Weight</th>
-                        <th>Gross Weight</th>
-                        <th>Net Weight</th>
-                        <th>Error Msg</th>
-                        <th>Truck No.</th>
-                        <th>Driver</th>
-                        <th>Sales Order</th>
-                        <th>Customer</th>
+                        <th>delivery no</th>
+                        <th>type</th>
+                        <th>trx type</th>
+                        <th>atc</th>
+                        <th>customer</th>
+                        <th>product</th>
+                        <th>UoM</th>
+                        <th>dispatched date</th>
+                        <th>tare time</th>
+                        <th>gross time</th>
+                        <th>waybill</th>
+                        <th>truck no</th>
+                        <th>driver</th>
+                        <th>tare</th>
+                        <th>gross</th>
+                        <th>net</th>
+                        <th>destination</th>
+                        <th>sender</th>
+                        <th>truck status</th>
                     </tr>
                 </thead>
-
-
+                
             </table>
 
         </div>
     </div>
 </body>
+
 

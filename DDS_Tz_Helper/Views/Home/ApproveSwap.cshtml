@@ -16,8 +16,11 @@
     <title>ApproveSwap</title>
 </head>
 <body>
+    <link href="~/front_template/HTML/css/popup.css" rel="stylesheet" />
+    <script src="~/Scripts/moment.js"></script>
+
     <script language="JavaScript" type="text/javascript">
-        
+
         $(document).ready(function () {
             //var xx = id;
              var loginVAr = "check login";
@@ -52,7 +55,7 @@
                             }
                             else {
 
-                                //url = '@Url.Action("Default", "Home")'; //Default
+                                //url = '@Url.Action("Default", "Home")';
                                 window.open(
                                     url,
                                     '_self');
@@ -96,21 +99,23 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                //$("#btnATCSearch").removeAttr("disabled");
                                 alert(data.msg);
                                 console.log(data.excptn);
 
 
                             }
                             else {
-                                //alert('Receiver Updated successfully');
                                 $("#wrongATC").val(data.vehicle);
                                 $("#correctATC").val(data.atc_no);
                                 $("#txtTrip").val(data.trip_id);
                                 $("#txtReason").val(data.seal);
-                                $("#txtRequestBy").val(data.operatorID);
+                                var dates = new Date(parseInt(data.tare_time.substr(6)));
+                                var actualDate = dates.toDateString()
 
-                                
+                                //var newDate = moment(data.tare_time).format('DD/MM/YYYY HH:mm');
+                                $("#txtRequestBy").val(data.operatorID);
+                                //$("#txtRequestDate").val(data.tare_time);
+                                $("#txtRequestDate").val(actualDate);
 
 
                             }
@@ -124,10 +129,10 @@
 
 
             $("#btnReject").on('click', function () {
-                var comment = $("#txtComment").val();
+                var comment = $("#txtComments").val();
 
                 var msg = "";
-                if (comment == "") { msg = "Please enter Rejection comment! \n"; }
+                if (comment == "") { msg = "Please enter Rejection Comments! \n"; }
 
                 if (msg != "") {
                     alert(msg);
@@ -166,7 +171,6 @@
 
                             }
                             else {
-                                //alert('Receiver Updated successfully');
                                 debugger;
                                 $("#atc").val("");
                                 $("#wrongATC").val("");
@@ -175,32 +179,19 @@
                                 $("#txtReason").val("");
                                 $("#txtRequestBy").val("");
                                 $("#txtRequestDate").val("");
-                                $("#txtCOmment").val("");
+                                $("#txtComments").val("");
 
-                                //window.parent.closeIframe();
 
-                                //$.confirm({
-                                //    title: 'Change Request Success!!',
-                                //    content: "Change Request Approved!!",
-                                //    type: 'green',
-                                //    typeAnimated: true,
-                                //    buttons: {
-                                //        close: function () {
-                                //            window.parent.closeIframe();
-                                //        }
-                                //    }
-                                //});
+                                alert(data.msg);
 
-                                //return false;
-                               
                                 var url = "";
-                                url = '@Url.Action("ATCswapRequests", "Home")'; //Default
+                                url = '@Url.Action("ATCswapRequests", "Home")';
 
                                 window.open(url, "_self");
 
 
                             }
-                            //return false;
+
 
                         },
 
@@ -212,11 +203,11 @@
             });
 
             $("#btnApprove").on('click', function () {
-                var comment = $("#txtComment").val();
+                var comment = $("#txtComments").val();
 
 
                 var msg = "";
-                if (comment == "") { msg = "Please enter Approval comment! \n"; }
+                if (comment == "") { msg = "Please enter Approval Comments! \n"; }
 
 
                 if (msg != "") {
@@ -224,7 +215,7 @@
 
                     return false;
                 }
-                
+
 
                 var token = $('[name=__RequestVerificationToken]').val();
                 var bb = @ViewBag.RecordId;
@@ -256,7 +247,6 @@
 
                             }
                             else {
-                                //alert('Receiver Updated successfully');
                                 debugger;
                                 $("#atc").val("");
                                 $("#wrongATC").val("");
@@ -265,31 +255,17 @@
                                 $("#txtReason").val("");
                                 $("#txtRequestBy").val("");
                                 $("#txtRequestDate").val("");
+                                $("#txtComments").val("");
 
-                                //window.parent.closeIframe();
+                                alert(data.msg);
 
-                                //$.confirm({
-                                //    title: 'Change Request Success!!',
-                                //    content: "Change Request Approved!!",
-                                //    type: 'green',
-                                //    typeAnimated: true,
-                                //    buttons: {
-                                //        close: function () {
-                                //            window.parent.closeIframe();
-                                //        }
-                                //    }
-                                //});
-
-                                //return false;
-                               
                                 var url = "";
-                                url = '@Url.Action("ATCswapRequests", "Home")'; //Default
+                                url = '@Url.Action("ATCswapRequests", "Home")';
 
                                 window.open(url, "_self");
 
 
                             }
-                            //return false;
 
                         },
 
@@ -298,96 +274,6 @@
                 })
             });
 
-
-            @*$("#btnUpdate").on('click', function () {
-
-                var atc = $("#atc").val();
-                var newATC = $("#txtNewATC").val();
-                var reason = $("#txtReason").val();
-
-                var trip_id = $("#txtTrip").val();
-
-
-
-
-                var msg = "";
-                if (atc == "") { msg = "Please enter ATC! \n" ; }
-                if (newATC == "") { msg += "Please enter new ATC! \n"; }
-                if (reason == "") { msg += "Please enter reason for the swap! \n"; }
-
-                if (msg != "") {
-                    alert(msg);
-
-                    return false;
-                }
-
-                var token = $('[name=__RequestVerificationToken]').val();
-                //debugger;
-                 setTimeout(function () {
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("DoATCSwap", "Home")',
-                        async: true,
-                        data: {
-                            __RequestVerificationToken: token,
-                            atc: atc,
-                            newATC: newATC,
-                            trip_id: trip_id,
-                            reason: reason,
-
-
-                        },
-                        error: function (data) {
-                            debugger;
-
-                            alert(data);
-                        },
-                        success: function (data) {
-                            if (data.status == false) {
-
-                                pause_sensor = false;
-                                alert(data.msg);
-
-                            }
-                            else {
-
-
-
-                                alert(data.msg);
-                                $("#atc").val("");
-                                $("#txtNewATC").val("");
-
-
-
-                                $("#btnUpdate").hide();
-                                $("#newATCDiv").hide();
-                                $("#trpDiv").hide();
-                                $("#reasonDiv").hide();
-
-
-
-                                $("#btnATCSearch").removeAttr("disabled");
-                                $("#atc").removeAttr("disabled");
-
-
-
-                                 var url = "";
-                                url = '@Url.Action("ATCSwwap", "Home")'; //Default
-
-
-                            }
-
-                        },
-
-
-                    });
-
-
-
-
-
-                 }, 200);
-            });*@
 
         });
 

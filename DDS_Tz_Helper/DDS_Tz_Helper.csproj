@@ -2651,6 +2651,7 @@
     <Content Include="front_template\HTML\css\mws-theme.css" />
     <Content Include="front_template\HTML\css\panels.css" />
     <Content Include="front_template\HTML\css\plugins.css" />
+    <Content Include="front_template\HTML\css\popup.css" />
     <Content Include="front_template\HTML\css\shared.css" />
     <Content Include="front_template\HTML\css\statistic.css" />
     <Content Include="front_template\HTML\css\table.css" />
@@ -3685,6 +3686,7 @@
     <Content Include="Views\Home\ATCSwap.cshtml" />
     <Content Include="Views\Home\ATCswapRequests.cshtml" />
     <Content Include="Views\Home\ApproveSwap.cshtml" />
+    <Content Include="Views\Home\MaterialReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
