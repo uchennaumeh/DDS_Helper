@@ -36,7 +36,20 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult ATCArchiveRequests()
+        {
+
+            return View();
+        }
+
         public ActionResult ApproveSwap(int? id)
+        {
+            //ession["recordId"] = id;
+            ViewBag.RecordId = id;
+            return View();
+        }
+
+        public ActionResult ApproveArchive(int? id)
         {
             //ession["recordId"] = id;
             ViewBag.RecordId = id;
@@ -49,6 +62,11 @@ namespace DDS_Tz_Helper.Controllers
         }
 
         public ActionResult MaterialReport()
+        {
+            return View();
+        }
+
+        public ActionResult ATCArchive()
         {
             return View();
         }
@@ -633,7 +651,7 @@ namespace DDS_Tz_Helper.Controllers
 
                 //return
             }            
-            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross == null && x.sales_type == "BAGS" && x.sales_type == "PO_OUT").FirstOrDefault();
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross == null && x.sales_type == "PO_OUT").FirstOrDefault();
             if(stoTrxDataDetaisOut != null)
             {
                 //DO STO Outbound swap swap
@@ -665,7 +683,7 @@ namespace DDS_Tz_Helper.Controllers
                 return Json(stdx);
                 //return
             }
-            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare == null && x.sales_type == "BAGS" && x.sales_type == "PO_IN").FirstOrDefault();
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
             if (stoTrxDataDetaisOut != null)
             {
                 //DO STO Inbound swap swap
@@ -825,7 +843,7 @@ namespace DDS_Tz_Helper.Controllers
             string newATCStoOut = StoOutTdaDetails.sales_doc_number;
             string trip_idStoOut = StoOutTdaDetails.trip_id;
 
-            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoOut && x.gross == null && x.sales_type == "BAGS" && x.sales_type == "PO_OUT").FirstOrDefault();
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoOut && x.gross == null && x.sales_type == "PO_OUT").FirstOrDefault();
             var ATCstoTrxDataDetaisOutOld = db.sto_data.Where(x => x.delivery_number_out == oldATCStoOut && x.sales_type == "PO_OUT").FirstOrDefault();
             var ATCstoTrxDataDetaisOutNew = db.sto_data.Where(x => x.delivery_number_out == newATCStoOut && x.sales_type == "PO_OUT").FirstOrDefault();
             if (stoTrxDataDetaisOut != null)
@@ -880,7 +898,7 @@ namespace DDS_Tz_Helper.Controllers
             string newATCStoIn = StoInTdaDetails.sales_doc_number;
             string trip_idStoIn = StoInTdaDetails.trip_id;
 
-            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoIn && x.tare == null && x.sales_type == "BAGS" && x.sales_type == "PO_IN").FirstOrDefault();
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoIn && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
             var ATCstoTrxDataDetaisInOld = db.sto_data.Where(x => x.delivery_number == oldATCStoIn && x.sales_type == "PO_IN").FirstOrDefault();
             var ATCstoTrxDataDetaisInNew = db.sto_data.Where(x => x.delivery_number == newATCStoIn && x.sales_type == "PO_IN").FirstOrDefault();
             if (stoTrxDataDetaisIn != null)
@@ -987,6 +1005,206 @@ namespace DDS_Tz_Helper.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public JsonResult DoActualATCArchive(String __RequestVerificationToken, int id, String comment)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            string msge;
+
+
+            //TRADE
+            var tdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (tdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            string oldATC = tdaDetails.sales_doc_number;
+            string oldATCx = tdaDetails.sales_doc_number.PadLeft(10, '0');
+
+            var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == oldATC && a.seconddatetime == null).FirstOrDefault();
+            var ATCtradeDetails = db.atcs.Where(a => a.sales_doc_number == oldATCx).FirstOrDefault();
+            if (tradeDetails != null)
+            {
+
+                db.Entry(tradeDetails).State = EntityState.Deleted;
+                db.SaveChanges();
+
+                db.Entry(ATCtradeDetails).State = EntityState.Deleted;
+                db.SaveChanges();
+
+
+                tdaDetails.operator_picking = comment;
+                tdaDetails.sales_doc_type = "APPROVED";
+                tdaDetails.picking_time = DateTime.Now;
+
+                db.Entry(tdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATC, user_id, ActivityType.APPROVE_ARCHIVING_HELPER, oldATC, DateTime.Now.ToString());
+
+
+                tradex.msg = "ATC ARCHIVE IS SUCCESSFUL!!";
+                tradex.status = true;
+
+                return Json(tradex);
+
+                //return
+            }
+
+            //STO_TRANSACTION_DATA OUTBOUND
+            var StoOutTdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (StoOutTdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            string oldATCStoOut = StoOutTdaDetails.sales_doc_number;
+
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoOut && x.gross == null && x.sales_type == "PO_OUT").FirstOrDefault();
+            var ATCstoTrxDataDetaisOutOld = db.sto_data.Where(x => x.delivery_number_out == oldATCStoOut && x.sales_type == "PO_OUT").FirstOrDefault();
+
+            if (stoTrxDataDetaisOut != null)
+            {
+                
+                db.Entry(stoTrxDataDetaisOut).State = EntityState.Deleted;
+                db.SaveChanges();
+
+                ATCstoTrxDataDetaisOutOld.used = null;
+
+                db.Entry(ATCstoTrxDataDetaisOutOld).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                StoOutTdaDetails.operator_picking = comment;
+                StoOutTdaDetails.sales_doc_type = "APPROVED";
+                StoOutTdaDetails.picking_time = DateTime.Now;
+
+                db.Entry(StoOutTdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+
+                stdx.status = true;
+                stdx.msg = "ATC ARCHIVE IS SUCCESSFULL";
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCStoOut, user_id, ActivityType.APPROVE_ARCHIVING_HELPER, oldATCStoOut, DateTime.Now.ToString());
+
+                return Json(stdx);
+
+            }
+
+            //STO_TRANSACTION_DATA INBOUND
+            var StoInTdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (StoInTdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+
+            string oldATCStoIn = StoInTdaDetails.vehicle;
+
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoIn && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
+            var ATCstoTrxDataDetaisInOld = db.sto_data.Where(x => x.delivery_number == oldATCStoIn && x.sales_type == "PO_IN").FirstOrDefault();
+            if (stoTrxDataDetaisIn != null)
+            {
+
+                db.Entry(stoTrxDataDetaisIn).State = EntityState.Deleted;
+                db.SaveChanges();
+
+                ATCstoTrxDataDetaisInOld.used = null;
+
+                db.Entry(ATCstoTrxDataDetaisInOld).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                StoInTdaDetails.operator_picking = comment;
+                StoInTdaDetails.sales_doc_type = "APPROVED";
+                StoInTdaDetails.picking_time = DateTime.Now;
+
+                db.Entry(StoInTdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                //DO STO Outbound swap swap
+                stdx.status = true;
+                stdx.msg = "ATC ARCHIVE IS SUCCESSFULL";
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCStoIn, user_id, ActivityType.APPROVE_ARCHIVING_HELPER, oldATCStoIn, DateTime.Now.ToString());
+
+                return Json(stdx);
+            }
+
+            //TRANSACTION_DATA
+            var atcDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (atcDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+
+            string oldATCTrxData = atcDetails.vehicle;
+
+            var TrxDataDetais = db.transaction_data.Where(x => x.sales_doc_number == oldATCTrxData && x.gross == null && x.sales_type == "BAGS").FirstOrDefault();
+            var ATCTrxDataDetaisOld = db.atc_data.Where(x => x.sales_doc_number == oldATCTrxData && x.sales_type == "BAGS").FirstOrDefault();
+
+            if (TrxDataDetais != null)
+            {
+
+                db.Entry(TrxDataDetais).State = EntityState.Deleted;
+                db.SaveChanges();
+
+
+                ATCTrxDataDetaisOld.used = null;
+
+                db.Entry(ATCTrxDataDetaisOld).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+
+                atcDetails.operator_picking = comment;
+                atcDetails.sales_doc_type = "APPROVED";
+                atcDetails.picking_time = DateTime.Now;
+
+                db.Entry(atcDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                //DO STO Outbound swap swap
+                trx_Datax.status = true;
+                trx_Datax.msg = "ATC ARCHIVE IS SUCCESSFULL";
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCTrxData, user_id, ActivityType.APPROVE_ARCHIVING_HELPER, oldATCTrxData, DateTime.Now.ToString());
+
+                return Json(trx_Datax);
+            }
+
+
+            return Json(trx_Datax);
+        }
+
+
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult RejectATCSwap(String __RequestVerificationToken, int id, String comment)
         {
 
@@ -1021,6 +1239,54 @@ namespace DDS_Tz_Helper.Controllers
 
 
                 tradex.msg = "REJECT IS SUCCESSFUL!!";
+                tradex.status = true;
+
+                return Json(tradex);
+
+
+
+            }
+
+
+            return Json(tradex);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult RejectATCArchive(String __RequestVerificationToken, int id, String comment)
+        {
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            var tdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (tdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            else
+            {
+                string oldATC = tdaDetails.sales_doc_number;
+
+                tdaDetails.operator_picking = comment;
+                tdaDetails.sales_doc_type = "REJECTED";
+                tdaDetails.picking_time = DateTime.Now;
+                tdaDetails.wb_in = Session["user_id"].ToString();
+
+
+                db.Entry(tdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATC, user_id, ActivityType.REJECT_ARCHIVING_HELPER, oldATC, DateTime.Now.ToString());
+
+
+                tradex.msg = "ATC ARCHIVE REJECT IS SUCCESSFUL!!";
                 tradex.status = true;
 
                 return Json(tradex);
@@ -1096,6 +1362,69 @@ namespace DDS_Tz_Helper.Controllers
                 return Json(trx_Datax);
             }
                                              
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoApproveATCArchiveFetch(String __RequestVerificationToken, int id)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var returnedTda = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+
+            var user_id = int.Parse(returnedTda.shp_point);
+
+            var operatorUsername = db.users.Where(a => a.Id == user_id).FirstOrDefault();
+            var loggedInUser = operatorUsername.username;
+
+
+            try
+            {
+                if (returnedTda == null)
+                {
+
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                    return Json(trx_Datax);
+
+
+
+
+
+                }
+                else
+                {
+                    trx_Datax.msg = "";
+                    trx_Datax.status = true;
+                    trx_Datax.atc_no = returnedTda.sales_doc_number;
+
+                    //if (returnedTda.tare_time.HasValue)
+                    //{
+                    trx_Datax.tare_time = returnedTda.tare_time ?? DateTime.MinValue;
+                    //var date = new Date(parseInt(returnedTda.tare_time.substr(6)));
+                    //}
+
+                    trx_Datax.operatorID = loggedInUser;
+                    trx_Datax.seal = returnedTda.seal;
+
+                    return Json(trx_Datax);
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                trx_Datax.msg = "Error occured during ATC fetch";
+                trx_Datax.status = false;
+                //trx_Datax.excptn = ex.ToString();
+
+                return Json(trx_Datax);
+            }
+
 
         }
 
@@ -2078,7 +2407,7 @@ namespace DDS_Tz_Helper.Controllers
 
                     int user_id = int.Parse(Session["user_id"].ToString());
                     TransactionLogging TRX_LOG = new TransactionLogging();
-                    bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.MATERIAL_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL HELPER: ", DateTime.Now.ToString());
+                    bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.MATERIAL_REPORT_SPOOL_HELPER, "MATERIAL REPORT SPOOL HELPER: ", DateTime.Now.ToString());
 
                     return Json(new { data = allMaterialsReturned }, JsonRequestBehavior.AllowGet);
                  
@@ -2110,21 +2439,21 @@ namespace DDS_Tz_Helper.Controllers
 
         public ActionResult GetPendingApprovalRequestForSwap()
         {
+            //db.Configuration.ProxyCreationEnabled = false;
+            //var usertry = db.users.ToList();
+            //var roletry = db.roles.ToList();
 
-            var usertry = db.users.ToList();
-            var roletry = db.roles.ToList();
-
-            var jointry = from f in usertry
-                          join c in roletry.DefaultIfEmpty() on f.role_id equals c.Id
-                          select new { f, c };
-
-
+            //var jointry = from f in usertry
+            //              join c in roletry.DefaultIfEmpty() on f.role_id equals c.Id
+            //              select new { f, c };
 
 
 
-            int user_id = int.Parse(Session["user_id"].ToString());
-            TransactionLogging TRX_LOG = new TransactionLogging();
-            bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.GATE_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL: ", DateTime.Now.ToString());
+
+
+            //int user_id = int.Parse(Session["user_id"].ToString());
+            //TransactionLogging TRX_LOG = new TransactionLogging();
+            //bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.GATE_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL: ", DateTime.Now.ToString());
 
             db.Configuration.ProxyCreationEnabled = false;
             try
@@ -2144,6 +2473,57 @@ namespace DDS_Tz_Helper.Controllers
 
 
                 return Json(new { data = returnedReportPendingSwap }, JsonRequestBehavior.AllowGet);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Gate_Datax gate_Datax = new Gate_Datax();
+                gate_Datax.msg = "Something during data spool";
+                gate_Datax.status = false;
+
+                return Json(gate_Datax);
+            }
+        }
+
+
+        public ActionResult GetPendingArchivingRequestForSwap()
+        {
+
+            //var usertry = db.users.ToList();
+            //var roletry = db.roles.ToList();
+
+            //var jointry = from f in usertry
+            //              join c in roletry.DefaultIfEmpty() on f.role_id equals c.Id
+            //              select new { f, c };
+
+
+
+
+
+            //int user_id = int.Parse(Session["user_id"].ToString());
+            //TransactionLogging TRX_LOG = new TransactionLogging();
+            //bool status = TRX_LOG.RecordLog(db, "0000000000", user_id, ActivityType.GATE_REPORT_SPOOL_HELPER, "GATE REPORT SPOOL: ", DateTime.Now.ToString());
+
+            db.Configuration.ProxyCreationEnabled = false;
+            try
+            {
+
+                //var returnedReportPendingSwap0 = from s in db.transaction_data_archive.Where(a => a.operator_weighin == "ATC SWAP REQUEST" && a.sales_doc_type == "PENDING")
+                //                                 join t in db.users on s.shp_point equals t.Id.ToString()
+                //                                 select new { s, t };
+
+                var trxDataArc = db.transaction_data_archive.Where(a => a.operator_weighin == "ATC ARCHIVING REQUEST" && a.sales_doc_type == "PENDING").ToList();
+                var allUsers = db.users.ToList();
+                var returnedReportPendingArchive = from b in trxDataArc
+                                                join v in allUsers on b.shp_point equals v.Id.ToString()
+                                                select new { b, v };
+
+                returnedReportPendingArchive = returnedReportPendingArchive.ToList();
+
+
+                return Json(new { data = returnedReportPendingArchive }, JsonRequestBehavior.AllowGet);
 
 
 
@@ -2370,6 +2750,10 @@ namespace DDS_Tz_Helper.Controllers
 
 
                 var returnedRecord = db.transaction_data.Where(a => a.gross_time >= fromDate && a.gross_time <= toDate && a.error_field != "OFFLINE" && a.sync_status == false && a.error_field != " ").ToList<transaction_data>();
+                //var check2 = from s in returnedRecord.DefaultIfEmpty()
+                //             join d in db.atc_data.DefaultIfEmpty().ToList() on s.sales_doc_number equals d.sales_doc_number
+                //             join v in db.atc_data.DefaultIfEmpty().ToList() on s.parent_sales_order equals v.sales_doc_number
+                //             select new { s, d, v};
 
                 int user_id = int.Parse(Session["user_id"].ToString());
                 TransactionLogging TRX_LOG = new TransactionLogging();
@@ -2387,6 +2771,416 @@ namespace DDS_Tz_Helper.Controllers
 
                 return Json(gate_Datax);
             }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoFetchATcForArchiveDetails(String __RequestVerificationToken, String atc)
+        {
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var trimmedATC = atc.TrimStart('0');
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            string atc_actual = atc;
+            string msge;
+
+            //var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == atc && a.seconddatetime == null).FirstOrDefault();
+            var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == trimmedATC && a.seconddatetime == null).FirstOrDefault();
+            if (tradeDetails != null)
+            {
+                //DO Trade swap
+                tradex.msg = "";
+                tradex.status = true;
+                tradex.statusPicking = false;
+                tradex.atc = tradeDetails.sparenum2.ToString();
+                tradex.trip_ID = "0000000000";
+
+                ViewBag.DestinationTable = "trade";
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(tradex);
+
+                //return
+            }
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross == null && x.sales_type == "PO_OUT").FirstOrDefault();
+            if (stoTrxDataDetaisOut != null)
+            {
+                stdx.msg = "";
+                stdx.status = true;
+
+                stdx.atc = stoTrxDataDetaisOut.po_doc_number;
+                stdx.trip_id = stoTrxDataDetaisOut.trip_id;
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(stdx);
+              
+            }
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
+            if (stoTrxDataDetaisOut != null)
+            {
+            //    //DO STO Inbound swap swap
+                stdx.msg = "";
+                stdx.status = true;
+
+          
+                stdx.atc = stoTrxDataDetaisIn.po_doc_number;
+                stdx.trip_id = stoTrxDataDetaisIn.trip_id;
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(stdx);
+        
+            }
+            var atcDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.gross == null).FirstOrDefault();
+
+            if (atcDetails == null)
+            {
+                //DO Trx_data swap
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                trx_Datax.status = false;
+                trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                return Json(trx_Datax);
+
+            }
+            else
+            {
+                trx_Datax.msg = "";
+                trx_Datax.status = true;
+
+                trx_Datax.atc = atc;
+                trx_Datax.trip_id = atcDetails.trip_id;
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(trx_Datax);
+            }
+
+
+
+
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoActualATCArchiving(String __RequestVerificationToken, String atc, String reason)
+        {
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+            var trimmedATC = atc.TrimStart('0');
+
+            string atc_actual = atc;
+            string msge;
+
+            var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == atc && a.seconddatetime == null).FirstOrDefault();
+            if (tradeDetails != null)
+            {
+                //DO Trade swap
+                tradex.msg = "";
+                tradex.status = true;
+                tradex.statusPicking = false;
+                tradex.atc = tradeDetails.sparenum2.ToString();
+                tradex.trip_ID = "0000000000";
+
+                ViewBag.DestinationTable = "trade";
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(tradex);
+
+            }
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross == null && x.sales_type == "PO_OUT").FirstOrDefault();
+            if (stoTrxDataDetaisOut != null)
+            {
+                stdx.msg = "";
+                stdx.status = true;
+
+                stdx.atc = stoTrxDataDetaisOut.po_doc_number;
+                stdx.trip_id = stoTrxDataDetaisOut.trip_id;
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(stdx);
+       
+            }
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
+            if (stoTrxDataDetaisOut != null)
+            {
+            //  DO STO Inbound swap swap
+                stdx.msg = "";
+                stdx.status = true;
+
+            
+                stdx.atc = stoTrxDataDetaisIn.po_doc_number;
+                stdx.trip_id = stoTrxDataDetaisIn.trip_id;
+
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(stdx);
+
+            }
+            var atcDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.gross == null).FirstOrDefault();
+
+            if (atcDetails == null)
+            {
+                //DO Trx_data swap
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                trx_Datax.status = false;
+                trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                return Json(trx_Datax);
+
+            }
+            else
+            {
+                trx_Datax.msg = "";
+                trx_Datax.status = true;
+
+                trx_Datax.atc = atc;
+                trx_Datax.trip_id = atcDetails.trip_id;
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_ARCHIVE_HELPER, "FETCH ATC ATTEMPT FOR ARCHIVE : ", DateTime.Now.ToString());
+
+                return Json(trx_Datax);
+            }
+
+
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoTempATCArchiving(String __RequestVerificationToken, String atc, String reason)
+        {
+            //Session["TrxSwapPicking"] = 0;
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+            transaction_data_archive tda = new transaction_data_archive();
+            
+
+            string atc_actual = atc;
+            string msge;
+
+            var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == atc && a.seconddatetime == null).FirstOrDefault();
+            if (tradeDetails != null)
+            {
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                //DO Trade swap
+                //string cc = tradeDetails.truckno;
+                tradex.msg = "";
+                tradex.status = true;
+                tradex.statusPicking = false;
+                tda.sales_doc_number = tradeDetails.sparenum2.ToString().PadLeft(10, '0');
+                tda.sales_doc_type = "PENDING";
+                tda.operator_weighin = "ATC ARCHIVING REQUEST";
+                tda.seal = reason;
+                tda.shp_point = user_id.ToString();
+                tda.tare = tradeDetails.firstweight;
+                tda.gross = tradeDetails.secondweight;
+                tda.tare_time = DateTime.Now;
+                tda.sap_post_time = tradeDetails.firstdatetime;
+                tda.gross_time = tradeDetails.seconddatetime;
+                tda.vehicle = tradeDetails.truckno;
+                tda.driver = tradeDetails.sparestr5;
+                tda.migo_details = tradeDetails.product;
+                tda.sender = tradeDetails.sender;
+                tda.destination = tradeDetails.receiver;
+                tda.transporter = tradeDetails.transporter;
+                tda.transporter_name = tradeDetails.transcode;
+                tda.operator_weighout = tradeDetails.username1 + " " + "weighin";
+
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+                tradex.msg = "ARCHIVE IS PENDING APPROVAL";
+                tradex.status = true;
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.SEND_FOR_ARCHIVE_APPROVAL_HELPER, "SEND ATC FOR ARCHIVE APPROVAL :", DateTime.Now.ToString());
+
+                return Json(tradex);
+
+            }
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross == null && x.sales_type == "PO_OUT").FirstOrDefault();
+            if (stoTrxDataDetaisOut != null)
+            {
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                //DO Trade swap
+                //string cc = tradeDetails.truckno;
+                tradex.msg = "";
+                tradex.status = true;
+                tradex.statusPicking = false;
+                tda.sales_doc_number = stoTrxDataDetaisOut.po_doc_number;
+                tda.sales_doc_type = "PENDING";
+                tda.operator_weighin = "ATC ARCHIVING REQUEST";
+                tda.seal = reason;
+                tda.shp_point = user_id.ToString();
+                tda.tare = stoTrxDataDetaisOut.tare;
+                tda.gross = stoTrxDataDetaisOut.gross;
+                tda.tare_time = DateTime.Now;
+                tda.sap_post_time = stoTrxDataDetaisOut.tare_time;
+                tda.gross_time = stoTrxDataDetaisOut.gross_time;
+                tda.vehicle = stoTrxDataDetaisOut.vehicle;
+                tda.driver = stoTrxDataDetaisOut.driver;
+                tda.migo_details = "ZSTO";
+                tda.sender = stoTrxDataDetaisOut.sender;
+                tda.destination = stoTrxDataDetaisOut.receiver;
+                tda.transporter = stoTrxDataDetaisOut.transporter;
+                tda.transporter_name = stoTrxDataDetaisOut.transporter_name;
+                tda.operator_weighout = stoTrxDataDetaisOut.operator_weighin + " " + "weighin";
+
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+             
+                tradex.msg = "ARCHIVE IS PENDING APPROVAL";
+                tradex.status = true;
+                
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.SEND_FOR_ARCHIVE_APPROVAL_HELPER, "SEND ATC FOR ARCHIVE APPROVAL : ", DateTime.Now.ToString());
+
+                return Json(tradex);
+                
+            }
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
+            if (stoTrxDataDetaisIn != null)
+            {
+            //    //DO STO Inbound swap swap
+                stdx.msg = "";
+                stdx.status = true;
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+
+                tradex.msg = "";
+                tradex.status = true;
+                tradex.statusPicking = false;
+                tda.sales_doc_number = stoTrxDataDetaisIn.po_doc_number;
+                tda.sales_doc_type = "PENDING";
+                tda.operator_weighin = "ATC ARCHIVING REQUEST";
+                tda.seal = reason;
+                tda.shp_point = user_id.ToString();
+                tda.tare = stoTrxDataDetaisIn.tare;
+                tda.gross = stoTrxDataDetaisIn.gross;
+                tda.tare_time = DateTime.Now;
+                tda.sap_post_time = stoTrxDataDetaisIn.tare_time;
+                tda.gross_time = stoTrxDataDetaisIn.gross_time;
+                tda.vehicle = stoTrxDataDetaisIn.vehicle;
+                tda.driver = stoTrxDataDetaisIn.driver;
+                tda.migo_details = "ZSTO";
+                tda.sender = stoTrxDataDetaisIn.sender;
+                tda.destination = stoTrxDataDetaisIn.receiver;
+                tda.transporter = stoTrxDataDetaisIn.transporter;
+                tda.transporter_name = stoTrxDataDetaisIn.transporter_name;
+                tda.operator_weighout = stoTrxDataDetaisIn.operator_weighin + " " + "weighin";
+
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+
+                tradex.msg = "ARCHIVE IS PENDING APPROVAL";
+                tradex.status = true;
+
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.SEND_FOR_ARCHIVE_APPROVAL_HELPER, "SEND ATC FOR ARCHIVE APPROVAL : ", DateTime.Now.ToString());
+
+                return Json(tradex);
+            }
+            var atcDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.gross == null).FirstOrDefault();
+
+            if (atcDetails == null)
+            {
+                //DO Trx_data swap
+
+                trx_Datax.status = false;
+                trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                return Json(trx_Datax);
+
+            }
+            else
+            {
+                int user_id = int.Parse(Session["user_id"].ToString());
+
+                tradex.msg = "";
+                tradex.status = true;
+                tradex.statusPicking = false;
+                tda.sales_doc_number = atcDetails.sales_doc_number;
+                tda.sales_doc_type = "PENDING";
+                tda.operator_weighin = "ATC ARCHIVING REQUEST";
+                tda.seal = reason;
+                tda.shp_point = user_id.ToString();
+                tda.tare = atcDetails.tare;
+                tda.gross = atcDetails.gross;
+                tda.tare_time = DateTime.Now;
+                tda.sap_post_time = atcDetails.tare_time;
+                tda.gross_time = atcDetails.gross_time;
+                tda.vehicle = atcDetails.vehicle;
+                tda.driver = atcDetails.driver;
+                tda.migo_details = "CEMENT";
+                tda.sender = atcDetails.sender;
+                tda.destination = atcDetails.destination;
+                tda.transporter = atcDetails.transporter;
+                tda.transporter_name = atcDetails.transporter_name;
+                tda.operator_weighout = atcDetails.operator_weighin + " " + "weighin";
+
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.SEND_FOR_ARCHIVE_APPROVAL_HELPER, "SEND ATC FOR ARCHIVE APPROVAL : ", DateTime.Now.ToString());
+
+
+                tradex.msg = "ARCHIVE IS PENDING APPROVAL";
+                tradex.status = true;
+                return Json(tradex);
+            }
+
+
+
+
         }
 
 

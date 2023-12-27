@@ -1,0 +1,270 @@
+﻿
+@{
+    ViewBag.Title = "ATCArchive";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+</head>
+
+<body>
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+
+                            loginVAr: loginVAr,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+                            else {
+
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+
+            $("#btnUpdate").hide();
+            $("#reasonDiv").hide();
+
+
+            $("#btnATCSearch").on('click', function () {
+                var atc = $("#atc").val();
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n"; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+                $("#btnATCSearch").attr("disabled", "disabled");
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoFetchATcForArchiveDetails", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                $("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                                //alert('Receiver Updated successfully');
+                                $("#atc").val(data.atc);
+
+                                $("#atc").attr("disabled", "disabled");
+
+                                $("#btnUpdate").show();
+                                $("#reasonDiv").show();
+
+                                //url = '@Url.Action("ATCSwap", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+                })
+            });
+
+
+            $("#btnUpdate").on('click', function () {
+
+                var atc = $("#atc").val();
+                var reason = $("#txtReason").val();
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+                if (reason == "") { msg += "Please enter reason for the swap! \n"; }
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                //var destination = @ViewBag.DestinationTable;
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoTempATCArchiving", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                            reason: reason,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+
+                            }
+                            else {
+
+
+
+                                alert(data.msg);
+                                $("#atc").val("");
+                                $("#txtReason").val("");
+
+
+                                $("#btnUpdate").hide();
+                                $("#reasonDiv").hide();
+
+
+
+                                $("#btnATCSearch").removeAttr("disabled");
+                                $("#atc").removeAttr("disabled");
+
+
+
+                                 var url = "";
+                                url = '@Url.Action("ATCArchive", "Home")';
+
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+    <div class="container">
+
+        <div class="mws-panel grid_8">
+            <div class="mws-panel-header">
+                <span>ATC Archive</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-cols">
+                            <div class="mws-form-col-5-8">
+                                <label class="mws-form-label">ATC*</label>
+                                <div class="mws-form-item">
+                                    @*<input type="text" id="atc" placeholder="enter ATC..." class="large">*@
+                                    <input type="text" id="atc" placeholder="enter an ATC that is not already weighed out..." class="large">
+                                </div>
+                            </div>
+                            <div class="mws-form-col-1-8">
+                                <label id="lblGO" class="mws-form-label">.</label>
+                                <div class="mws-form-item">
+                                    @*<button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>*@
+                                    <button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+                        <div id="reasonDiv" class="mws-form-row">
+                            <label class="mws-form-label">Reason For Archiving</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtReason" class="small">
+
+                            </div>
+                        </div>
+                        
+
+
+                    </div>
+                    <div class="mws-button-row">
+
+                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> DO ARCHIVE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</body>
+
+
+
+
+
+

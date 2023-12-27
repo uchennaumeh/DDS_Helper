@@ -3687,6 +3687,9 @@
     <Content Include="Views\Home\ATCswapRequests.cshtml" />
     <Content Include="Views\Home\ApproveSwap.cshtml" />
     <Content Include="Views\Home\MaterialReport.cshtml" />
+    <Content Include="Views\Home\ATCArchive.cshtml" />
+    <Content Include="Views\Home\ATCArchiveRequests.cshtml" />
+    <Content Include="Views\Home\ApproveArchive.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
