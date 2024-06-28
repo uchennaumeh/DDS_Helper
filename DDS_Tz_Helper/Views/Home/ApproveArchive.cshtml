@@ -1,7 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "ApproveArchive";
-    //Layout = "~/Views/Shared/_NewLayout.cshtml";
+   
 
     int id = (int)ViewBag.RecordId;
 }
@@ -105,7 +105,7 @@
                                 $("#txtReason").val(data.seal);
                                 var dates = new Date(parseInt(data.tare_time.substr(6)));
                                 var actualDate = dates.toDateString()
-                                //var newDate = moment(data.tare_time).format('DD/MM/YYYY HH:mm');
+                              
                                 $("#txtRequestBy").val(data.operatorID);
                                 $("#txtRequestDate").val(actualDate);
 
@@ -156,7 +156,7 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                //$("#btnATCSearch").removeAttr("disabled");
+                               
                                 alert(data.msg);
                                 console.log(data.excptn);
 
@@ -285,25 +285,7 @@
 
                 </div>
 
-                @*<div class="mws-form-inline">
-                    <div class="mws-form-row bordered">
-                        <label class="mws-form-label">CORRECT ATC</label>
-                        <div class="mws-form-item">
-                            <input type="text" id="correctATC" class="large">
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="mws-form-inline">
-                    <div class="mws-form-row bordered">
-                        <label class="mws-form-label">TRIP ID</label>
-                        <div class="mws-form-item">
-                            <input type="text" id="txtTrip" class="large">
-                        </div>
-                    </div>
-
-                </div>*@
+                
 
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">

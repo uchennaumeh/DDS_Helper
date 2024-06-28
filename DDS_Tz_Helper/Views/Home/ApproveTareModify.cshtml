@@ -1,10 +1,8 @@
 ﻿
 @{
-    Layout = null;
-
+    ViewBag.Title = "ApproveTareModify";
+    //Layout = null;
     int id = (int)ViewBag.RecordId;
-
-
 }
 
 <!DOCTYPE html>
@@ -12,7 +10,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>ApproveSwap</title>
+    <title>ApproveTare Modification</title>
 </head>
 <body>
     <link href="~/front_template/HTML/css/popup.css" rel="stylesheet" />
@@ -70,8 +68,6 @@
             }, 200);
 
             $("#wrongATC").attr("disabled", "disabled");
-            $("#correctATC").attr("disabled", "disabled");
-            $("#txtTrip").attr("disabled", "disabled");
             $("#txtRequestDate").attr("disabled", "disabled");
             $("#txtRequestBy").attr("disabled", "disabled");
             $("#txtReason").attr("disabled", "disabled");
@@ -81,7 +77,7 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoApproveATCSwapFetch", "Home")',
+                        url: '@Url.Action("DoApproveTareModifFetch", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -104,15 +100,12 @@
 
                             }
                             else {
-                                $("#wrongATC").val(data.vehicle);
-                                $("#correctATC").val(data.atc_no);
-                                $("#txtTrip").val(data.trip_id);
+                                $("#wrongATC").val(data.atc_no);
                                 $("#txtReason").val(data.seal);
                                 var dates = new Date(parseInt(data.tare_time.substr(6)));
                                 var actualDate = dates.toDateString()
-
+                                //var newDate = moment(data.tare_time).format('DD/MM/YYYY HH:mm');
                                 $("#txtRequestBy").val(data.operatorID);
-
                                 $("#txtRequestDate").val(actualDate);
 
 
@@ -144,7 +137,7 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("RejectATCSwap", "Home")',
+                        url: '@Url.Action("RejectTareWeightModification", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -172,8 +165,6 @@
                                 debugger;
                                 $("#atc").val("");
                                 $("#wrongATC").val("");
-                                $("#correctATC").val("");
-                                $("#txtTrip").val("");
                                 $("#txtReason").val("");
                                 $("#txtRequestBy").val("");
                                 $("#txtRequestDate").val("");
@@ -183,7 +174,7 @@
                                 alert(data.msg);
 
                                 var url = "";
-                                url = '@Url.Action("ATCswapRequests", "Home")';
+                                url = '@Url.Action("ModifyTareWeightRequests", "Home")';
 
                                 window.open(url, "_self");
 
@@ -220,7 +211,7 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoActualATCSwap", "Home")',
+                        url: '@Url.Action("DoActualTareModification", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -248,8 +239,6 @@
                                 debugger;
                                 $("#atc").val("");
                                 $("#wrongATC").val("");
-                                $("#correctATC").val("");
-                                $("#txtTrip").val("");
                                 $("#txtReason").val("");
                                 $("#txtRequestBy").val("");
                                 $("#txtRequestDate").val("");
@@ -258,7 +247,7 @@
                                 alert(data.msg);
 
                                 var url = "";
-                                url = '@Url.Action("ATCswapRequests", "Home")';
+                                url = '@Url.Action("ModifyTareWeightRequests", "Home")';
 
                                 window.open(url, "_self");
 
@@ -287,7 +276,7 @@
                 @Html.AntiForgeryToken()
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
-                        <label class="mws-form-label">WRONG ATC</label>
+                        <label class="mws-form-label">ATC </label>
                         <div class="mws-form-item">
                             <input type="text" id="wrongATC" class="large">
                         </div>
@@ -295,25 +284,25 @@
 
                 </div>
 
-                <div class="mws-form-inline">
-                    <div class="mws-form-row bordered">
-                        <label class="mws-form-label">CORRECT ATC</label>
-                        <div class="mws-form-item">
-                            <input type="text" id="correctATC" class="large">
+                @*<div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">CORRECT ATC</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="correctATC" class="large">
+                            </div>
                         </div>
+
                     </div>
 
-                </div>
-
-                <div class="mws-form-inline">
-                    <div class="mws-form-row bordered">
-                        <label class="mws-form-label">TRIP ID</label>
-                        <div class="mws-form-item">
-                            <input type="text" id="txtTrip" class="large">
+                    <div class="mws-form-inline">
+                        <div class="mws-form-row bordered">
+                            <label class="mws-form-label">TRIP ID</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTrip" class="large">
+                            </div>
                         </div>
-                    </div>
 
-                </div>
+                    </div>*@
 
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
@@ -337,7 +326,7 @@
 
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
-                        <label class="mws-form-label">SWAP REASON</label>
+                        <label class="mws-form-label">MODIFY REASON</label>
                         <div class="mws-form-item">
                             <input type="text" id="txtReason" class="large">
                         </div>
@@ -372,3 +361,5 @@
 
 </body>
 </html>
+
+

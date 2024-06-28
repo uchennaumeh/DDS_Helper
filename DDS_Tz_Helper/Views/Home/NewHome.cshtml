@@ -54,8 +54,10 @@
 
         $(document).ready(function () {
             $("#atc").val("");
+            $('#spinner').hide();
 
             $("#btnLogin").on('click', function () {
+                $('#spinner').show();
 
 
 
@@ -87,7 +89,7 @@
                         },
                         error: function (data) {
                             debugger;
-                            console.log(data.excptn);
+                            console.log(data.excptn);                            
                             alert(data);
                             console.log(excptn);
                         },
@@ -96,6 +98,7 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
+                                $('#spinner').hide();
                                 alert(data.msg);
                                 //console.log(excptn);
 
@@ -124,6 +127,7 @@
 
 
     <div id="mws-login-wrapper">
+        <img src="~/front_template/HTML/images/Spinner2.gif" id="spinner" height="100" width="100" />
         <div id="mws-login">
             <h1>Login</h1>
             <div class="mws-login-lock"><i class="icon-lock"></i></div>

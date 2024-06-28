@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "ATCArchiveRequests";
+    ViewBag.Title = "GrossWTChangeApprove";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -46,7 +46,7 @@
 
                 $("#gateTableFilter").DataTable({
                     "ajax": {
-                        "url": '@Url.Action("GetPendingArchivingRequestForSwap", "Home")',
+                        "url": '@Url.Action("GetPendingGrossWTRequestForSwap", "Home")',
                         "type": "GET",
                         data: {
 
@@ -64,13 +64,14 @@
                             }
                         },
                         { "data": "v.username" },
-                        { data: "b.sales_type" },
-                        { "data": "b.sales_doc_type" },
+                        { data: "b.nett" },
+                        { "data": "b.loc" },
                         { "data": "b.seal" },
+                        { "data": "b.sales_doc_type" },
                         {
                             "data": "b.id",
                             "render": function (data) {
-                                return "<a class='btn btn-primary' onclick=Popupform('@Url.Action("ApproveArchive", "Home")/" + data +"')>APPROVE or REJECT</a>";
+                                return "<a class='btn btn-primary' onclick=Popupform('@Url.Action("ApproveGWT", "Home")/" + data +"')>APPROVE or REJECT</a>";
                             },
 
                             "orderable": false,
@@ -127,7 +128,7 @@
                     popup = formDiv.dialog({
                         autoOpen: true,
                         resizable: false,
-                        title: 'Approve or Reject ATC ARCHIVING',
+                        title: 'Approve or Reject ADDITIONAL GROSS WEIGHTS',
                         height: 600,
                         width: 700,
                         close: function () {
@@ -153,7 +154,6 @@
 
     <div class="mws-panel grid_8">
         <div id="overlay"></div>
-        @*<div id="modal"><h1>Modal Content!</h1></div>*@
         <div class="mws-panel-header">
             <span>PENDING ATC ARCHIVING REQUESTS</span>
         </div>
@@ -165,9 +165,10 @@
                         <th>atc no</th>
                         <th>Request Date</th>
                         <th>Requested By</th>
-                        <th>Sales type</th>
-                        <th>Status</th>
+                        <th>Net Weight</th>
+                        <th>Weight To Be Added</th>
                         <th>Reason</th>
+                        <th>status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -177,5 +178,7 @@
         </div>
     </div>
 </body>
+
+
 
 

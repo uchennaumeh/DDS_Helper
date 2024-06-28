@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "ATCArchiveRequests";
+    ViewBag.Title = "ModifyTareWeightRequests";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 }
 
@@ -46,7 +46,7 @@
 
                 $("#gateTableFilter").DataTable({
                     "ajax": {
-                        "url": '@Url.Action("GetPendingArchivingRequestForSwap", "Home")',
+                        "url": '@Url.Action("GetPendingApprovalRequestForTareModify", "Home")',
                         "type": "GET",
                         data: {
 
@@ -64,13 +64,17 @@
                             }
                         },
                         { "data": "v.username" },
+                        { "data": "b.bin_1_tare" },
+                        { "data": "b.bin_2_tare" },
                         { data: "b.sales_type" },
                         { "data": "b.sales_doc_type" },
+
                         { "data": "b.seal" },
                         {
                             "data": "b.id",
                             "render": function (data) {
-                                return "<a class='btn btn-primary' onclick=Popupform('@Url.Action("ApproveArchive", "Home")/" + data +"')>APPROVE or REJECT</a>";
+                                return "<a class='btn btn-primary' onclick=Popupform('@Url.Action("ApproveTareModify", "Home")/" + data +"')>APPROVE or REJECT</a>";
+                                @*return "<a class='btn btn-primary' onclick=('@Url.Action("ApproveTareAlternative", "Home")/" + data +"')>APPROVE or REJECT</a>";*@
                             },
 
                             "orderable": false,
@@ -82,7 +86,7 @@
                     ],
 
                     "language": {
-                        "emptyTable": "No Data Found! <b>Please comfirm</b> you have requests pending approval"
+                        "emptyTable": "No Data Found! <b>Please comfirm</b> you have tare-weight requests pending approval"
                     },
 
                     "dom": "Bfrtip",
@@ -126,8 +130,9 @@
 
                     popup = formDiv.dialog({
                         autoOpen: true,
+                        position: "Center",
                         resizable: false,
-                        title: 'Approve or Reject ATC ARCHIVING',
+                        title: 'Approve or Reject TARE WEIGHT MODIFICATION',
                         height: 600,
                         width: 700,
                         close: function () {
@@ -155,7 +160,7 @@
         <div id="overlay"></div>
         @*<div id="modal"><h1>Modal Content!</h1></div>*@
         <div class="mws-panel-header">
-            <span>PENDING ATC ARCHIVING REQUESTS</span>
+            <span>PENDING TARE WEIGHT CHANGE REQUESTS</span>
         </div>
 
         <div class="mws-panel-body no-padding">
@@ -165,6 +170,8 @@
                         <th>atc no</th>
                         <th>Request Date</th>
                         <th>Requested By</th>
+                        <th>Old Tare</th>
+                        <th>New Tare</th>
                         <th>Sales type</th>
                         <th>Status</th>
                         <th>Reason</th>

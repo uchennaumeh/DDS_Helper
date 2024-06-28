@@ -1,0 +1,538 @@
+﻿
+@{
+    ViewBag.Title = "GrossWeightModif";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+
+
+    //String can_approves = (Session["can_approve"] != null) ? Session["can_approve"].ToString() : "False";
+    String can_approves = Session["can_approve"].ToString();
+    if (can_approves != "True")
+    {
+
+        Response.Redirect("~/Home/NotAllowed");
+    }
+
+}
+
+<head>
+
+    @*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+    <script src="~/Scripts/moment.js"></script>
+
+</head>
+
+<body>
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+
+                            loginVAr: loginVAr,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+                            else {
+
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+
+            $("#btnUpdate").hide();
+            $("#truckDiv").hide();
+            $("#tripDiv").hide();
+            $("#senderDiv").hide();
+            $("#stoLocDiv").hide();
+            $("#destinationDiv").hide();
+            $("#transDiv").hide();
+            $("#driverDiv").hide();
+            $("#receiverDiv").hide();
+            $("#netDiv").hide();
+            $("#numberDiv").hide();
+            $("#newWTDiv").hide();
+            $("#reasonDiv").hide();
+            $("#ActualTruckNumDiv").hide();
+            $("#ActualDriverNameDiv").hide();
+            $("#MigoDiv").hide();
+            $("#ActualDestinationDiv").hide();
+            $("#opWeighinDiv").hide();
+            $("#opPickingDiv").hide();
+       
+
+
+
+            $("#btnATCSearch").on('click', function () {
+                var atc = $("#atc").val();
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n"; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+                $("#btnATCSearch").attr("disabled", "disabled");
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoFetchATcForGrossModif", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                $("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                             
+                                $("#atc").val(data.atc);
+                                $("#txtTruckNum").val(data.requestedBy);
+                                $("#txtDriverName").val(data.approvedBy);
+                                $("#txtStoLoc").val(data.stoLoc);
+                                $("#txtTransporter").val(data.grade);
+
+
+                                var mmm = moment(data.dateOfRequest).format('DD/MM/YYYY HH:mm');
+                                $("#txtSender").val(mmm);
+
+                                var mmmm = moment(data.dateOfApproval).format('DD/MM/YYYY HH:mm');
+                                $("#txtDestination").val(mmmm);
+
+
+                                $("#txtTrip").val(data.destination);
+                                $("#txtReceiver").val(data.driverName);
+                                $("#txtNet").val(data.sender);
+                                $("#txtNumberOfBags").val(data.Quantity);
+                                $("#txtPlateNum").val(data.truckNumber);
+                                $("#txtActualDriverName").val(data.TruckDriverName);
+                                $("#txtActualTransType").val(data.Migo_Details);
+                                $("#txtActualDestination").val(data.truckDestination);
+                                $("#txtActualWeighin").val(data.operatorWeighin);
+                                $("#txtActualPicking").val(data.operatorPicking);
+
+                                $("#atc").attr("disabled", "disabled");
+                                
+                                $("#txtRequestBy").val(data.operatorID);
+                   
+
+
+                                
+                                $("#txtTruckNum").attr("disabled", "disabled");
+                                $("#txtDriverName").attr("disabled", "disabled");
+                                $("#txtStoLoc").attr("disabled", "disabled");
+                                $("#txtTransporter").attr("disabled", "disabled");
+                                $("#txtSender").attr("disabled", "disabled");
+                                $("#txtDestination").attr("disabled", "disabled");
+                                $("#txtTrip").attr("disabled", "disabled");
+                                $("#txtReceiver").attr("disabled", "disabled");
+                                $("#txtNet").attr("disabled", "disabled");
+                                $("#txtNumberOfBags").attr("disabled", "disabled");
+
+
+
+                                $("#btnUpdate").show();
+                                $("#truckDiv").show();
+                                $("#tripDiv").show();
+                                $("#senderDiv").show();
+                                $("#stoLocDiv").show();
+                                $("#destinationDiv").show();
+                                $("#transDiv").show();
+                                $("#driverDiv").show();
+                                $("#receiverDiv").show();
+                                $("#netDiv").show();
+                                $("#numberDiv").show();
+                                $("#newWTDiv").show();
+                                $("#reasonDiv").show();
+
+
+                                
+                                 //var url = "";
+                                //url = '@Url.Action("STO_Modify", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+                })
+            });
+
+
+            $("#btnUpdate").on('click', function () {
+
+                var atc = $("#atc").val();
+                var requestedBy = $("#txtTruckNum").val();
+                var approvedBy = $("#txtDriverName").val();
+                var stoLoc = $("#txtStoLoc").val();
+                var transporter = $("#txtTransporter").val();
+                var sender = $("#txtSender").val();
+                var dateOfApproval = $("#txtDestination").val();
+                var oldGrosss = $("#txtTrip").val();
+                var receiver = $("#txtReceiver").val();
+                var net = $("#txtNet").val();
+                var numberOfBags = $("#txtNumberOfBags").val();
+                var newWT = $("#txtNewWtToBeAdded").val();
+                var reason = $("#txtReason").val();
+                var ActualPlateNum = $("#txtPlateNum").val();
+                var ActualDriverName = $("#txtActualDriverName").val();
+                var ActualTransType = $("#txtActualTransType").val();
+                var ActualDestination = $("#txtActualDestination").val();
+                var ActualWeighin = $("#txtActualWeighin").val();
+                var ActualPicking = $("#txtActualPicking").val();
+
+           
+
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+                if (requestedBy == "") { msg += "Please enter Requested by! \n"; }
+                if (approvedBy == "") { msg += "Please enter Approved by! \n"; }
+                if (stoLoc == "") { msg += "Please enter storage location! \n"; }
+                if (transporter == "") { msg += "Please enter transporter name! \n"; }
+                if (sender == "") { msg += "Please enter sender name! \n"; }
+                if (dateOfApproval == "") { msg += "Please date of approval! \n"; }
+                if (oldGrosss == "") { msg += "Please enter Old Grosss! \n"; }
+                if (receiver == "") { msg += "Please enter receiver! \n"; }
+                if (newWT == "") { msg += "Please enter new weight to be added! \n"; }
+                if (reason == "") { msg += "Please enter reason for additional weight change! \n"; }
+                if (newWT > 150 || newWT < -150) { msg += "New Weight cannot be more than 150 or less than -150! \n"; }
+
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoModifyGrossWeightRequest", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                            requestedBy: requestedBy,
+                            approvedBy: approvedBy,
+                            stoLoc: stoLoc,
+                            transporter: transporter,
+                            sender: sender,
+                            dateOfApproval: dateOfApproval,
+                            oldGrosss: oldGrosss,
+                            receiver: receiver,
+                            net: net,
+                            numberOfBags: numberOfBags,
+                            newWT: newWT,
+                            reason: reason,
+                            ActualPlateNum: ActualPlateNum,
+                            ActualDriverName: ActualDriverName,
+                            ActualTransType: ActualTransType,
+                            ActualDestination: ActualDestination,
+                            ActualWeighin: ActualWeighin,
+                            ActualPicking: ActualPicking,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+                            }
+                            else {
+
+
+
+                                alert(data.msg);
+                                $("#atc").val("");
+                                $("#txtTruckNum").val("");
+                                $("#txtDriverName").val("");
+                                $("#txtStoLoc").val("");
+                                $("#txtTransporter").val("");
+                                $("#txtDestination").val("");
+                                $("#txtSender").val("");
+                                $("#txtTrip").val("");
+                                $("#txtReceiver").val("");
+                                $("#txtNet").val("");
+                                $("#txtNumberOfBags").val("");
+                                $("#txtNewWtToBeAdded").val("");
+                                $("#txtReason").val("");
+                                $("#txtPlateNum").val("");
+                                $("#txtActualDriverName").val("");
+                                $("#txtActualTransType").val("");
+                                $("#txtActualDestination").val("");
+                                $("#txtActualWeighin").val("");
+                                $("#txtActualPicking").val("");
+
+
+                                $("#btnUpdate").hide();
+                                $("#truckDiv").hide();
+                                $("#tripDiv").hide();
+                                $("#senderDiv").hide();
+                                $("#stoLocDiv").hide();
+                                $("#destinationDiv").hide();
+                                $("#transDiv").hide();
+                                $("#driverDiv").hide();
+                                $("#netDiv").hide();
+                                $("#numberDiv").hide();
+                                $("#newWTDiv").hide();
+                                $("#reasonDiv").hide();
+                                $("#receiverDiv").hide();
+
+
+
+                                $("#btnATCSearch").removeAttr("disabled");
+                                $("#atc").removeAttr("disabled");
+
+
+
+                                 var url = "";
+                                url = '@Url.Action("GrossWeightModif", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+    <div class="container">
+
+        <div class="mws-panel grid_8">
+            <div class="mws-panel-header">
+                <span>Modify STO</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-cols">
+                            <div class="mws-form-col-5-8">
+                                <label class="mws-form-label">ATC*</label>
+                                <div class="mws-form-item">
+                                    @*<input type="text" id="atc" placeholder="enter ATC..." class="large">*@
+                                    <input type="text" id="atc" placeholder="enter ATC..." class="large">
+                                </div>
+                            </div>
+                            <div class="mws-form-col-1-8">
+                                <label id="lblGO" class="mws-form-label">.</label>
+                                <div class="mws-form-item">
+                                    @*<button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>*@
+                                    <button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+                        <div id="truckDiv" class="mws-form-row">
+                            <label class="mws-form-label">DDS change Requested By</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTruckNum" class="small">
+
+                            </div>
+                        </div>
+                        <div id="senderDiv" class="mws-form-row">
+                            <label class="mws-form-label">DDS Date of Request</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtSender" class="small">
+                            </div>
+                        </div>
+                        <div id="driverDiv" class="mws-form-row">
+                            <label class="mws-form-label">DDS change Approved By</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtDriverName" class="small">
+                            </div>
+                        </div>
+                        <div id="destinationDiv" class="mws-form-row">
+                            <label class="mws-form-label">DDS Date of Approval</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtDestination" class="small">
+                            </div>
+                        </div>
+                        <div id="stoLocDiv" class="mws-form-row">
+                            <label class="mws-form-label">DDS Approval Status</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtStoLoc" class="small">
+                            </div>
+                        </div>
+                        <div id="transDiv" class="mws-form-row">
+                            <label class="mws-form-label">DDS weight Approved</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTransporter" class="small">
+                            </div>
+                        </div>
+
+
+                        <div id="receiverDiv" class="mws-form-row">
+                            <label class="mws-form-label">Tare Weight</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtReceiver" class="small">
+                            </div>
+                        </div>
+                        <div id="tripDiv" class="mws-form-row">
+                            <label class="mws-form-label">Gross Weight</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTrip" class="small">
+                            </div>
+                        </div>
+                        <div id="netDiv" class="mws-form-row">
+                            <label class="mws-form-label">Net Weight</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtNet" class="small">
+                            </div>
+                        </div>
+                        <div id="numberDiv" class="mws-form-row">
+                            <label class="mws-form-label">Number of Bags</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtNumberOfBags" class="small">
+                            </div>
+                        </div>
+                        <div id="newWTDiv" class="mws-form-row">
+                            <label class="mws-form-label">Enter New Weight to Be Added</label>
+                            <div class="mws-form-item">
+                                <input type="number" id="txtNewWtToBeAdded" class="small">
+                            </div>
+                        </div>
+                        <div id="reasonDiv" class="mws-form-row">
+                            <label class="mws-form-label">Reason For More GW Modification</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtReason" class="small">
+                            </div>
+                        </div>
+                        <div id="ActualTruckNumDiv" class="mws-form-row">
+                            <label class="mws-form-label">Plate number</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtPlateNum" class="small">
+                            </div>
+                        </div>
+                        <div id="ActualDriverNameDiv" class="mws-form-row">
+                            <label class="mws-form-label">Driver Name</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtActualDriverName" class="small">
+                            </div>
+                        </div>
+                        <div id="MigoDiv" class="mws-form-row">
+                            <label class="mws-form-label">Trans Type</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtActualTransType" class="small">
+                            </div>
+                        </div>
+                        <div id="ActualDestinationDiv" class="mws-form-row">
+                            <label class="mws-form-label">Actual Destination</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtActualDestination" class="small">
+                            </div>
+                        </div>
+                        <div id="opWeighinDiv" class="mws-form-row">
+                            <label class="mws-form-label">OP WeighIN</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtActualWeighin" class="small">
+                            </div>
+                        </div>
+                        <div id="opPickingDiv" class="mws-form-row">
+                            <label class="mws-form-label">Op Picking</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtActualPicking" class="small">
+                            </div>
+                        </div>
+                        
+                                               
+
+                    </div>
+                    <div class="mws-button-row">
+
+                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> REQUEST FOR FURTHER WEIGHT CHANGE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</body>
+
+
+

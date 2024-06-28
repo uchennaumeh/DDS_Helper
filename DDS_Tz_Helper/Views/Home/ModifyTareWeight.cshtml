@@ -1,0 +1,336 @@
+﻿
+@{
+    ViewBag.Title = "ModifyTareWeight";
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+}
+
+<head>
+
+</head>
+
+<body>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>*@
+
+    <script src="~/Scripts/moment.js"></script>
+
+
+    <script language="JavaScript" type="text/javascript">
+
+        $(document).ready(function () {
+
+             var loginVAr = "check login";
+            setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("checkLogin", "Home")',
+                        async: true,
+                        data: {
+
+                            loginVAr: loginVAr,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                        },
+                        success: function (data) {
+
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+
+                                var url = "";
+                                url = '@Url.Action("NewHome", "Home")';
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+                            else {
+
+                                //url = '@Url.Action("Default", "Home")'; //Default
+                                window.open(
+                                    url,
+                                    '_self');
+
+                            }
+
+                        },
+
+
+                    });
+
+
+            }, 200);
+
+
+            $("#btnUpdate").hide();
+            $("#reasonDiv").hide();
+            $("#oldTareDiv").hide();
+            $("#newTareDiv").hide();
+            $("#tareTimeDiv").hide();
+            $("#operatorDiv").hide();
+
+
+            $("#btnATCSearch").on('click', function () {
+                var atc = $("#atc").val();
+
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n"; }
+
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+                $("#btnATCSearch").attr("disabled", "disabled");
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoFetchATcForTareChangeDetails", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                $("#btnATCSearch").removeAttr("disabled");
+                                alert(data.msg);
+                                console.log(data.excptn);
+
+
+                            }
+                            else {
+                                //alert('Receiver Updated successfully');
+                                $("#atc").val(data.atc);
+                                $("#txtOldTare").val(data.tare);
+                                $("#txtOperator").val(data.operator_weighn);
+                                $("#txtTareTime").val(moment(data.tare_time).format('DD/MM/YYYY HH:mm'));
+                                //$("#txtTareTime").val(data.tare_time);
+
+                                moment(data).format('DD/MM/YYYY HH:mm')
+
+                                $("#operatorDiv").show();
+                                $("#reasonDiv").show();
+                                $("#tareTimeDiv").show();
+                                $("#newTareDiv").show();
+
+                                $("#atc").attr("disabled", "disabled");
+                                $("#txtOldTare").attr("disabled", "disabled");
+                                $("#txtOperator").attr("disabled", "disabled");
+                                $("#txtTareTime").attr("disabled", "disabled");
+
+                                $("#btnUpdate").show();
+                                $("#oldTareDiv").show();
+
+                                //url = '@Url.Action("ModifyTareWeight", "Home")'; //Default
+
+
+                            }
+
+                        },
+
+
+                    });
+                })
+            });
+
+
+            $("#btnUpdate").on('click', function () {
+
+                var atc = $("#atc").val();
+                var reason = $("#txtReason").val();
+                var newTare = $("#txtNewTare").val();
+                var operator = $("#txtOperator").val();
+                var oldTare = $("#txtOldTare").val();
+
+                var msg = "";
+                if (atc == "") { msg = "Please enter ATC! \n" ; }
+                if (reason == "") { msg += "Please enter reason for the tare weight change! \n"; }
+                if (newTare == "") { msg += "Please enter the new tare weight! \n"; }
+
+                if (msg != "") {
+                    alert(msg);
+
+                    return false;
+                }
+
+                var token = $('[name=__RequestVerificationToken]').val();
+                //var destination = @ViewBag.DestinationTable;
+                //debugger;
+                 setTimeout(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DoTempTareWeightChange", "Home")',
+                        async: true,
+                        data: {
+                            __RequestVerificationToken: token,
+                            atc: atc,
+                            reason: reason,
+                            newTare: newTare,
+                            operator: operator,
+                            oldTare: oldTare,
+
+                        },
+                        error: function (data) {
+                            debugger;
+
+                            alert(data);
+                        },
+                        success: function (data) {
+                            if (data.status == false) {
+
+                                pause_sensor = false;
+                                alert(data.msg);
+
+                            }
+                            else {
+
+
+
+                                alert(data.msg);
+                                $("#atc").val("");
+                                $("#txtReason").val("");
+
+
+                                $("#btnUpdate").hide();
+                                $("#reasonDiv").hide();
+                                $("#btnUpdate").hide();
+                                $("#reasonDiv").hide();
+                                $("#oldTareDiv").hide();
+                                $("#newTareDiv").hide();
+                                $("#tareTimeDiv").hide();
+                                $("#operatorDiv").hide();
+
+
+
+                                $("#btnATCSearch").removeAttr("disabled");
+                                $("#atc").removeAttr("disabled");
+
+
+
+                                 var url = "";
+                                url = '@Url.Action("ModifyTareWeight", "Home")';
+
+
+                            }
+
+                        },
+
+
+                    });
+
+
+
+
+
+                 }, 200);
+            });
+
+        });
+
+    </script>
+
+    <div class="container">
+
+        <div class="mws-panel grid_8">
+            <div class="mws-panel-header">
+                <span>MODIFY TARE WEIGHT</span>
+            </div>
+            <div class="mws-panel-body no-padding">
+                <form class="mws-form" action="form_layouts.html">
+                    @Html.AntiForgeryToken()
+                    <div class="mws-form-inline">
+                        <div class="mws-form-cols">
+                            <div class="mws-form-col-5-8">
+                                <label class="mws-form-label">ATC*</label>
+                                <div class="mws-form-item">
+                                    @*<input type="text" id="atc" placeholder="enter ATC..." class="large">*@
+                                    <input type="text" id="atc" placeholder="enter an ATC that is not already weighed out..." class="large">
+                                </div>
+                            </div>
+                            <div class="mws-form-col-1-8">
+                                <label id="lblGO" class="mws-form-label">.</label>
+                                <div class="mws-form-item">
+                                    @*<button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>*@
+                                    <button id="btnATCSearch" class="btn btn-primary" type="button"><i class="fa fa-key"></i> GO</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+                        <div id="oldTareDiv" class="mws-form-row">
+                            <label class="mws-form-label">Old Tare</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtOldTare" class="small">
+
+                            </div>
+                        </div>
+                        <div id="operatorDiv" class="mws-form-row">
+                            <label class="mws-form-label">Weigh In Operator</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtOperator" class="small">
+
+                            </div>
+                        </div>
+                        <br />
+                        <div id="newTareDiv" class="mws-form-row">
+                            <label class="mws-form-label">New Tare</label>
+                            <div class="mws-form-item">
+                                <input type="number" id="txtNewTare" class="small">
+
+                            </div>
+                        </div>
+                        <div id="tareTimeDiv" class="mws-form-row">
+                            <label class="mws-form-label">Tare Time</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtTareTime" class="small">
+
+                            </div>
+                        </div>
+
+
+                        <br />
+                        <div id="reasonDiv" class="mws-form-row">
+                            <label class="mws-form-label">Reason For Modification</label>
+                            <div class="mws-form-item">
+                                <input type="text" id="txtReason" class="small">
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="mws-button-row">
+
+                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> SEND TARE MODIFICATION REQUEST</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</body>
+

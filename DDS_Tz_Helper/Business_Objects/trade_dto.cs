@@ -13,6 +13,11 @@ namespace DDS_Tz_Helper.Business_Objects
         public string atc { get; set; }
         public bool statusPicking { get; set; }
         public string trip_ID { get; set; }
+        public string Tare { get; set; }
+        public string operator_weighn { get; set; }
+        public string operatorWeighIn { get; set; }
+        public DateTime? tareTime { get; set; }
+        public DateTime? tare_time { get; set; }
         public Boolean status { get; set; }
     }
 }

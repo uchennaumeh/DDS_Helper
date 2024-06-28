@@ -22,9 +22,8 @@ body,
 	background-color:#35353a;
 }
 
-#mws-header
-{
-	border-color:#c5d52b;
+#mws-header {
+    border-color: #c5d52b;
 }
 
 .mws-panel .mws-panel-header span, 

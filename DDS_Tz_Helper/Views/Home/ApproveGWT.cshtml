@@ -1,10 +1,8 @@
 ﻿
 @{
-    Layout = null;
+    ViewBag.Title = "ApproveGWT";
 
     int id = (int)ViewBag.RecordId;
-
-
 }
 
 <!DOCTYPE html>
@@ -69,19 +67,20 @@
 
             }, 200);
 
-            $("#wrongATC").attr("disabled", "disabled");
-            $("#correctATC").attr("disabled", "disabled");
-            $("#txtTrip").attr("disabled", "disabled");
+            $("#txtATC").attr("disabled", "disabled");
+            $("#txtDriver").attr("disabled", "disabled");
+            $("#txtVehicle").attr("disabled", "disabled");
+            $("#txtReason").attr("disabled", "disabled");
             $("#txtRequestDate").attr("disabled", "disabled");
             $("#txtRequestBy").attr("disabled", "disabled");
-            $("#txtReason").attr("disabled", "disabled");
+            $("#txtWTAdd").attr("disabled", "disabled");
 
             var token = $('[name=__RequestVerificationToken]').val();
             var bb = @ViewBag.RecordId;
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoApproveATCSwapFetch", "Home")',
+                        url: '@Url.Action("DoApproveATCGWTFetch", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -104,16 +103,17 @@
 
                             }
                             else {
-                                $("#wrongATC").val(data.vehicle);
-                                $("#correctATC").val(data.atc_no);
-                                $("#txtTrip").val(data.trip_id);
+                                $("#txtATC").val(data.atc_no);
+                                $("#txtDriver").val(data.driver);
+                             
+                                var newDate = moment(data.tare_time).format('DD/MM/YYYY HH:mm');
+                                $("#txtVehicle").val(data.vehicle);
+                           
                                 $("#txtReason").val(data.seal);
-                                var dates = new Date(parseInt(data.tare_time.substr(6)));
-                                var actualDate = dates.toDateString()
-
+                                $("#txtRequestDate").val(newDate);
                                 $("#txtRequestBy").val(data.operatorID);
-
-                                $("#txtRequestDate").val(actualDate);
+                                $("#txtWTAdd").val(data.nett);
+                            
 
 
                             }
@@ -144,7 +144,7 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("RejectATCSwap", "Home")',
+                        url: '@Url.Action("RejectGWTRequest", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -162,7 +162,7 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                //$("#btnATCSearch").removeAttr("disabled");
+                             
                                 alert(data.msg);
                                 console.log(data.excptn);
 
@@ -170,20 +170,20 @@
                             }
                             else {
                                 debugger;
-                                $("#atc").val("");
-                                $("#wrongATC").val("");
-                                $("#correctATC").val("");
-                                $("#txtTrip").val("");
+                                $("#txtATC").val("");
+                                $("#txtDriver").val("");
+                                $("#txtVehicle").val("");
                                 $("#txtReason").val("");
-                                $("#txtRequestBy").val("");
                                 $("#txtRequestDate").val("");
+                                $("#txtRequestBy").val("");
                                 $("#txtComments").val("");
+                                $("#txtWTAdd").val("");
 
 
                                 alert(data.msg);
 
                                 var url = "";
-                                url = '@Url.Action("ATCswapRequests", "Home")';
+                                url = '@Url.Action("GrossWTChangeApprove", "Home")';
 
                                 window.open(url, "_self");
 
@@ -202,6 +202,8 @@
 
             $("#btnApprove").on('click', function () {
                 var comment = $("#txtComments").val();
+                var weightToBeAdded = $("#txtWTAdd").val();
+               
 
 
                 var msg = "";
@@ -220,12 +222,13 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoActualATCSwap", "Home")',
+                        url: '@Url.Action("DoActualGWTApproval", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
                             id: bb,
                             comment: comment,
+                            weightToBeAdded: weightToBeAdded,
 
                         },
                         error: function (data) {
@@ -238,7 +241,7 @@
                             if (data.status == false) {
 
                                 pause_sensor = false;
-                                //$("#btnATCSearch").removeAttr("disabled");
+                               
                                 alert(data.msg);
                                 console.log(data.excptn);
 
@@ -246,19 +249,19 @@
                             }
                             else {
                                 debugger;
-                                $("#atc").val("");
-                                $("#wrongATC").val("");
-                                $("#correctATC").val("");
-                                $("#txtTrip").val("");
+                                $("#txtATC").val("");
+                                $("#txtDriver").val("");
+                                $("#txtVehicle").val("");
                                 $("#txtReason").val("");
-                                $("#txtRequestBy").val("");
                                 $("#txtRequestDate").val("");
+                                $("#txtRequestBy").val("");
                                 $("#txtComments").val("");
+                                $("#txtWTAdd").val("");
 
                                 alert(data.msg);
 
                                 var url = "";
-                                url = '@Url.Action("ATCswapRequests", "Home")';
+                                url = '@Url.Action("GrossWTChangeApprove", "Home")';
 
                                 window.open(url, "_self");
 
@@ -287,9 +290,9 @@
                 @Html.AntiForgeryToken()
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
-                        <label class="mws-form-label">WRONG ATC</label>
+                        <label class="mws-form-label">ATC</label>
                         <div class="mws-form-item">
-                            <input type="text" id="wrongATC" class="large">
+                            <input type="text" id="txtATC" class="large">
                         </div>
                     </div>
 
@@ -297,9 +300,9 @@
 
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
-                        <label class="mws-form-label">CORRECT ATC</label>
+                        <label class="mws-form-label">DRIVER </label>
                         <div class="mws-form-item">
-                            <input type="text" id="correctATC" class="large">
+                            <input type="text" id="txtDriver" class="large">
                         </div>
                     </div>
 
@@ -307,9 +310,18 @@
 
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
-                        <label class="mws-form-label">TRIP ID</label>
+                        <label class="mws-form-label">VEHICLE</label>
                         <div class="mws-form-item">
-                            <input type="text" id="txtTrip" class="large">
+                            <input type="text" id="txtVehicle" class="large">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="mws-form-inline">
+                    <div class="mws-form-row bordered">
+                        <label class="mws-form-label">AMOUNT TO BE ADDED</label>
+                        <div class="mws-form-item">
+                            <input type="text" id="txtWTAdd" class="large">
                         </div>
                     </div>
 
@@ -337,7 +349,7 @@
 
                 <div class="mws-form-inline">
                     <div class="mws-form-row bordered">
-                        <label class="mws-form-label">SWAP REASON</label>
+                        <label class="mws-form-label">REASON FOR THIS REQUEST</label>
                         <div class="mws-form-item">
                             <input type="text" id="txtReason" class="large">
                         </div>
@@ -372,3 +384,6 @@
 
 </body>
 </html>
+
+
+

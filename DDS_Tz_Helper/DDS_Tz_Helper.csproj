@@ -444,6 +444,11 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="raw_weigher.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -2782,6 +2787,8 @@
     <Content Include="front_template\HTML\images\DDS.png" />
     <Content Include="front_template\HTML\images\mws-logo.png" />
     <Content Include="front_template\HTML\images\processing.gif" />
+    <Content Include="front_template\HTML\images\spinner2.gif" />
+    <Content Include="front_template\HTML\images\SpinnerOrange.gif" />
     <Content Include="front_template\HTML\images\welcome-greetings.gif" />
     <Content Include="front_template\HTML\images\welcome.gif" />
     <Content Include="front_template\HTML\index.html" />
@@ -3615,6 +3622,10 @@
     <Content Include="Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -3690,6 +3701,15 @@
     <Content Include="Views\Home\ATCArchive.cshtml" />
     <Content Include="Views\Home\ATCArchiveRequests.cshtml" />
     <Content Include="Views\Home\ApproveArchive.cshtml" />
+    <Content Include="Views\Home\ModifyTareWeight.cshtml" />
+    <Content Include="Views\Home\ModifyTareWeightRequests.cshtml" />
+    <Content Include="Views\Home\ApproveTareModify.cshtml" />
+    <Content Include="Views\Home\ApproveTareAlternative.cshtml" />
+    <Content Include="Views\Home\STOPostingErrorReport.cshtml" />
+    <Content Include="Views\Home\RepairInbound.cshtml" />
+    <Content Include="Views\Home\GrossWeightModif.cshtml" />
+    <Content Include="Views\Home\GrossWTChangeApprove.cshtml" />
+    <Content Include="Views\Home\ApproveGWT.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
