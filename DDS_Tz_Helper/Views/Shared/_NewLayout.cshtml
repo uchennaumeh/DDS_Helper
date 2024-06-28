@@ -10,6 +10,11 @@
         roleP = "weighbridge";
 
     }
+    if (Session["Role"].ToString() == "3008")
+    {
+        roleP = "picking";
+
+    }
     if (Session["Role"].ToString() == "4")
     {
         roleP = "admin";
@@ -297,17 +302,17 @@
 
 
                             @*<li class="active" id="ModifyParams">
-                                <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
-                                <ul>
+                    <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
+                    <ul>
 
-                                    <li><a href="~/Home/ATCSwapRequests">ATC SWAP REQUEST</a></li>
+                        <li><a href="~/Home/ATCSwapRequests">ATC SWAP REQUEST</a></li>
 
-                                    <li><a href="~/Home/ATCArchiveRequests">ATC ARCHIVE REQUESTS</a></li>
+                        <li><a href="~/Home/ATCArchiveRequests">ATC ARCHIVE REQUESTS</a></li>
 
-                                    <li><a href="~/Home/ModifyTareWeightRequests">TARE WEIGHTS REQUESTS</a></li>
+                        <li><a href="~/Home/ModifyTareWeightRequests">TARE WEIGHTS REQUESTS</a></li>
 
-                                </ul>
-                            </li>*@
+                    </ul>
+                </li>*@
 
                             <li class="active" id="ModifyParams">
                                 <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
@@ -569,6 +574,52 @@
 
                                 </ul>
                             </li>
+
+                        }
+                    }
+
+                    @*picking roles*@
+                    @{
+                        if (roleP == "picking" && TareApprove == "UserCannotApproveTare")
+                        {
+
+
+
+
+                            <li class="active" id="ModifyParams">
+                                <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
+                                <ul>
+
+                                    <li><a href="~/Home/ModifyTareWeight">REQUEST TARE WEIGHT CHANGE</a></li>
+                                    <li><a href="~/Home/GrossWeightModif">REQUEST GROSS WEIGHT CHANGE</a></li>
+
+                                </ul>
+                            </li>
+
+
+
+                        }
+                    }
+
+
+                    @{
+                        if (roleP == "picking" && TareApprove == "UserCanApproveTare")
+                        {
+
+
+
+
+                            <li class="active" id="ModifyParams">
+                                <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
+                                <ul>
+
+                                    <li><a href="~/Home/ModifyTareWeightRequests">APPROVE TARE WEIGHTS REQUESTS</a></li>
+                                    <li><a href="~/Home/GrossWTChangeApprove">APPROVE GROSS WEIGHT REQUESTS</a></li>
+
+                                </ul>
+                            </li>
+
+
 
                         }
                     }
