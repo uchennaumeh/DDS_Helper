@@ -83,6 +83,13 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult ApproveZSTOMovement(int? id)
+        {
+            //ession["recordId"] = id;
+            ViewBag.RecordId = id;
+            return View();
+        }
+
 
 
         public ActionResult ApproveSwap(int? id)
@@ -208,6 +215,16 @@ namespace DDS_Tz_Helper.Controllers
         }
 
         public ActionResult AddOnlineTrip()
+        {
+            return View();
+        }
+
+        public ActionResult MaterialToZSTO()
+        {
+            return View();
+        }
+
+        public ActionResult MAterialToZSTORequests()
         {
             return View();
         }
@@ -608,6 +625,105 @@ namespace DDS_Tz_Helper.Controllers
                 return Json(sto_Datax);
             }
             
+
+
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoMoveToZSTORequest(String __RequestVerificationToken, String atc, String drvName, String weiginOp, String transact_Type, String firstWeight, String weighInDate, String destination, String sender, String receiver,
+           String reason, String sto_loc, String trip_id, String Transporter_name, String vehiclex, String waybill)
+        {
+            sto_datax sto_Datax = new sto_datax();
+            int user_id = int.Parse(Session["user_id"].ToString());
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            transaction_data_archive tda = new transaction_data_archive();
+            string oldATCx = atc.PadLeft(10, '0');
+
+
+            var TradeTransType = "";
+            try
+            {
+                tda.sales_doc_number = oldATCx;
+                tda.shp_point = user_id.ToString();
+                tda.operator_weighin = "MOVE FROM MATERIAL TO ZSTO";
+                if (transact_Type == "InboundZSTO") {
+                    TradeTransType = "PO_IN";
+                    tda.sales_type = TradeTransType;
+                    tda.gross = Decimal.Parse(firstWeight);                  
+                    tda.gross_time = DateTime.ParseExact(weighInDate, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+                }
+                else
+                {
+                    TradeTransType = "PO_OUT";
+                    tda.sales_type = TradeTransType;
+                    tda.nett = Decimal.Parse(firstWeight);
+                    tda.sap_post_time = DateTime.ParseExact(weighInDate, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+                }
+
+               
+                
+                tda.tare_time = DateTime.Now;
+                tda.sales_doc_type = "PENDING";
+                tda.seal = reason;
+                tda.transporter = Transporter_name;
+                tda.transporter_name = Transporter_name;
+                tda.destination = destination;
+                tda.loc = sto_loc;
+                tda.driver = drvName;
+                tda.bin_1 = weiginOp;
+                tda.vehicle = vehiclex;
+                //tda.sync_status = false;
+                tda.tmp_waybill_no = waybill;
+                tda.parent_sales_order = atc;
+                tda.bin_2 = Session["sales_code_type"].ToString();
+                tda.sender = sender;
+                tda.trip_id = trip_id;
+
+
+
+
+                db.transaction_data_archive.Add(tda);
+                db.SaveChanges();
+
+
+                var stoDataDetails = db.sto_data.Where(x => x.used == null && x.delivery_number == oldATCx || x.delivery_number_out == oldATCx).FirstOrDefault();
+                try
+                {
+                    //stoDataDetails.used = true;
+                    //db.Entry(stoDataDetails).State = EntityState.Modified;
+                    //db.SaveChanges();
+                }
+                catch(Exception ex)
+                {
+
+                }
+               
+
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.PLACED_REQUEST_FOR_ZSTO_MOVEMENT, atc + " " + reason, DateTime.Now.ToString());
+
+                trx_Datax.msg = "ZSTO SWAP SUBMITTED SUCCESSFULLY; APPROVAL IS PENDING!";
+                trx_Datax.status = true;
+                return Json(trx_Datax);
+            }
+            catch (Exception ex)
+            {
+
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCx, user_id, ActivityType.ERR_REQUESTING_ZSTO_MOVEMENT_HELPER, "ERR_REQUESTING_ZSTO_MOVEMENT_HELPER : ", DateTime.Now.ToString());
+
+                sto_Datax.msg = "Error occured somewhere";
+                sto_Datax.status = false;
+                sto_Datax.excptn = ex.ToString();
+
+                return Json(sto_Datax);
+            }
+
 
 
         }
@@ -1261,6 +1377,137 @@ namespace DDS_Tz_Helper.Controllers
         }
 
 
+        //Inbound/outbound to ZSTO 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoFetchTradeDetailsForZSTOMovement(String __RequestVerificationToken, String atc)
+        {
+
+            sto_datax sto_Datax = new sto_datax();
+            trade_dto tradex = new trade_dto();
+
+            //string atc_actual = atc;
+            string msge;
+            string oldATC = atc;
+            string oldATCx = atc.PadLeft(10, '0');
+
+            var stoExistCheck = db.sto_transaction_data.Where(x => x.po_doc_number == atc).FirstOrDefault();
+
+            if (stoExistCheck != null)
+            {
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO, "FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO : ", DateTime.Now.ToString());
+
+                sto_Datax.status = false;
+                //sto_Datax.msg = "Theres A Pending Request For Gross WT Change For This Same ATC!!!";
+                sto_Datax.msg = "Delivery Is Wrong Or Already weighed in as ZSTO!!!";
+                return Json(sto_Datax);
+            }
+
+            var stoTradeDetails = db.Trades.Where(x => x.sparenum2.ToString() == oldATC && x.seconddatetime == null).FirstOrDefault();
+
+            try
+            {
+                if (stoTradeDetails == null)
+                {
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO, "FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO : ", DateTime.Now.ToString());
+
+                    sto_Datax.status = false;
+                    //sto_Datax.msg = "Theres A Pending Request For Gross WT Change For This Same ATC!!!";
+                    sto_Datax.msg = "Delivery Is Wrong Or Already weighed Out as Material!!!";
+                    return Json(sto_Datax);
+                }
+                else
+                {
+                    var stoTradeSTO_DataDetails = db.sto_data.Where(x => x.used == null && x.delivery_number == oldATCx || x.delivery_number_out == oldATCx).FirstOrDefault();
+                    if (stoTradeSTO_DataDetails != null)
+                    {
+                        var deliveryIn = stoTradeSTO_DataDetails.delivery_number;
+                        var deliveryOut = stoTradeSTO_DataDetails.delivery_number_out;
+                        var sales_doc_type = stoTradeSTO_DataDetails.sales_doc_type;
+                        Session["Sales_code_type"] = sales_doc_type;
+
+                        var del_num = "";
+                        String transTypeCheck = "All";
+                        if (deliveryIn != "")
+                        {
+                            transTypeCheck = "InboundZSTO";
+                            Session["Trans_Type"] = transTypeCheck;
+                            ViewBag.TransType = transTypeCheck;
+
+
+
+
+                        }
+                        else
+                        {
+                            transTypeCheck = "OutboundZSTO";
+                            Session["Trans_Type"] = transTypeCheck;
+                            ViewBag.TransType = transTypeCheck;
+                        }
+
+
+                            //del_num = deliveryIn; Session["Trans_Type"] = "InboundZSTO" ?? deliveryOut; Session["Trans_Type"] = "OutboundZSTO";
+
+                        //if (deliveryIn != null) Session["Trans_Type"] = "InboundZSTO" ?? "OutboundZSTO";
+                        int user_id = int.Parse(Session["user_id"].ToString());
+                        TransactionLogging TRX_LOG = new TransactionLogging();
+                        bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO, "FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO : ", DateTime.Now.ToString());
+
+
+
+                        tradex.msg = "";
+                        tradex.status = true;
+                        tradex.driver = stoTradeDetails.sparestr1; //loc
+                        tradex.operatorWeighIn = stoTradeDetails.username1;
+                        tradex.spareStr6 = stoTradeDetails.sparestr5; //nett
+                        tradex.transporter_name = stoTradeDetails.transporter_name;
+                        tradex.product = stoTradeDetails.product;
+                        tradex.vehicle = stoTradeDetails.truckno;
+                        tradex.Tare = stoTradeDetails.firstweight.ToString();
+                        tradex.FirstDateTime = stoTradeDetails.firstdatetime;
+                        tradex.sender = stoTradeDetails.sender;
+                        tradex.receiver = stoTradeDetails.receiver;
+                        tradex.Transaction_Type = transTypeCheck;
+                        tradex.waybill = stoTradeDetails.sparestr6;
+                        //tradex.approvedBy = transChangeRequestDetails.approved_by;
+                        tradex.atc = atc;
+                        tradex.status = true;
+
+                        //sto_Datax.msg = "Delivery Is Not Vallid Or Has already been weighed in as ZSTO";
+                        //sto_Datax.status = false;
+                        return Json(tradex);
+
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO, "FETCH_ATC_ATTEMPT_FOR_MATERIAL_TO_ZSTO : ", DateTime.Now.ToString());
+
+               msge = ex.Message;
+                sto_Datax.msg = "Error (an exception) occured somewhere. Contact Admin.";
+                sto_Datax.status = false;
+                sto_Datax.excptn = ex.ToString();
+
+                return Json(sto_Datax);
+            }
+
+            sto_Datax.msg = "Delivery Is Not Vallid Or Has already been weighed in as ZSTO";            
+            sto_Datax.status = false;            
+            return Json(sto_Datax);
+
+        }
+
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1371,7 +1618,7 @@ namespace DDS_Tz_Helper.Controllers
                 //return
             }
 
-            string oldATCStoIn = StoInTdaDetails.vehicle;
+            string oldATCStoIn = StoInTdaDetails.sales_doc_number;
 
             var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoIn && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
             var ATCstoTrxDataDetaisInOld = db.sto_data.Where(x => x.delivery_number == oldATCStoIn && x.sales_type == "PO_IN").FirstOrDefault();
@@ -1415,7 +1662,7 @@ namespace DDS_Tz_Helper.Controllers
                 //return
             }
 
-            string oldATCTrxData = atcDetails.vehicle;
+            string oldATCTrxData = atcDetails.sales_doc_number;
 
             var TrxDataDetais = db.transaction_data.Where(x => x.sales_doc_number == oldATCTrxData && x.gross == null && x.sales_type == "BAGS").FirstOrDefault();
             var ATCTrxDataDetaisOld = db.atc_data.Where(x => x.sales_doc_number == oldATCTrxData && x.sales_type == "BAGS").FirstOrDefault();
@@ -1532,6 +1779,141 @@ namespace DDS_Tz_Helper.Controllers
             return Json(tradex);
 
         }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoActualZSTOMoveApproval(String __RequestVerificationToken, int id, String comment)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+            sto_transaction_data stdax = new sto_transaction_data();
+
+            string msge;
+            var StoTdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            string oldATC = StoTdaDetails.sales_doc_number;
+            string trimmedATc = oldATC.TrimStart('0');
+            string oldATCx = StoTdaDetails.sales_doc_number.PadLeft(10, '0');
+
+            try
+            {
+
+                if (StoTdaDetails == null)
+                {
+                    //DO SOMETHING
+                    //return
+                }
+
+                stdax.po_doc_number = StoTdaDetails.sales_doc_number;
+                stdax.loc = StoTdaDetails.loc;
+                stdax.trip_id = StoTdaDetails.trip_id;
+                stdax.vehicle = StoTdaDetails.vehicle;
+                stdax.driver = StoTdaDetails.driver;
+                stdax.transporter = StoTdaDetails.transporter;
+               
+                stdax.tmp_waybill_no = StoTdaDetails.tmp_waybill_no;
+                stdax.parent_sales_order = StoTdaDetails.parent_sales_order;
+                stdax.sender = StoTdaDetails.sender;
+                stdax.destination = StoTdaDetails.destination;
+                stdax.operator_weighin = StoTdaDetails.bin_1;
+                stdax.sales_doc_type = StoTdaDetails.bin_2;
+                stdax.transporter_name = StoTdaDetails.transporter_name;
+                stdax.gross = StoTdaDetails.gross;
+                stdax.sales_type = StoTdaDetails.sales_type;
+                if (stdax.sales_type == "PO_IN")
+                {
+                    stdax.gross = StoTdaDetails.gross;
+                    stdax.gross_time = StoTdaDetails.gross_time;
+                }
+                else
+                {
+                    stdax.tare = StoTdaDetails.nett;
+                    stdax.tare_time = StoTdaDetails.sap_post_time;
+                }
+
+                
+                
+                
+                
+                //stda
+
+
+
+                db.sto_transaction_data.Add(stdax);
+                //var ATCGWTCHange = db.weight_change.Where(x => x.atc_no == oldATC && x.status == "APPROVED").FirstOrDefault();
+                //int initialWeightAdded = int.Parse(ATCGWTCHange.weight_change1);
+                //int newWTToBeAdded = int.Parse(weightToBeAdded);
+                //int newGWTReApproved = newWTToBeAdded + initialWeightAdded;
+
+                //ATCGWTCHange.weight_change1 = newGWTReApproved.ToString();
+                //ATCGWTCHange.filename = "Weight Re-Approved By HELPER";
+
+
+                //db.Entry(ATCGWTCHange).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                StoTdaDetails.operator_picking = comment;
+                StoTdaDetails.sales_doc_type = "APPROVED";
+                StoTdaDetails.picking_time = DateTime.Now;
+
+                db.Entry(StoTdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                var stoDataDetails = db.sto_data.Where(x => x.used == null && x.delivery_number == oldATCx || x.delivery_number_out == oldATCx).FirstOrDefault();
+
+                stoDataDetails.used = true;
+                db.Entry(stoDataDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+
+                var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == trimmedATc && a.seconddatetime == null).FirstOrDefault();
+                var ATCtradeDetails = db.atcs.Where(a => a.sales_doc_number == oldATCx).FirstOrDefault();
+                if (tradeDetails != null)
+                {
+                    db.Entry(tradeDetails).State = EntityState.Deleted;
+                    db.SaveChanges();
+
+                    db.Entry(ATCtradeDetails).State = EntityState.Deleted;
+                    db.SaveChanges();
+                }
+                
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATC, user_id, ActivityType.APPROVED_ZSTO_MOVEMENT, oldATC, DateTime.Now.ToString());
+
+
+                tradex.msg = "MATERIAL TO ZSTO MOVEMENT APPROVAL IS SUCCESSFUL!!";
+                tradex.status = true;
+
+                return Json(tradex);
+            }
+            catch (Exception ex)
+            {
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATC, user_id, ActivityType.ERROR_APPROVING_GROSS_WT_ADDITION_HELPER, oldATC, DateTime.Now.ToString());
+
+                tradex.msg = "";
+                tradex.status = false;
+            }
+
+
+
+            return Json(tradex);
+
+        }
+
+
 
 
 
@@ -2034,6 +2416,56 @@ namespace DDS_Tz_Helper.Controllers
             return Json(tradex);
         }
 
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult RejectZSTOMoveRequest(String __RequestVerificationToken, int id, String comment)
+        {
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            var tdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (tdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            else
+            {
+                string oldATC = tdaDetails.sales_doc_number;
+
+                tdaDetails.operator_picking = comment;
+                tdaDetails.sales_doc_type = "REJECTED";
+                tdaDetails.picking_time = DateTime.Now;
+                tdaDetails.wb_in = Session["user_id"].ToString();
+
+
+                db.Entry(tdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATC, user_id, ActivityType.REJECT_ZSTO_MOVE_HELPER, oldATC, DateTime.Now.ToString());
+
+
+                tradex.msg = "ZSTO MOVEMENT SWITCH REJECTED";
+                tradex.status = true;
+
+                return Json(tradex);
+
+
+
+            }
+
+
+            return Json(tradex);
+        }
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public JsonResult RejectTareWeightModification(String __RequestVerificationToken, int id, String comment)
@@ -2274,6 +2706,81 @@ namespace DDS_Tz_Helper.Controllers
 
 
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoApproveZSTOMoveFetch(String __RequestVerificationToken, int id)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var returnedTda = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+
+            var user_id = int.Parse(returnedTda.shp_point);
+
+            var operatorUsername = db.users.Where(a => a.Id == user_id).FirstOrDefault();
+            var loggedInUser = operatorUsername.username;
+
+
+            try
+            {
+                if (returnedTda == null)
+                {
+
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong DELIVERY or Request Already Approved";
+                    return Json(trx_Datax);
+                    
+                }
+                else
+                {
+                    trx_Datax.msg = "";
+                    trx_Datax.status = true;
+                    trx_Datax.atc_no = returnedTda.sales_doc_number;
+
+                    trx_Datax.tare_time = returnedTda.tare_time ?? DateTime.MinValue;
+
+
+                    trx_Datax.operatorID = loggedInUser;
+                    trx_Datax.seal = returnedTda.seal;
+                    trx_Datax.sto_loc = returnedTda.loc;
+                    //trx_Datax.nett = returnedTda.loc;
+                    trx_Datax.vehicle = returnedTda.vehicle;
+                    trx_Datax.driver = returnedTda.driver;
+                    trx_Datax.operator_weighn = returnedTda.bin_1;
+                    trx_Datax.transporter = returnedTda.transporter;
+                    trx_Datax.gross = returnedTda.gross.ToString();
+                    trx_Datax.tare = returnedTda.tare.ToString();
+                    trx_Datax.waybill_no = returnedTda.tmp_waybill_no;
+                    trx_Datax.sales_type = returnedTda.sales_type;
+                    //trx_Datax.operator_weighout = returnedTda.bin_2;
+
+
+
+
+
+
+                    return Json(trx_Datax);
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                trx_Datax.msg = "Error occured during transaction fetch. Please Contact IT";
+                trx_Datax.status = false;
+
+
+                return Json(trx_Datax);
+            }
+
+
+        }
+
+
 
 
         [HttpPost]
@@ -3427,6 +3934,38 @@ namespace DDS_Tz_Helper.Controllers
             {
                 Gate_Datax gate_Datax = new Gate_Datax();
                 gate_Datax.msg = "Something during data spool";
+                gate_Datax.status = false;
+
+                return Json(gate_Datax);
+            }
+        }
+
+
+        public ActionResult GetPendingMatToZSTORequestForMovement()
+        {
+
+            db.Configuration.ProxyCreationEnabled = false;
+            try
+            {
+                
+                var trxDataZSTO = db.transaction_data_archive.Where(a => a.operator_weighin == "MOVE FROM MATERIAL TO ZSTO" && a.sales_doc_type == "PENDING").ToList();
+                var allUsers = db.users.ToList();
+                var returnedReportPendingZSTOMovement = from b in trxDataZSTO
+                                                        join v in allUsers on b.shp_point equals v.Id.ToString()
+                                                   select new { b, v };
+
+                returnedReportPendingZSTOMovement = returnedReportPendingZSTOMovement.ToList();
+
+
+                return Json(new { data = returnedReportPendingZSTOMovement }, JsonRequestBehavior.AllowGet);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Gate_Datax gate_Datax = new Gate_Datax();
+                gate_Datax.msg = "Something went wrong during data spool";
                 gate_Datax.status = false;
 
                 return Json(gate_Datax);

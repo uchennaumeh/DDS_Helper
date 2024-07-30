@@ -9,6 +9,7 @@ namespace DDS_Tz_Helper.Business_Objects
     {
         public string msg { get; set; }
         public string atc { get; set; }
+        public string sto_loc { get; set; }
         public string driver { get; set; }
         public string vehicle { get; set; }
         public string transporter { get; set; }

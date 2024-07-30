@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "GrossWeightModif";
+    ViewBag.Title = "MaterialToZSTO";
     Layout = "~/Views/Shared/_NewLayout.cshtml";
 
 
@@ -10,7 +10,21 @@
     {
 
         Response.Redirect("~/Home/NotAllowed");
-    }
+    };
+
+    String TranxType = ViewBag.TransType;
+
+    //String WeighInType = Session["Trans_Type"].ToString();
+    //String WeighInMatType;
+    //if (WeighInType != "InboundZSTO")
+    //{
+    //    WeighInMatType = "INBOUND ZSTO";
+
+    //}
+    //else
+    //{
+    //    WeighInMatType = "OUTBOUND ZSTO";
+    //}
 
 }
 
@@ -85,17 +99,19 @@
             $("#transDiv").hide();
             $("#driverDiv").hide();
             $("#receiverDiv").hide();
-            $("#netDiv").hide();
+            $("#TruckDiv").hide();
             $("#numberDiv").hide();
-            $("#newWTDiv").hide();
+            //$("#numberDiv").hide();
+            //$("#newWTDiv").hide();
             $("#reasonDiv").hide();
             $("#ActualTruckNumDiv").hide();
             $("#ActualDriverNameDiv").hide();
             $("#MigoDiv").hide();
-            $("#ActualDestinationDiv").hide();
-            $("#opWeighinDiv").hide();
-            $("#opPickingDiv").hide();
-       
+            //$("#MigoDiv").hide();
+            //$("#ActualDestinationDiv").hide();
+            //$("#opWeighinDiv").hide();
+            //$("#opPickingDiv").hide();
+
 
 
 
@@ -118,7 +134,7 @@
                 setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoFetchATcForGrossModif", "Home")',
+                        url: '@Url.Action("DoFetchTradeDetailsForZSTOMovement", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
@@ -141,39 +157,38 @@
 
                             }
                             else {
-                             
+
                                 $("#atc").val(data.atc);
-                                $("#txtTruckNum").val(data.requestedBy);
-                                $("#txtDriverName").val(data.approvedBy);
-                                $("#txtStoLoc").val(data.stoLoc);
-                                $("#txtTransporter").val(data.grade);
+                                $("#txtTruckNum").val(data.operatorWeighIn);
+                                $("#txtDriverName").val(data.spareStr6);                               
+                                
+                                $("#txtStoLoc").val(data.Transaction_Type);
+
+                                $("#txtTransporter").val(data.Tare);
 
 
-                                var mmm = moment(data.dateOfRequest).format('DD/MM/YYYY HH:mm');
+                                var mmm = moment(data.FirstDateTime).format('DD/MM/YYYY HH:mm');
                                 $("#txtSender").val(mmm);
-
-                                var mmmm = moment(data.dateOfApproval).format('DD/MM/YYYY HH:mm');
-                                $("#txtDestination").val(mmmm);
-
-
-                                $("#txtTrip").val(data.destination);
-                                $("#txtReceiver").val(data.driverName);
-                                $("#txtNet").val(data.sender);
-                                $("#txtNumberOfBags").val(data.Quantity);
-                                $("#txtPlateNum").val(data.truckNumber);
-                                $("#txtActualDriverName").val(data.TruckDriverName);
-                                $("#txtActualTransType").val(data.Migo_Details);
-                                $("#txtActualDestination").val(data.truckDestination);
-                                $("#txtActualWeighin").val(data.operatorWeighin);
-                                $("#txtActualPicking").val(data.operatorPicking);
+                                
+                                $("#txtTrip").val(data.sender);
+                                $("#txtReceiver").val(data.receiver);
+                                $("#txtActualTruckNumber").val(data.vehicle);
+                                $("#txtDestination").val(data.receiver);
+                                $("#txtNumberOfBags").val(data.transporter_name);
+                                //$("#txtPlateNum").val(data.truckNumber);
+                                //$("#txtActualDriverName").val(data.TruckDriverName);
+                                $("#txtActualTransType").val(data.waybill);
+                                //$("#txtActualDestination").val(data.truckDestination);
+                                //$("#txtActualWeighin").val(data.operatorWeighin);
+                               //$("#txtActualPicking").val(data.operatorPicking);
 
                                 $("#atc").attr("disabled", "disabled");
-                                
+
                                 $("#txtRequestBy").val(data.operatorID);
-                   
 
 
-                                
+
+
                                 $("#txtTruckNum").attr("disabled", "disabled");
                                 $("#txtDriverName").attr("disabled", "disabled");
                                 $("#txtStoLoc").attr("disabled", "disabled");
@@ -182,7 +197,7 @@
                                 $("#txtDestination").attr("disabled", "disabled");
                                 $("#txtTrip").attr("disabled", "disabled");
                                 $("#txtReceiver").attr("disabled", "disabled");
-                                $("#txtNet").attr("disabled", "disabled");
+                                $("#txtActualTruckNumber").attr("disabled", "disabled");
                                 $("#txtNumberOfBags").attr("disabled", "disabled");
 
 
@@ -196,13 +211,14 @@
                                 $("#transDiv").show();
                                 $("#driverDiv").show();
                                 $("#receiverDiv").show();
-                                $("#netDiv").show();
-                                $("#numberDiv").show();
-                                $("#newWTDiv").show();
+                                $("#TruckDiv").show();
+                                $("#ActualDriverNameDiv").show();
+                                $("#ActualTruckNumDiv").show();                               
                                 $("#reasonDiv").show();
+                                $("#numberDiv").show();
 
 
-                                
+
                                  //var url = "";
                                 //url = '@Url.Action("STO_Modify", "Home")'; //Default
 
@@ -220,42 +236,36 @@
             $("#btnUpdate").on('click', function () {
 
                 var atc = $("#atc").val();
-                var requestedBy = $("#txtTruckNum").val();
-                var approvedBy = $("#txtDriverName").val();
-                var stoLoc = $("#txtStoLoc").val();
-                var transporter = $("#txtTransporter").val();
-                var sender = $("#txtSender").val();
-                var dateOfApproval = $("#txtDestination").val();
-                var oldGrosss = $("#txtTrip").val();
+                var weiginOp = $("#txtTruckNum").val();
+                var drvName = $("#txtDriverName").val();
+                var transact_Type = $("#txtStoLoc").val();
+                var firstWeight = $("#txtTransporter").val();
+                var weighInDate = $("#txtSender").val();
+                var destination = $("#txtDestination").val();
+                var sender = $("#txtTrip").val();
                 var receiver = $("#txtReceiver").val();
-                var net = $("#txtNet").val();
-                var numberOfBags = $("#txtNumberOfBags").val();
-                var newWT = $("#txtNewWtToBeAdded").val();
-                var reason = $("#txtReason").val();
-                var ActualPlateNum = $("#txtPlateNum").val();
-                var ActualDriverName = $("#txtActualDriverName").val();
-                var ActualTransType = $("#txtActualTransType").val();
-                var ActualDestination = $("#txtActualDestination").val();
-                var ActualWeighin = $("#txtActualWeighin").val();
-                var ActualPicking = $("#txtActualPicking").val();
+                var ActualTruckNum = $("#txtActualTruckNumber").val();
 
-           
+            
+                var reason = $("#txtReason").val();
+                var trip_id = $("#txtPlateNum").val();
+                var sto_loc = $("#txtActualDriverName").val();
+                var waybill = $("#txtActualTransType").val();
+                //var ActualDestination = $("#txtActualDestination").val();
+                //var ActualWeighin = $("#txtActualWeighin").val();
+                var ActualPicking = $("#txtActualPicking").val();
+                var Transporter_name = $("#txtNumberOfBags").val();
+                var vehiclex = $("#txtActualTruckNumber").val();
+
+
 
 
 
                 var msg = "";
-                if (atc == "") { msg = "Please enter ATC! \n" ; }
-                if (requestedBy == "") { msg += "Please enter Requested by! \n"; }
-                if (approvedBy == "") { msg += "Please enter Approved by! \n"; }
-                if (stoLoc == "") { msg += "Please enter storage location! \n"; }
-                if (transporter == "") { msg += "Please enter transporter name! \n"; }
-                if (sender == "") { msg += "Please enter sender name! \n"; }
-                if (dateOfApproval == "") { msg += "Please date of approval! \n"; }
-                if (oldGrosss == "") { msg += "Please enter Old Grosss! \n"; }
-                if (receiver == "") { msg += "Please enter receiver! \n"; }
-                if (newWT == "") { msg += "Please enter new weight to be added! \n"; }
-                if (reason == "") { msg += "Please enter reason for additional weight change! \n"; }
-                if (newWT > 150 || newWT < -150) { msg += "New Weight cannot be more than 150 or less than -150! \n"; }
+                if (reason == "") { msg = "Please enter Reason for this Movement! \n" ; }
+                if (trip_id == "") { msg += "Please enter Trip ID! \n"; }
+                if (sto_loc == "") { msg += "Please enter Correct Storage Location! \n"; }
+               
 
 
 
@@ -270,29 +280,30 @@
                  setTimeout(function () {
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("DoModifyGrossWeightRequest", "Home")',
+                        url: '@Url.Action("DoMoveToZSTORequest", "Home")',
                         async: true,
                         data: {
                             __RequestVerificationToken: token,
                             atc: atc,
-                            requestedBy: requestedBy,
-                            approvedBy: approvedBy,
-                            stoLoc: stoLoc,
-                            transporter: transporter,
+                            weiginOp: weiginOp,
+                            drvName: drvName,
+                            transact_Type: transact_Type,
+                            firstWeight: firstWeight,
+                            weighInDate: weighInDate,
+                            destination: destination,
                             sender: sender,
-                            dateOfApproval: dateOfApproval,
-                            oldGrosss: oldGrosss,
                             receiver: receiver,
-                            net: net,
-                            numberOfBags: numberOfBags,
-                            newWT: newWT,
+                            ActualTruckNum: ActualTruckNum,
                             reason: reason,
-                            ActualPlateNum: ActualPlateNum,
-                            ActualDriverName: ActualDriverName,
-                            ActualTransType: ActualTransType,
-                            ActualDestination: ActualDestination,
-                            ActualWeighin: ActualWeighin,
-                            ActualPicking: ActualPicking,
+                            trip_id: trip_id,
+                            sto_loc: sto_loc,
+                            Transporter_name: Transporter_name,
+                            vehiclex: vehiclex,
+                            waybill: waybill,
+                            //ActualTransType: ActualTransType,
+                            //ActualDestination: ActualDestination,
+                            //ActualWeighin: ActualWeighin,
+                            //ActualPicking: ActualPicking,
 
                         },
                         error: function (data) {
@@ -322,15 +333,15 @@
                                 $("#txtSender").val("");
                                 $("#txtTrip").val("");
                                 $("#txtReceiver").val("");
-                                $("#txtNet").val("");
+                                $("#txtActualTruckNumber").val("");
                                 $("#txtNumberOfBags").val("");
-                                $("#txtNewWtToBeAdded").val("");
+                                //$("#txtNewWtToBeAdded").val("");
                                 $("#txtReason").val("");
                                 $("#txtPlateNum").val("");
                                 $("#txtActualDriverName").val("");
-                                $("#txtActualTransType").val("");
-                                $("#txtActualDestination").val("");
-                                $("#txtActualWeighin").val("");
+                                //$("#txtActualTransType").val("");
+                                //$("#txtActualDestination").val("");
+                                //$("#txtActualWeighin").val("");
                                 $("#txtActualPicking").val("");
 
 
@@ -342,11 +353,13 @@
                                 $("#destinationDiv").hide();
                                 $("#transDiv").hide();
                                 $("#driverDiv").hide();
-                                $("#netDiv").hide();
+                                $("#TruckDiv").hide();
                                 $("#numberDiv").hide();
-                                $("#newWTDiv").hide();
+                                //$("#newWTDiv").hide();
                                 $("#reasonDiv").hide();
                                 $("#receiverDiv").hide();
+                                $("#ActualTruckNumDiv").hide();
+                                $("#ActualDriverNameDiv").hide();
 
 
 
@@ -356,7 +369,7 @@
 
 
                                  var url = "";
-                                url = '@Url.Action("GrossWeightModif", "Home")'; //Default
+                                url = '@Url.Action("MaterialToZSTO", "Home")'; //Default
 
 
                             }
@@ -381,7 +394,7 @@
 
         <div class="mws-panel grid_8">
             <div class="mws-panel-header">
-                <span>Modify GROSS WEIGHT</span>
+                <span>MOVE FROM INBOUND/OUTBOUND TO ZSTO</span>
             </div>
             <div class="mws-panel-body no-padding">
                 <form class="mws-form" action="form_layouts.html">
@@ -389,10 +402,10 @@
                     <div class="mws-form-inline">
                         <div class="mws-form-cols">
                             <div class="mws-form-col-5-8">
-                                <label class="mws-form-label">ATC*</label>
+                                <label class="mws-form-label">DELIVERY NUMBER*</label>
                                 <div class="mws-form-item">
                                     @*<input type="text" id="atc" placeholder="enter ATC..." class="large">*@
-                                    <input type="text" id="atc" placeholder="enter ATC..." class="large">
+                                    <input type="text" id="atc" placeholder="enter delivery number..." class="large">
                                 </div>
                             </div>
                             <div class="mws-form-col-1-8">
@@ -406,38 +419,39 @@
                         <br />
 
                         <div id="truckDiv" class="mws-form-row">
-                            <label class="mws-form-label">DDS change Requested By</label>
+                            <label class="mws-form-label">Truck Weighed In By</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtTruckNum" class="small">
 
                             </div>
                         </div>
+
                         <div id="senderDiv" class="mws-form-row">
-                            <label class="mws-form-label">DDS Date of Request</label>
+                            <label class="mws-form-label">Truck Weigh In Date</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtSender" class="small">
                             </div>
                         </div>
                         <div id="driverDiv" class="mws-form-row">
-                            <label class="mws-form-label">DDS change Approved By</label>
+                            <label class="mws-form-label">Drivers Name</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtDriverName" class="small">
                             </div>
                         </div>
                         <div id="destinationDiv" class="mws-form-row">
-                            <label class="mws-form-label">DDS Date of Approval</label>
+                            <label class="mws-form-label">Destination</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtDestination" class="small">
                             </div>
                         </div>
                         <div id="stoLocDiv" class="mws-form-row">
-                            <label class="mws-form-label">DDS Approval Status</label>
+                            <label class="mws-form-label">Weigh In Type (INB/OBD)</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtStoLoc" class="small">
                             </div>
                         </div>
                         <div id="transDiv" class="mws-form-row">
-                            <label class="mws-form-label">DDS weight Approved</label>
+                            <label class="mws-form-label">First Weight (Gross or Tare)</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtTransporter" class="small">
                             </div>
@@ -445,84 +459,84 @@
 
 
                         <div id="receiverDiv" class="mws-form-row">
-                            <label class="mws-form-label">Tare Weight</label>
+                            <label class="mws-form-label">Destination Plant</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtReceiver" class="small">
                             </div>
                         </div>
                         <div id="tripDiv" class="mws-form-row">
-                            <label class="mws-form-label">Gross Weight</label>
+                            <label class="mws-form-label">Sender</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtTrip" class="small">
                             </div>
                         </div>
-                        <div id="netDiv" class="mws-form-row">
-                            <label class="mws-form-label">Net Weight</label>
+                        <div id="TruckDiv" class="mws-form-row">
+                            <label class="mws-form-label">Truck Number</label>
                             <div class="mws-form-item">
-                                <input type="text" id="txtNet" class="small">
+                                <input type="text" id="txtActualTruckNumber" class="small">
                             </div>
                         </div>
                         <div id="numberDiv" class="mws-form-row">
-                            <label class="mws-form-label">Number of Bags</label>
+                            <label class="mws-form-label">Transporter Name</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtNumberOfBags" class="small">
                             </div>
                         </div>
-                        <div id="newWTDiv" class="mws-form-row">
+                        @*<div id="newWTDiv" class="mws-form-row">
                             <label class="mws-form-label">Enter New Weight to Be Added</label>
                             <div class="mws-form-item">
                                 <input type="number" id="txtNewWtToBeAdded" class="small">
                             </div>
-                        </div>
+                        </div>*@
                         <div id="reasonDiv" class="mws-form-row">
-                            <label class="mws-form-label">Reason For More GW Modification</label>
+                            <label class="mws-form-label">Reason For Moving to ZSTO</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtReason" class="small">
                             </div>
                         </div>
                         <div id="ActualTruckNumDiv" class="mws-form-row">
-                            <label class="mws-form-label">Plate number</label>
+                            <label class="mws-form-label">Trip ID</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtPlateNum" class="small">
                             </div>
                         </div>
                         <div id="ActualDriverNameDiv" class="mws-form-row">
-                            <label class="mws-form-label">Driver Name</label>
+                            <label class="mws-form-label">Storage Location</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtActualDriverName" class="small">
                             </div>
                         </div>
                         <div id="MigoDiv" class="mws-form-row">
-                            <label class="mws-form-label">Trans Type</label>
+                            <label class="mws-form-label">Waybill</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtActualTransType" class="small">
                             </div>
                         </div>
-                        <div id="ActualDestinationDiv" class="mws-form-row">
+                        @*<div id="ActualDestinationDiv" class="mws-form-row">
                             <label class="mws-form-label">Actual Destination</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtActualDestination" class="small">
                             </div>
-                        </div>
-                        <div id="opWeighinDiv" class="mws-form-row">
+                        </div>*@
+                        @*<div id="opWeighinDiv" class="mws-form-row">
                             <label class="mws-form-label">OP WeighIN</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtActualWeighin" class="small">
                             </div>
-                        </div>
-                        <div id="opPickingDiv" class="mws-form-row">
+                        </div>*@
+                        @*<div id="opPickingDiv" class="mws-form-row">
                             <label class="mws-form-label">Op Picking</label>
                             <div class="mws-form-item">
                                 <input type="text" id="txtActualPicking" class="small">
                             </div>
-                        </div>
-                        
-                                               
+                        </div>*@
+
+
 
                     </div>
                     <div class="mws-button-row">
 
-                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> REQUEST FOR FURTHER WEIGHT CHANGE</button>
+                        <button id="btnUpdate" class="btn btn-primary" type="button"><i class="fa fa-key"></i> MOVE TO ZSTO</button>
                     </div>
                 </form>
             </div>
@@ -533,6 +547,4 @@
     </div>
 
 </body>
-
-
 

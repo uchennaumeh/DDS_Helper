@@ -252,15 +252,6 @@
                 <span></span>
             </div>
 
-            <!-- Searchbox -->
-            @*<div id="mws-searchbox" class="mws-inset">
-                    <form action="typography.html">
-                        <input type="text" class="mws-search-input" placeholder="Search...">
-                        <button type="submit" class="mws-search-submit"><i class="icon-search"></i></button>
-                    </form>
-                </div>*@
-
-            <!-- Main Navigation -->
             <div id="mws-navigation">
                 <ul>
                     @{ if (roleP == "weighbridge" && TareApprove == "UserCannotApproveTare")
@@ -277,8 +268,7 @@
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
                                     <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                                    @*<li><a href="form_elements.html">Elements</a></li>
-                        <li><a href="form_wizard.html">Wizard</a></li>*@
+                               
                                 </ul>
                             </li>
 
@@ -299,21 +289,7 @@
 
                                 </ul>
                             </li>
-
-
-                            @*<li class="active" id="ModifyParams">
-                    <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
-                    <ul>
-
-                        <li><a href="~/Home/ATCSwapRequests">ATC SWAP REQUEST</a></li>
-
-                        <li><a href="~/Home/ATCArchiveRequests">ATC ARCHIVE REQUESTS</a></li>
-
-                        <li><a href="~/Home/ModifyTareWeightRequests">TARE WEIGHTS REQUESTS</a></li>
-
-                    </ul>
-                </li>*@
-
+                            
                             <li class="active" id="ModifyParams">
                                 <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
                                 <ul>
@@ -324,18 +300,10 @@
 
                                     <li><a href="~/Home/ModifyTareWeight">REQUEST TARE WEIGHT CHANGE</a></li>
                                     <li><a href="~/Home/GrossWeightModif">REQUEST GROSS WEIGHT CHANGE</a></li>
+                                    <li><a href="~/Home/MaterialToZSTO">REQUEST ZSTO SWAP CHANGE</a></li>
 
                                 </ul>
                             </li>
-
-
-
-
-
-                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
-
-
-
 
                         }
 
@@ -354,9 +322,7 @@
                             <li class="active">
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
-                                    <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                                    @*<li><a href="form_elements.html">Elements</a></li>
-                        <li><a href="form_wizard.html">Wizard</a></li>*@
+                                    <li><a href="~/Home/STO_Modify">Modify Entry</a></li>                            
                                 </ul>
                             </li>
 
@@ -377,30 +343,12 @@
 
                                 </ul>
                             </li>
-
-
-
-
-
-
-                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
-
-
-
-
+                            
                         }
 
                         //end of to be tested uche
 
-
                     }
-
-
-
-
-
-
-
 
                     @{ if (roleP == "admin" && TareApprove == "UserCannotApproveTare")
                         {
@@ -416,8 +364,7 @@
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
                                     <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                                    @*<li><a href="form_elements.html">Elements</a></li>
-                        <li><a href="form_wizard.html">Wizard</a></li>*@
+                                
                                 </ul>
                             </li>
                             <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
@@ -446,42 +393,14 @@
                                     <li><a href="~/Home/ModifyTareWeight">MODIFY TARE WEIGHT</a></li>
                                     @*<li><a href="~/Home/ModifyTareWeightRequests">APPROVE TARE WEIGHTS REQUESTS</a></li>*@
                                     <li><a href="~/Home/GrossWeightModif">MODIFY GROSS WEIGHT</a></li>
+                                    <li><a href="~/Home/MAterialToZSTORequests">APPROVE ZSTO MOVEMENT</a></li>
 
                                 </ul>
                             </li>
 
-
-
-
-                            @*@(TareApprove == "UserCanApproveTare")
-                {
-                    <li class="active">
-                        <a href="#"><i class="icon-list"></i> APPROVE MODIFICATIONS</a>
-                        <ul>
-
-                            <li><a href="~/Home/ModifyTareWeight">APPROVE MODIFY TARE WEIGHT</a></li>
-
-                            <li><a href="~/Home/ATCSwap">APPROVE ATC SWAP</a></li>
-
-                            <li><a href="~/Home/ATCArchive">APPROVE ATC ARCHIVE</a></li>
-
-                        </ul>
-                    </li>
-
-                }*@
-
-
-
-
-
-
                         }
 
                     }
-
-
-
-
 
 
 
@@ -499,8 +418,7 @@
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
                                     <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                                    @*<li><a href="form_elements.html">Elements</a></li>
-                        <li><a href="form_wizard.html">Wizard</a></li>*@
+                                  
                                 </ul>
                             </li>
                             <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
@@ -527,30 +445,12 @@
                                     <li><a href="~/Home/ATCArchive">REQUEST ATC ARCHIVE</a></li>
                                     @*<li><a href="~/Home/ATCArchiveRequests">APPROVE ATC ARCHIVE REQUESTS</a></li>*@
                                     <li><a href="~/Home/ModifyTareWeight">MODIFY TARE WEIGHT</a></li>
-                                    <li><a href="~/Home/GrossWTChangeApprove">MODIFY GROSS WEIGHT</a></li>
+                                    <li><a href="~/Home/GrossWeighTModif">MODIFY GROSS WEIGHT</a></li>
+                                    <li><a href="~/Home/MaterialToZSTO">REQUEST ZSTO SWAP CHANGE</a></li>
                                     @*<li><a href="~/Home/ModifyTareWeightRequests">APPROVE TARE WEIGHTS REQUESTS</a></li>*@
 
                                 </ul>
                             </li>
-
-                            //if (TareApprove == "UserCanApproveTare")
-                            //{
-                            @*<li class="active">
-                    <a href="#"><i class="icon-list"></i> APPROVE MODIFICATIONS</a>
-                    <ul>
-
-                        <li><a href="~/Home/ModifyTareWeight">APPROVE MODIFY TARE WEIGHT</a></li>
-
-                        <li><a href="~/Home/ATCSwap">APPROVE ATC SWAP</a></li>
-
-                        <li><a href="~/Home/ATCArchive">APPROVE ATC ARCHIVE</a></li>
-
-                    </ul>
-                </li>*@
-
-                            //}
-
-
 
                         }
 
@@ -571,6 +471,7 @@
                                     <li><a href="~/Home/ATCArchiveRequests">APPROVE ATC ARCHIVE REQUESTS</a></li>
 
                                     <li><a href="~/Home/GrossWTChangeApprove">APPROVE GROSS WEIGHT REQUESTS</a></li>
+                                    <li><a href="~/Home/MAterialToZSTORequests">APPROVE ZSTO MOVE REQUESTS</a></li>
 
                                 </ul>
                             </li>
@@ -630,7 +531,7 @@
                         {
 
                             <li><a href="~/Home/CancelTrip"><i class="icon-blocked"></i> Cancel DDS Trip ID</a></li>
-                            @*<li><a href="~/Home/TripCheck"><i class="icon-eye-open"></i> Check Trip Details</a></li>*@
+                         
                             <li class="active">
                                 <a href="#"><i class="icon-list"></i> REPORTS</a>
                                 <ul>

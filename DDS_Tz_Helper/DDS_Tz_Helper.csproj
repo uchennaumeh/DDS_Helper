@@ -3710,6 +3710,9 @@
     <Content Include="Views\Home\GrossWeightModif.cshtml" />
     <Content Include="Views\Home\GrossWTChangeApprove.cshtml" />
     <Content Include="Views\Home\ApproveGWT.cshtml" />
+    <Content Include="Views\Home\MaterialToZSTO.cshtml" />
+    <Content Include="Views\Home\MAterialToZSTORequests.cshtml" />
+    <Content Include="Views\Home\ApproveZSTOMovement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
