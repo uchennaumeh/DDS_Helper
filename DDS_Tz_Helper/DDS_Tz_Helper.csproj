@@ -3713,6 +3713,9 @@
     <Content Include="Views\Home\MaterialToZSTO.cshtml" />
     <Content Include="Views\Home\MAterialToZSTORequests.cshtml" />
     <Content Include="Views\Home\ApproveZSTOMovement.cshtml" />
+    <Content Include="Views\Home\STOWeights.cshtml" />
+    <Content Include="Views\Home\STOWeightRequests.cshtml" />
+    <Content Include="Views\Home\ApproveSTOWeights.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

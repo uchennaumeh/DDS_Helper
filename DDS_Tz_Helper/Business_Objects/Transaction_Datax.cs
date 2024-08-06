@@ -38,5 +38,8 @@ namespace DDS_Tz_Helper.Business_Objects
         public DateTime gross_time { get; set; }
         public Boolean status { get; set; }
         public Boolean statusPicking { get; set; }
+        public Decimal oldTare { get; set; }
+        public Decimal oldNet { get; set; }
+
     }
 }

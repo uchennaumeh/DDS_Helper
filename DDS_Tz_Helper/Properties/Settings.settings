@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="CheckerUser" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Uchenna.Umeh, Hassan.Enemosah</Value>
+      <Value Profile="(Default)">HASSAN.ENEMOSAH</Value>
     </Setting>
   </Settings>
 </SettingsFile>

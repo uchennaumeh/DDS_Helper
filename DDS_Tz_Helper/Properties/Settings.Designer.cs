@@ -25,7 +25,7 @@ namespace DDS_Tz_Helper.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Uchenna.Umeh, Hassan.Enemosah")]
+        [global::System.Configuration.DefaultSettingValueAttribute("HASSAN.ENEMOSAH")]
         public string CheckerUser {
             get {
                 return ((string)(this["CheckerUser"]));

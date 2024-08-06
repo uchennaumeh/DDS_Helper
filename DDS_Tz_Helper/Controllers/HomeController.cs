@@ -40,7 +40,19 @@ namespace DDS_Tz_Helper.Controllers
             return View();
         }
 
+        public ActionResult STOWeights()
+        {
+
+            return View();
+        }
+
         public ActionResult GrossWeightModif()
+        {
+
+            return View();
+        }
+
+        public ActionResult STOWeightRequests()
         {
 
             return View();
@@ -51,6 +63,13 @@ namespace DDS_Tz_Helper.Controllers
             ViewBag.RecordId = id;
             return View();
         }
+
+        public ActionResult ApproveSTOWeights(int? id)
+        {
+            ViewBag.RecordId = id;
+            return View();
+        }
+
 
         public ActionResult GrossWTChangeApprove()
         {
@@ -2111,6 +2130,201 @@ namespace DDS_Tz_Helper.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public JsonResult DoActualZSTOWeightModification(String __RequestVerificationToken, int id, String comment)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            string msge;
+
+
+            //TRADE
+            var tdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (tdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            string oldATC = tdaDetails.sales_doc_number;
+            string oldATCx = tdaDetails.sales_doc_number.PadLeft(10, '0');
+
+            //var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == oldATC && a.seconddatetime == null).FirstOrDefault();
+            //var ATCtradeDetails = db.atcs.Where(a => a.sales_doc_number == oldATCx).FirstOrDefault();
+            //var ATCtradeDetails2 = db.atcs.Where(a => a.sales_doc_number == oldATC).FirstOrDefault();
+            //if (tradeDetails != null)
+            //{
+
+
+            //    tdaDetails.operator_picking = comment;
+            //    tdaDetails.sales_doc_type = "APPROVED";
+            //    tdaDetails.picking_time = DateTime.Now;
+            //    db.Entry(tdaDetails).State = EntityState.Modified;
+            //    db.SaveChanges();
+
+
+            //    tradeDetails.firstweight = tdaDetails.bin_2_tare;
+            //    db.Entry(tradeDetails).State = EntityState.Modified;
+            //    db.SaveChanges();
+
+
+            //    ATCtradeDetails2.tare_weight = tdaDetails.bin_2_tare.ToString();
+            //    db.Entry(ATCtradeDetails2).State = EntityState.Modified;
+            //    db.SaveChanges();
+
+
+            //    int user_id = int.Parse(Session["user_id"].ToString());
+            //    TransactionLogging TRX_LOG = new TransactionLogging();
+            //    bool status = TRX_LOG.RecordLog(db, oldATC, user_id, ActivityType.APPROVE_TARE_WEIGHT_MODIFY_HELPER, oldATC, DateTime.Now.ToString());
+
+
+            //    tradex.msg = "TARE MODIFICATION APPROVAL IS SUCCESSFUL!!";
+            //    tradex.status = true;
+
+            //    return Json(tradex);
+
+
+            //}
+
+            //STO_TRANSACTION_DATA OUTBOUND
+            var StoOutTdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (StoOutTdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            string oldATCStoOut = StoOutTdaDetails.sales_doc_number;
+
+            var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoOut && x.gross != null && x.sales_type == "PO_OUT").FirstOrDefault();
+            var ATCstoTrxDataDetaisOutOld = db.sto_data.Where(x => x.delivery_number_out == oldATCStoOut && x.sales_type == "PO_OUT").FirstOrDefault();
+
+            if (stoTrxDataDetaisOut != null)
+            {
+
+
+                StoOutTdaDetails.operator_picking = comment;
+                StoOutTdaDetails.sales_doc_type = "APPROVED";
+                StoOutTdaDetails.picking_time = DateTime.Now;
+                db.Entry(StoOutTdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                stoTrxDataDetaisOut.tare = tdaDetails.bin_2_tare;
+                stoTrxDataDetaisOut.nett = tdaDetails.bin_1_tare;
+                stoTrxDataDetaisOut.sync_status = false;
+                db.Entry(stoTrxDataDetaisOut).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                stdx.status = true;
+                stdx.msg = "STO WEIGHT MODIFICATION APPROVAL IS SUCCESSFULL";
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCStoOut, user_id, ActivityType.APPROVE_STO_WEIGHT_MODIFY_HELPER, oldATCStoOut, DateTime.Now.ToString());
+
+                return Json(stdx);
+
+            }
+
+            //STO_TRANSACTION_DATA INBOUND
+            var StoInTdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (StoInTdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+
+            string oldATCStoIn = StoInTdaDetails.sales_doc_number;
+
+            var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == oldATCStoIn && x.tare != null && x.sales_type == "PO_IN").FirstOrDefault();
+            var ATCstoTrxDataDetaisInOld = db.sto_data.Where(x => x.delivery_number == oldATCStoIn && x.sales_type == "PO_IN").FirstOrDefault();
+            if (stoTrxDataDetaisIn != null)
+            {
+
+
+
+                StoInTdaDetails.operator_picking = comment;
+                StoInTdaDetails.sales_doc_type = "APPROVED";
+                StoInTdaDetails.picking_time = DateTime.Now;
+
+                db.Entry(StoInTdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                stoTrxDataDetaisIn.tare = tdaDetails.bin_2_tare;
+                stoTrxDataDetaisIn.nett = tdaDetails.bin_1_tare;
+                stoTrxDataDetaisIn.sync_status = false;
+                db.Entry(stoTrxDataDetaisIn).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                //DO STO Outbound swap swap
+                stdx.status = true;
+                stdx.msg = "STO WEIGHT MODIFICATION APPROVAL IS SUCCESSFULL";
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCStoIn, user_id, ActivityType.APPROVE_STO_WEIGHT_MODIFY_HELPER, oldATCStoIn, DateTime.Now.ToString());
+
+                return Json(stdx);
+            }
+
+            //TRANSACTION_DATA
+            var atcDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (atcDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+
+            string oldATCTrxData = atcDetails.sales_doc_number;
+
+            var TrxDataDetais = db.transaction_data.Where(x => x.sales_doc_number == oldATCTrxData && x.gross == null && x.sales_type == "BAGS").FirstOrDefault();
+            var ATCTrxDataDetaisOld = db.atc_data.Where(x => x.sales_doc_number == oldATCTrxData && x.sales_type == "BAGS").FirstOrDefault();
+
+            if (TrxDataDetais != null)
+            {
+
+
+
+                atcDetails.operator_picking = comment;
+                atcDetails.sales_doc_type = "APPROVED";
+                atcDetails.picking_time = DateTime.Now;
+
+                db.Entry(atcDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                TrxDataDetais.tare = atcDetails.bin_2_tare;
+                db.Entry(TrxDataDetais).State = EntityState.Modified;
+                db.SaveChanges();
+
+
+                //DO STO Outbound swap swap
+                trx_Datax.status = true;
+                trx_Datax.msg = "TARE MODIFICATION APPROVAL IS SUCCESSFULL";
+
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, oldATCTrxData, user_id, ActivityType.APPROVE_TARE_WEIGHT_MODIFY_HELPER, oldATCTrxData, DateTime.Now.ToString());
+
+                return Json(trx_Datax);
+            }
+
+
+            return Json(trx_Datax);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult DoActualModifyTareWeight(String __RequestVerificationToken, int id, String comment)
         {
 
@@ -2496,10 +2710,58 @@ namespace DDS_Tz_Helper.Controllers
 
                 int user_id = int.Parse(Session["user_id"].ToString());
                 TransactionLogging TRX_LOG = new TransactionLogging();
-                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.REJECT_TARE_WEIGHT_MODIFY_HELPER, atc, DateTime.Now.ToString());
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.REJECT_ZSTO_WEIGHT_MODIFY_HELPER, atc, DateTime.Now.ToString());
 
 
-                tradex.msg = "TARE MODIFICATION IS REJECTED!!";
+                tradex.msg = "TARE WEIGHT MODIFICATION IS REJECTED!!";
+                tradex.status = true;
+
+                return Json(tradex);
+
+
+
+            }
+
+
+            return Json(tradex);
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult RejectZSTOWeightModification(String __RequestVerificationToken, int id, String comment)
+        {
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            var tdaDetails = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+            if (tdaDetails == null)
+            {
+                //DO SOMETHING
+                //return
+            }
+            else
+            {
+                string atc = tdaDetails.sales_doc_number;
+
+                tdaDetails.operator_picking = comment;
+                tdaDetails.sales_doc_type = "REJECTED";
+                tdaDetails.picking_time = DateTime.Now;
+                tdaDetails.wb_in = Session["user_id"].ToString();
+
+
+                db.Entry(tdaDetails).State = EntityState.Modified;
+                db.SaveChanges();
+
+                int user_id = int.Parse(Session["user_id"].ToString());
+                TransactionLogging TRX_LOG = new TransactionLogging();
+                bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.REJECT_ZSTO_WEIGHT_MODIFY_HELPER, atc, DateTime.Now.ToString());
+
+
+                tradex.msg = "ZSTO MODIFICATION IS REJECTED!!";
                 tradex.status = true;
 
                 return Json(tradex);
@@ -2836,6 +3098,73 @@ namespace DDS_Tz_Helper.Controllers
                 trx_Datax.msg = "Error occured during ATC fetch";
                 trx_Datax.status = false;
                 
+
+                return Json(trx_Datax);
+            }
+
+
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoApproveSTOWeightfFetch(String __RequestVerificationToken, int id)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var returnedTda = db.transaction_data_archive.Where(a => a.id == id && a.sales_doc_type == "PENDING").FirstOrDefault();
+
+            var user_id = int.Parse(returnedTda.shp_point);
+
+            var operatorUsername = db.users.Where(a => a.Id == user_id).FirstOrDefault();
+            var loggedInUser = operatorUsername.username;
+
+
+            try
+            {
+                if (returnedTda == null)
+                {
+
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong Delivery";
+                    return Json(trx_Datax);
+
+
+
+
+
+                }
+                else
+                {
+                    trx_Datax.msg = "";
+                    trx_Datax.status = true;
+                    trx_Datax.atc_no = returnedTda.sales_doc_number;
+
+                    trx_Datax.tare_time = returnedTda.tare_time ?? DateTime.MinValue;
+
+
+                    trx_Datax.operatorID = loggedInUser;
+                    trx_Datax.seal = returnedTda.seal;
+                    trx_Datax.oldNet = returnedTda.nett ?? 0;
+                    trx_Datax.nett = returnedTda.bin_1_tare.ToString();
+                    trx_Datax.oldTare = returnedTda.tare ?? 0;
+                    trx_Datax.tare = returnedTda.bin_2_tare.ToString();
+
+
+                    return Json(trx_Datax);
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                trx_Datax.msg = "Error occured during Delivery fetch";
+                trx_Datax.status = false;
+
 
                 return Json(trx_Datax);
             }
@@ -3618,6 +3947,17 @@ namespace DDS_Tz_Helper.Controllers
 
                     Session["canApproveTare"] = "cnat";
                     string approvers = Properties.Settings.Default.CheckerUser;
+                    
+                    var plant = db.system_setting.Where(x => x.switch_over == "auto").FirstOrDefault();
+                    string plantCode = plant.plant_code;
+                    if (plantCode == "2000")
+                    {
+
+                        Session["currentPlant"] = "GBOKO";
+
+                    }
+
+
 
                     var tareApproverUsers = approvers.Split(',');
                     foreach (var approver in tareApproverUsers)
@@ -3631,7 +3971,10 @@ namespace DDS_Tz_Helper.Controllers
                        
                     }
 
-                 
+
+                    
+
+
                     Session["company_name"] = "Dangote Cement Tanzania";
 
 
@@ -3854,6 +4197,41 @@ namespace DDS_Tz_Helper.Controllers
                 var returnedReportPendingTareModify = from b in trxDataArc
                                                 join v in allUsers on b.shp_point equals v.Id.ToString()
                                                 select new { b, v };
+
+                returnedReportPendingTareModify = returnedReportPendingTareModify.ToList();
+
+
+                return Json(new { data = returnedReportPendingTareModify }, JsonRequestBehavior.AllowGet);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Gate_Datax gate_Datax = new Gate_Datax();
+                gate_Datax.msg = "Something went wrong during data spool";
+                gate_Datax.status = false;
+
+                return Json(gate_Datax);
+            }
+        }
+
+
+
+        public ActionResult GetPendingSTOWeightsRequest()
+        {
+
+            db.Configuration.ProxyCreationEnabled = false;
+            try
+            {
+
+
+
+                var trxDataSTOWeights = db.transaction_data_archive.Where(a => a.operator_weighin == "STO WEIGHT CHANGE REQUEST" && a.sales_doc_type == "PENDING").ToList();
+                var allUsers = db.users.ToList();
+                var returnedReportPendingTareModify = from b in trxDataSTOWeights
+                                                      join v in allUsers on b.shp_point equals v.Id.ToString()
+                                                      select new { b, v };
 
                 returnedReportPendingTareModify = returnedReportPendingTareModify.ToList();
 
@@ -4765,6 +5143,152 @@ namespace DDS_Tz_Helper.Controllers
         }
 
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoFetchDeliveryForWeightChangeDetails(String __RequestVerificationToken, String atc)
+        {
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var trimmedATC = atc.TrimStart('0');
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            
+
+
+
+            string atc_actual = atc;
+            string msge;
+
+
+            //var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == trimmedATC && a.seconddatetime == null).FirstOrDefault();
+            //if (tradeDetails != null)
+            //{
+            //    //DO Trade swap
+            //    tradex.msg = "";
+            //    tradex.status = true;
+            //    tradex.statusPicking = false;
+            //    tradex.operator_weighn = tradeDetails.username1;
+            //    tradex.Tare = tradeDetails.tare.ToString();
+            //    tradex.tare_time = tradeDetails.firstdatetime;
+            //    tradex.atc = tradeDetails.sparenum2.ToString();
+
+
+            //    int user_id = int.Parse(Session["user_id"].ToString());
+            //    TransactionLogging TRX_LOG = new TransactionLogging();
+            //    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_TARE_CHANGE_HELPER, "FETCH ATC ATTEMPT FOR TARE CHANGE : ", DateTime.Now.ToString());
+
+            //    return Json(tradex);
+
+            //    //return
+            //}
+            try
+            {
+                var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross != null && x.sales_type == "PO_OUT").FirstOrDefault();
+                if (stoTrxDataDetaisOut != null && stoTrxDataDetaisOut.gross_time <= DateTime.Today.AddDays(-2))
+                {
+                    stdx.msg = "";
+                    stdx.status = true;
+
+                    stdx.atc = stoTrxDataDetaisOut.po_doc_number;
+                    stdx.tare_time = stoTrxDataDetaisOut.tare_time ?? DateTime.MinValue;
+                    stdx.gross_time = stoTrxDataDetaisOut.gross_time ?? DateTime.MinValue;
+                    stdx.operator_weighn = stoTrxDataDetaisOut.operator_weighin;
+                    stdx.operator_weighout = stoTrxDataDetaisOut.operator_weighout;
+                    stdx.tare = stoTrxDataDetaisOut.tare.ToString();
+                    stdx.gross = stoTrxDataDetaisOut.gross.ToString();
+                    stdx.nett = stoTrxDataDetaisOut.nett.ToString();
+                    stdx.trip_id = stoTrxDataDetaisOut.trip_id;
+
+
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.STO_Weights_Fetch_HELPER, "STO_Weights_Fetch_HELPER: ", DateTime.Now.ToString());
+
+                    return Json(stdx);
+
+                }
+                var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare != null && x.sales_type == "PO_IN").FirstOrDefault();
+                if (stoTrxDataDetaisIn != null && stoTrxDataDetaisIn.tare_time <= DateTime.Today.AddDays(-2))
+                {
+                    //    //DO STO Inbound swap swap
+                    stdx.msg = "";
+                    stdx.status = true;
+
+
+                    //stdx.atc = stoTrxDataDetaisIn.po_doc_number;
+                    //stdx.trip_id = stoTrxDataDetaisIn.trip_id;
+                    //stdx.tare_time = stoTrxDataDetaisOut.tare_time ?? DateTime.MinValue;
+                    //stdx.operator_weighn = stoTrxDataDetaisOut.operator_weighin;
+                    //stdx.tare = stoTrxDataDetaisOut.tare.ToString();
+
+                    stdx.atc = stoTrxDataDetaisIn.po_doc_number;
+                    stdx.tare_time = stoTrxDataDetaisIn.tare_time ?? DateTime.MinValue;
+                    stdx.gross_time = stoTrxDataDetaisIn.gross_time ?? DateTime.MinValue;
+                    stdx.operator_weighn = stoTrxDataDetaisIn.operator_weighin;
+                    stdx.operator_weighout = stoTrxDataDetaisIn.operator_weighout;
+                    stdx.tare = stoTrxDataDetaisIn.tare.ToString();
+                    stdx.gross = stoTrxDataDetaisIn.gross.ToString();
+                    stdx.nett = stoTrxDataDetaisIn.nett.ToString();
+                    stdx.trip_id = stoTrxDataDetaisIn.trip_id;
+
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.STO_Weights_Fetch_HELPER, "STO_Weights_Fetch_HELPER : ", DateTime.Now.ToString());
+
+                    return Json(stdx);
+
+                }
+                var atcDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.gross == null).FirstOrDefault();
+
+                if (atcDetails == null)
+                {
+                    //DO Trx_data swap
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_TARE_CHANGE_HELPER, "FETCH ATC ATTEMPT FOR TARE CHANGE : ", DateTime.Now.ToString());
+
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong Delivery or Delivery Not Weighed Out";
+                    return Json(trx_Datax);
+
+                }
+                else
+                {
+                    trx_Datax.msg = "NOT FOUND";
+                    trx_Datax.status = true;
+
+                    trx_Datax.atc = atc;
+                    trx_Datax.trip_id = atcDetails.trip_id;
+                    //trx_Datax.atc = atcDetails.sales_doc_number;
+                    trx_Datax.tare = atcDetails.tare.ToString();
+                    trx_Datax.operator_weighn = atcDetails.operator_weighin;
+                    trx_Datax.tare_time = atcDetails.tare_time ?? DateTime.MinValue;
+
+
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_TARE_CHANGE_HELPER, "FETCH ATC ATTEMPT FOR TARE CHANGE : ", DateTime.Now.ToString());
+
+                    return Json(trx_Datax);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+
+
+            return Json(trx_Datax);
+
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public JsonResult DoTempTareWeightChange(String __RequestVerificationToken, String atc, String reason, String newTare, String Operator, String oldTare)
@@ -4976,6 +5500,235 @@ namespace DDS_Tz_Helper.Controllers
                 tradex.status = true;
                 return Json(tradex);
             }
+
+
+
+
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DoTempSTOWeightsChange(String __RequestVerificationToken, String atc, String reason, String newTare, String Operator, String oldTare, String operatorOut, String oldGross, String oldNet, String newNet)
+        {
+
+
+            Transaction_Datax trx_Datax = new Transaction_Datax();
+            var trimmedATC = atc.TrimStart('0');
+            trade_dto tradex = new trade_dto();
+            Sto_Transaction_Datax stdx = new Sto_Transaction_Datax();
+
+            transaction_data_archive tda = new transaction_data_archive();
+
+
+            string atc_actual = atc;
+            string msge;
+
+            //var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == atc && a.seconddatetime == null).FirstOrDefault();
+            //var tradeDetails = db.Trades.Where(a => a.sparenum2.ToString() == trimmedATC && a.seconddatetime == null).FirstOrDefault();
+            //if (tradeDetails != null)
+            //{
+
+            //    int user_id = int.Parse(Session["user_id"].ToString());
+            //    //DO Trade swap
+            //    //string cc = tradeDetails.truckno;
+            //    tradex.msg = "";
+            //    tradex.status = true;
+            //    tradex.statusPicking = false;
+            //    tda.sales_doc_number = tradeDetails.sparenum2.ToString().PadLeft(10, '0');
+            //    tda.sales_doc_type = "PENDING";
+            //    tda.operator_weighin = "TARE WEIGHT CHANGE REQUEST";
+            //    tda.seal = reason;
+            //    tda.shp_point = user_id.ToString();
+            //    tda.tare = tradeDetails.firstweight;
+            //    tda.gross = tradeDetails.secondweight;
+            //    tda.tare_time = DateTime.Now;
+            //    tda.sap_post_time = tradeDetails.firstdatetime;
+            //    tda.gross_time = tradeDetails.seconddatetime;
+            //    tda.vehicle = tradeDetails.truckno;
+            //    tda.driver = tradeDetails.sparestr5;
+            //    tda.migo_details = tradeDetails.product;
+            //    tda.sender = tradeDetails.sender;
+            //    tda.destination = tradeDetails.receiver;
+            //    tda.transporter = tradeDetails.transporter;
+            //    tda.transporter_name = tradeDetails.transcode;
+            //    tda.operator_weighout = tradeDetails.username1 + " " + "weighin";
+            //    tda.bin_1_tare = Decimal.Parse(oldTare);
+            //    tda.bin_2_tare = Decimal.Parse(newTare);
+
+
+
+
+            //    db.transaction_data_archive.Add(tda);
+            //    db.SaveChanges();
+
+            //    tradex.msg = "TARE WEIGHT CHANGE IS PENDING APPROVAL";
+            //    tradex.status = true;
+
+            //    TransactionLogging TRX_LOG = new TransactionLogging();
+            //    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.TARE_WEIGHT_CHANGE_REQUEST_HELPER, "TARE WEIGHT CHANGE REQUEST HELPER :", DateTime.Now.ToString());
+
+            //    return Json(tradex);
+
+            //}
+            try
+            {
+                var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross != null && x.sales_type == "PO_OUT").FirstOrDefault();
+                if (stoTrxDataDetaisOut != null)
+                {
+
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+                    //DO Trade swap
+                    //string cc = tradeDetails.truckno;
+                    tradex.msg = "";
+                    tradex.status = true;
+                    tradex.statusPicking = false;
+                    tda.sales_doc_number = stoTrxDataDetaisOut.po_doc_number;
+                    tda.sales_doc_type = "PENDING";
+                    tda.operator_weighin = "STO WEIGHT CHANGES REQUEST";
+                    tda.seal = reason;
+                    tda.shp_point = user_id.ToString();
+                    tda.tare = stoTrxDataDetaisOut.tare;
+                    tda.gross = stoTrxDataDetaisOut.gross;
+                    tda.tare_time = DateTime.Now;
+                    tda.sap_post_time = stoTrxDataDetaisOut.tare_time;
+                    tda.gross_time = stoTrxDataDetaisOut.gross_time;
+                    tda.vehicle = stoTrxDataDetaisOut.vehicle;
+                    tda.driver = stoTrxDataDetaisOut.driver;
+                    tda.migo_details = "ZSTO";
+                    tda.sender = stoTrxDataDetaisOut.sender;
+                    tda.destination = stoTrxDataDetaisOut.receiver;
+                    tda.transporter = stoTrxDataDetaisOut.transporter;
+                    tda.transporter_name = stoTrxDataDetaisOut.transporter_name;
+                    tda.operator_weighout = stoTrxDataDetaisOut.operator_weighin + " " + "weighin";
+                    tda.bin_1_tare = Decimal.Parse(newNet);
+                    tda.bin_2_tare = Decimal.Parse(newTare);
+                    tda.nett = Decimal.Parse(oldNet);
+
+
+
+                    db.transaction_data_archive.Add(tda);
+                    db.SaveChanges();
+
+
+                    tradex.msg = "STO WEIGHT CHANGE IS PENDING APPROVAL";
+                    tradex.status = true;
+
+
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.STO_WEIGHT_CHANGE_REQUEST_HELPER, "STO_WEIGHT_CHANGE_REQUEST_HELPER : ", DateTime.Now.ToString());
+
+                    return Json(tradex);
+
+                }
+                var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare != null && x.sales_type == "PO_IN").FirstOrDefault();
+                if (stoTrxDataDetaisIn != null)
+                {
+                    //    //DO STO Inbound swap swap
+                    stdx.msg = "";
+                    stdx.status = true;
+
+                    int user_id = int.Parse(Session["user_id"].ToString());
+
+                    tradex.msg = "";
+                    tradex.status = true;
+                    tradex.statusPicking = false;
+                    tda.sales_doc_number = stoTrxDataDetaisIn.po_doc_number;
+                    tda.sales_doc_type = "PENDING";
+                    tda.operator_weighin = "STO WEIGHT CHANGE REQUEST";
+                    tda.seal = reason;
+                    tda.shp_point = user_id.ToString();
+                    tda.tare = stoTrxDataDetaisIn.tare;
+                    tda.gross = stoTrxDataDetaisIn.gross;
+                    tda.tare_time = DateTime.Now;
+                    tda.sap_post_time = stoTrxDataDetaisIn.tare_time;
+                    tda.gross_time = stoTrxDataDetaisIn.gross_time;
+                    tda.vehicle = stoTrxDataDetaisIn.vehicle;
+                    tda.driver = stoTrxDataDetaisIn.driver;
+                    tda.migo_details = "ZSTO";
+                    tda.sender = stoTrxDataDetaisIn.sender;
+                    tda.destination = stoTrxDataDetaisIn.receiver;
+                    tda.transporter = stoTrxDataDetaisIn.transporter;
+                    tda.transporter_name = stoTrxDataDetaisIn.transporter_name;
+                    tda.operator_weighout = stoTrxDataDetaisIn.operator_weighin + " " + "weighin";
+                    tda.bin_1_tare = Decimal.Parse(newNet);
+                    tda.bin_2_tare = Decimal.Parse(newTare);
+                    tda.nett = Decimal.Parse(oldNet);
+
+
+                    db.transaction_data_archive.Add(tda);
+                    db.SaveChanges();
+
+
+                    tradex.msg = "STO WEIGHT CHANGE IS PENDING APPROVAL";
+                    tradex.status = true;
+
+
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.STO_WEIGHT_CHANGE_REQUEST_HELPER, "STO_WEIGHT_CHANGE_REQUEST_HELPER :", DateTime.Now.ToString());
+
+                    return Json(tradex);
+                }
+                var atcDetails = db.transaction_data.Where(x => x.sales_doc_number == atc && x.gross == null).FirstOrDefault();
+
+                if (atcDetails == null)
+                {
+                    //DO Trx_data swap
+
+                    trx_Datax.status = false;
+                    trx_Datax.msg = "Wrong ATC or ATC is already weighed-out";
+                    return Json(trx_Datax);
+
+                }
+                else
+                {
+                    int user_id = int.Parse(Session["user_id"].ToString());
+
+                    tradex.msg = "";
+                    tradex.status = true;
+                    tradex.statusPicking = false;
+                    tda.sales_doc_number = atcDetails.sales_doc_number;
+                    tda.sales_doc_type = "PENDING";
+                    tda.operator_weighin = "TARE WEIGHT CHANGE REQUEST";
+                    tda.seal = reason;
+                    tda.shp_point = user_id.ToString();
+                    tda.tare = atcDetails.tare;
+                    tda.gross = atcDetails.gross;
+                    tda.tare_time = DateTime.Now;
+                    tda.sap_post_time = atcDetails.tare_time;
+                    tda.gross_time = atcDetails.gross_time;
+                    tda.vehicle = atcDetails.vehicle;
+                    tda.driver = atcDetails.driver;
+                    tda.migo_details = "CEMENT";
+                    tda.sales_type = atcDetails.sales_type;
+                    tda.sender = atcDetails.sender;
+                    tda.destination = atcDetails.destination;
+                    tda.transporter = atcDetails.transporter;
+                    tda.transporter_name = atcDetails.transporter_name;
+                    tda.operator_weighout = atcDetails.operator_weighin + " " + "weighin";
+                    tda.bin_1_tare = Decimal.Parse(oldTare);
+                    tda.bin_2_tare = Decimal.Parse(newTare);
+
+
+                    db.transaction_data_archive.Add(tda);
+                    db.SaveChanges();
+
+                    TransactionLogging TRX_LOG = new TransactionLogging();
+                    bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.TARE_WEIGHT_CHANGE_REQUEST_HELPER, "TARE WEIGHT CHANGE REQUEST HELPER : ", DateTime.Now.ToString());
+
+
+                    tradex.msg = "TARE WEIGHT CHANGE IS PENDING APPROVAL";
+                    tradex.status = true;
+                    return Json(tradex);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw; ;
+            }
+            
 
 
 

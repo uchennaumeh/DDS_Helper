@@ -3,6 +3,7 @@
     Layout = null;
     String roleP = "";
     String TareApprove = "";
+    String userPlant = "";
 
 
     if (Session["Role"].ToString() == "1")
@@ -45,6 +46,15 @@
     {
         TareApprove = "UserCannotApproveTare";
     }
+
+   
+
+    if (Session["currentPlant"].ToString() == "GBOKO")
+    {
+        userPlant = "GBOKO";
+
+    }
+   
 
 
 
@@ -107,7 +117,7 @@
 
     @RenderSection("scripts", required: false)
 
-    <title>DDS ONNE HELPER</title>
+    <title>DDS GBOKO HELPER</title>
 
 </head>
 
@@ -268,7 +278,7 @@
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
                                     <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                               
+
                                 </ul>
                             </li>
 
@@ -289,7 +299,7 @@
 
                                 </ul>
                             </li>
-                            
+
                             <li class="active" id="ModifyParams">
                                 <a href="#"><i class="icon-list"></i> MODIFY PARAMS</a>
                                 <ul>
@@ -322,7 +332,7 @@
                             <li class="active">
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
-                                    <li><a href="~/Home/STO_Modify">Modify Entry</a></li>                            
+                                    <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
                                 </ul>
                             </li>
 
@@ -343,11 +353,27 @@
 
                                 </ul>
                             </li>
-                            
+
                         }
+
+
+
 
                         //end of to be tested uche
 
+                    }
+
+                    @{
+                        if (roleP == "weighbridge" && TareApprove == "UserCannotApproveTare" && userPlant == "GBOKO")
+                        {
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> STO WEIGHTS</a>
+                                <ul>
+                                    <li><a href="~/Home/STOWeights">Modify STO weights</a></li>
+
+                                </ul>
+                            </li>
+                        }
                     }
 
                     @{ if (roleP == "admin" && TareApprove == "UserCannotApproveTare")
@@ -364,7 +390,7 @@
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
                                     <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                                
+
                                 </ul>
                             </li>
                             <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
@@ -418,7 +444,7 @@
                                 <a href="#"><i class="icon-list"></i> STO TMS</a>
                                 <ul>
                                     <li><a href="~/Home/STO_Modify">Modify Entry</a></li>
-                                  
+
                                 </ul>
                             </li>
                             <li><a href="~/Home/Remove_TripID"><i class="icon-eye-open"></i> Remove Trip ID</a></li>
@@ -479,6 +505,24 @@
                         }
                     }
 
+                    @{
+                        if (TareApprove == "UserCanApproveTare" && userPlant == "GBOKO")
+                        {
+                            <li class="active">
+                                <a href="#"><i class="icon-list"></i> APPROVE STO WEIGHTS</a>
+                                <ul>
+
+                                    <li><a href="~/Home/STOWeightRequests">APPROVE STO WEIGHTS REQUESTS</a></li>
+                                    
+                                </ul>
+                            </li>
+
+                        }
+                    }
+
+
+
+
                     @*picking roles*@
                     @{
                         if (roleP == "picking" && TareApprove == "UserCannotApproveTare")
@@ -531,7 +575,7 @@
                         {
 
                             <li><a href="~/Home/CancelTrip"><i class="icon-blocked"></i> Cancel DDS Trip ID</a></li>
-                         
+
                             <li class="active">
                                 <a href="#"><i class="icon-list"></i> REPORTS</a>
                                 <ul>
@@ -614,7 +658,7 @@
                 @RenderBody()
                 <hr />
                 <footer>
-                    <p>&copy; @DateTime.Now.Year - DDS Helper ONNE</p>
+                    <p>&copy; @DateTime.Now.Year - DDS Helper GBOKO</p>
                 </footer>
             </div>
             <!-- Footer -->
