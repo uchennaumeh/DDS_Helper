@@ -2787,6 +2787,7 @@
     <Content Include="front_template\HTML\images\DDS.png" />
     <Content Include="front_template\HTML\images\mws-logo.png" />
     <Content Include="front_template\HTML\images\processing.gif" />
+    <Content Include="front_template\HTML\images\sadface.jpg" />
     <Content Include="front_template\HTML\images\spinner2.gif" />
     <Content Include="front_template\HTML\images\SpinnerOrange.gif" />
     <Content Include="front_template\HTML\images\welcome-greetings.gif" />

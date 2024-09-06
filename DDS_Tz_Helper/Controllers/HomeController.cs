@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Drawing;
 using System.DirectoryServices;
+using System.Configuration;
 
 namespace DDS_Tz_Helper.Controllers
 {
@@ -709,7 +710,7 @@ namespace DDS_Tz_Helper.Controllers
                 db.SaveChanges();
 
 
-                var stoDataDetails = db.sto_data.Where(x => x.used == null && x.delivery_number == oldATCx || x.delivery_number_out == oldATCx).FirstOrDefault();
+                var stoDataDetails = db.sto_data.Where(x => x.used == null && (x.delivery_number == oldATCx || x.delivery_number_out == oldATCx)).FirstOrDefault();
                 try
                 {
                     //stoDataDetails.used = true;
@@ -961,7 +962,7 @@ namespace DDS_Tz_Helper.Controllers
                 
             }
             var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare == null && x.sales_type == "PO_IN").FirstOrDefault();
-            if (stoTrxDataDetaisOut != null)
+            if (stoTrxDataDetaisIn != null)
             {
                 //DO STO Inbound swap swap
                 stdx.msg = "";
@@ -1274,7 +1275,11 @@ namespace DDS_Tz_Helper.Controllers
         public JsonResult DoFetchATcForGrossModif(String __RequestVerificationToken, String atc)
         {
 
-            sto_datax sto_Datax = new sto_datax();
+            //int lowerBound = int.Parse(ConfigurationManager.AppSettings["toleranceLowerBound"]);
+            //int upperBound = int.Parse(ConfigurationManager.AppSettings["toleranceUpperBound"]);
+            string lowerBound = ConfigurationManager.AppSettings["toleranceLowerBound"];
+            string upperBound = ConfigurationManager.AppSettings["toleranceUpperBound"];
+             sto_datax sto_Datax = new sto_datax();
 
             string atc_actual = atc;
             string msge;
@@ -1306,7 +1311,8 @@ namespace DDS_Tz_Helper.Controllers
                     return Json(sto_Datax);
                 }
 
-                var transDetailsWC = db.weight_change.Where(x => x.change_request_id != null && x.status == "APPROVED" && x.net_weight != null && x.atc_no == atc && x.weight_change1 == "-150" || x.weight_change1 == "150").FirstOrDefault();
+                //var transDetailsWC1 = db.weight_change.Where(x => x.change_request_id != null && x.status == "APPROVED" && x.net_weight != null && x.atc_no == atc && x.weight_change1 == "-150" || x.weight_change1 == "150").FirstOrDefault();
+                var transDetailsWC = db.weight_change.Where(x =>x.atc_no == atc && x.change_request_id != null && x.status == "APPROVED" && x.net_weight != null && (x.weight_change1 == lowerBound || x.weight_change1 == upperBound)).FirstOrDefault();
                 if (transDetailsWC == null)
                 {
                     int user_id = int.Parse(Session["user_id"].ToString());
@@ -1441,7 +1447,7 @@ namespace DDS_Tz_Helper.Controllers
                 }
                 else
                 {
-                    var stoTradeSTO_DataDetails = db.sto_data.Where(x => x.used == null && x.delivery_number == oldATCx || x.delivery_number_out == oldATCx).FirstOrDefault();
+                    var stoTradeSTO_DataDetails = db.sto_data.Where(x => x.used == null && (x.delivery_number == oldATCx || x.delivery_number_out == oldATCx)).FirstOrDefault();
                     if (stoTradeSTO_DataDetails != null)
                     {
                         var deliveryIn = stoTradeSTO_DataDetails.delivery_number;
@@ -1884,7 +1890,7 @@ namespace DDS_Tz_Helper.Controllers
                 db.SaveChanges();
 
 
-                var stoDataDetails = db.sto_data.Where(x => x.used == null && x.delivery_number == oldATCx || x.delivery_number_out == oldATCx).FirstOrDefault();
+                var stoDataDetails = db.sto_data.Where(x => x.used == null && (x.delivery_number == oldATCx || x.delivery_number_out == oldATCx)).FirstOrDefault();
 
                 stoDataDetails.used = true;
                 db.Entry(stoDataDetails).State = EntityState.Modified;
@@ -3956,6 +3962,11 @@ namespace DDS_Tz_Helper.Controllers
                         Session["currentPlant"] = "GBOKO";
 
                     }
+                    else
+                    {
+                        Session["currentPlant"] = "OTHERS";
+                    }
+
 
 
 
@@ -5185,7 +5196,7 @@ namespace DDS_Tz_Helper.Controllers
             try
             {
                 var stoTrxDataDetaisOut = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.gross != null && x.sales_type == "PO_OUT").FirstOrDefault();
-                if (stoTrxDataDetaisOut != null && stoTrxDataDetaisOut.gross_time <= DateTime.Today.AddDays(-2))
+                if (stoTrxDataDetaisOut != null && stoTrxDataDetaisOut.gross_time >= DateTime.Today.AddDays(-2))
                 {
                     stdx.msg = "";
                     stdx.status = true;
@@ -5210,7 +5221,7 @@ namespace DDS_Tz_Helper.Controllers
 
                 }
                 var stoTrxDataDetaisIn = db.sto_transaction_data.Where(x => x.po_doc_number == atc && x.tare != null && x.sales_type == "PO_IN").FirstOrDefault();
-                if (stoTrxDataDetaisIn != null && stoTrxDataDetaisIn.tare_time <= DateTime.Today.AddDays(-2))
+                if (stoTrxDataDetaisIn != null && stoTrxDataDetaisIn.tare_time >= DateTime.Today.AddDays(-2))
                 {
                     //    //DO STO Inbound swap swap
                     stdx.msg = "";
@@ -5252,7 +5263,7 @@ namespace DDS_Tz_Helper.Controllers
                     bool status = TRX_LOG.RecordLog(db, atc, user_id, ActivityType.FETCH_ATC_ATTEMPT_FOR_TARE_CHANGE_HELPER, "FETCH ATC ATTEMPT FOR TARE CHANGE : ", DateTime.Now.ToString());
 
                     trx_Datax.status = false;
-                    trx_Datax.msg = "Wrong Delivery or Delivery Not Weighed Out";
+                    trx_Datax.msg = "Wrong Delivery or Delivery Not Weighed Out. Weighment date should NOT be less than two days from today!!!";
                     return Json(trx_Datax);
 
                 }
